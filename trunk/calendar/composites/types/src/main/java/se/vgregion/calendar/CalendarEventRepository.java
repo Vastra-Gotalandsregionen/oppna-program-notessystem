@@ -19,12 +19,11 @@
 
 package se.vgregion.calendar;
 
-import java.util.List;
 
 public interface CalendarEventRepository {
 
-    List<CalendarEvent> findCalendarEvents(String userId);
+    CalendarEvents findCalendarEvents(String userId);
 
-    List<CalendarEvent> findCalendarEvents(String userId, WeekOfYear weekOfYear);
+    CalendarEvents findCalendarEvents(String userId, int week, int year);
 
 }

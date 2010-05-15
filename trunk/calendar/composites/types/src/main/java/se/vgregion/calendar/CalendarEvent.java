@@ -22,18 +22,25 @@
  */
 package se.vgregion.calendar;
 
-import java.util.Date;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Anders Asplund
  * 
  */
+@XmlRootElement(name = "item")
 public class CalendarEvent {
 
+    @XmlElement(name = "type")
     private String calendarType;
-    private Date startTime;
-    private Date endTime;
+    // @XmlElement(name = "") private Date startTime;
+    // @XmlElement(name = "") private Date endTime;
     private String title;
+    private String startDate;
+    private String startTime;
+    private String endDate;
+    private String endTime;
 
     public String getCalendarType() {
         return calendarType;
@@ -43,21 +50,21 @@ public class CalendarEvent {
         this.calendarType = calendarType;
     }
 
-    public Date getStartTime() {
-        return new Date(startTime.getTime());
-    }
-
-    void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return new Date(endTime.getTime());
-    }
-
-    void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+    // public Date getStartTime() {
+    // return new Date(startTime.getTime());
+    // }
+    //
+    // void setStartTime(Date startTime) {
+    // this.startTime = startTime;
+    // }
+    //
+    // public Date getEndTime() {
+    // return new Date(endTime.getTime());
+    // }
+    //
+    // void setEndTime(Date endTime) {
+    // this.endTime = endTime;
+    // }
 
     public String getTitle() {
         return title;
