@@ -22,34 +22,43 @@
  */
 package se.vgregion.infrastructure.webservice;
 
-import java.util.List;
+import org.apache.cxf.jaxrs.client.WebClient;
 
-import se.vgregion.calendar.CalendarEvent;
 import se.vgregion.calendar.CalendarEventRepository;
-import se.vgregion.calendar.WeekOfYear;
+import se.vgregion.calendar.CalendarEvents;
 
 /**
  * @author Anders Asplund
- *
+ * 
  */
 public class WSCalendarEventRepository implements CalendarEventRepository {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see se.vgregion.calendar.CalendarEventRepository#findCalendarEvents(java.lang.String)
      */
-    @Override
-    public List<CalendarEvent> findCalendarEvents(String userId) {
-        // TODO Auto-generated method stub
+    public CalendarEvents findCalendarEvents(String userId) {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see se.vgregion.calendar.CalendarEventRepository#findCalendarEvents(java.lang.String, se.vgregion.calendar.WeekOfYear)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see se.vgregion.calendar.CalendarEventRepository#findCalendarEvents(java.lang.String,
+     * se.vgregion.calendar.WeekOfYear)
      */
-    @Override
-    public List<CalendarEvent> findCalendarEvents(String userId, WeekOfYear weekOfYear) {
-        // TODO Auto-generated method stub
-        return null;
+    public CalendarEvents findCalendarEvents(String userId, int week, int year) {
+        WebClient client = WebClient.create("http://localhost:8080");
+        CalendarEvents events = client.path("getinfo.xml").accept("text/xml").get(CalendarEvents.class);
+        return events;
+    }
+
+    public static void main(String[] args) {
+        CalendarEventRepository repo = new WSCalendarEventRepository();
+        CalendarEvents events = repo.findCalendarEvents("", 0, 0);
+        System.out.println(events.getEvents().size());
+
     }
 
 }
