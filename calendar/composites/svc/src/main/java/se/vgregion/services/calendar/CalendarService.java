@@ -25,7 +25,6 @@ package se.vgregion.services.calendar;
 import java.util.List;
 
 import se.vgregion.calendar.CalendarEvent;
-import se.vgregion.calendar.CalendarEventRepository;
 import se.vgregion.calendar.WeekOfYear;
 
 /**
@@ -35,8 +34,6 @@ import se.vgregion.calendar.WeekOfYear;
 public interface CalendarService {
 
     List<CalendarEvent> getCalendarEvents(String userId);
-
-    void setCalendarEventRepository(CalendarEventRepository calendarEventRepository);
 
     List<CalendarEvent> getCalendarEvents(String userId, WeekOfYear weekOfYear);
 
