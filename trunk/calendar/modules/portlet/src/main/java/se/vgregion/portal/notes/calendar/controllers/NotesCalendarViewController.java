@@ -38,16 +38,16 @@ public class NotesCalendarViewController {
     public static final String VIEW_WEEK = "week";
 
     @Autowired
-    private CalendarService notesCalendarService;
+    private CalendarService calendarService;
 
-    public void setNotesCalendarService(CalendarService notesCalendarService) {
-        this.notesCalendarService = notesCalendarService;
+    public NotesCalendarViewController(CalendarService calendarService) {
+        this.calendarService = calendarService;
     }
 
     @RenderMapping
     public String displayCalendarEvents(ModelMap model, RenderRequest request) {
         String userId = getUserId(request);
-        model.put("calenderEvents", notesCalendarService.getCalendarEvents(userId));
+        model.put("calenderEvents", calendarService.getCalendarEvents(userId));
         return VIEW_WEEK;
     }
 

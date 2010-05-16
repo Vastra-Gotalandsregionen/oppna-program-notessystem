@@ -14,5 +14,6 @@
   <artifactId>oppna-program-notessystem-calendar-composite-types</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-
+  
+  
 </project>

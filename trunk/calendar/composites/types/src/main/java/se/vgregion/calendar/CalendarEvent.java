@@ -25,6 +25,9 @@ package se.vgregion.calendar;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * @author Anders Asplund
  * 
@@ -34,44 +37,44 @@ public class CalendarEvent {
 
     @XmlElement(name = "type")
     private String calendarType;
-    // @XmlElement(name = "") private Date startTime;
-    // @XmlElement(name = "") private Date endTime;
+    @XmlElement
     private String title;
+    @XmlElement
     private String startDate;
+    @XmlElement
     private String startTime;
+    @XmlElement
     private String endDate;
+    @XmlElement
     private String endTime;
 
     public String getCalendarType() {
         return calendarType;
     }
 
-    void setCalendarType(String calendarType) {
-        this.calendarType = calendarType;
-    }
-
-    // public Date getStartTime() {
-    // return new Date(startTime.getTime());
-    // }
-    //
-    // void setStartTime(Date startTime) {
-    // this.startTime = startTime;
-    // }
-    //
-    // public Date getEndTime() {
-    // return new Date(endTime.getTime());
-    // }
-    //
-    // void setEndTime(Date endTime) {
-    // this.endTime = endTime;
-    // }
-
     public String getTitle() {
         return title;
     }
 
-    void setTitle(String title) {
-        this.title = title;
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
 }

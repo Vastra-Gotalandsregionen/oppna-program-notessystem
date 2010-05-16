@@ -50,7 +50,7 @@ public class NotesCalendarViewControllerTest {
     private ModelMap model;
 
     @Mock
-    private CalendarService notesCalendarService;
+    private CalendarService calendarService;
 
     private MockRenderRequest renderRequest;
 
@@ -58,8 +58,7 @@ public class NotesCalendarViewControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         renderRequest = getMockRenderRequest();
-        notesCalendarViewController = new NotesCalendarViewController();
-        notesCalendarViewController.setNotesCalendarService(notesCalendarService);
+        notesCalendarViewController = new NotesCalendarViewController(calendarService);
         model = new ModelMap();
     }
 
@@ -67,7 +66,7 @@ public class NotesCalendarViewControllerTest {
     @Test
     public void shouldContainModelWithListOfCalendarEvents() throws Exception {
         // Given
-        given(notesCalendarService.getCalendarEvents(anyString())).willReturn(Arrays.asList(new CalendarEvent()));
+        given(calendarService.getCalendarEvents(anyString())).willReturn(Arrays.asList(new CalendarEvent()));
 
         // When
         notesCalendarViewController.displayCalendarEvents(model, renderRequest);

@@ -24,15 +24,21 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import se.vgregion.calendar.CalendarEvent;
 import se.vgregion.calendar.CalendarEventRepository;
 import se.vgregion.calendar.WeekOfYear;
 
+@Service
 public class CalendarServiceImp implements CalendarService {
 
     @Autowired
     private CalendarEventRepository calendarEventRepository;
+
+    public CalendarServiceImp(CalendarEventRepository eventRepository) {
+        this.calendarEventRepository = eventRepository;
+    }
 
     @Override
     public List<CalendarEvent> getCalendarEvents(String userId) {
@@ -40,11 +46,6 @@ public class CalendarServiceImp implements CalendarService {
             return Collections.emptyList();
         }
         return calendarEventRepository.findCalendarEvents(userId);
-    }
-
-    @Override
-    public void setCalendarEventRepository(CalendarEventRepository calendarEventRepository) {
-        this.calendarEventRepository = calendarEventRepository;
     }
 
     @Override

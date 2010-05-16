@@ -26,10 +26,8 @@ import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Matchers.*;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -38,8 +36,6 @@ import org.mockito.MockitoAnnotations;
 import se.vgregion.calendar.CalendarEvent;
 import se.vgregion.calendar.CalendarEventRepository;
 import se.vgregion.calendar.WeekOfYear;
-import se.vgregion.services.calendar.CalendarService;
-import se.vgregion.services.calendar.CalendarServiceImp;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -54,46 +50,42 @@ public class NotesCalendarServiceTest {
     private CalendarEventRepository calendarEventRepository;
 
     @Mock
+    private List<CalendarEvent> calendarEvents;
+
+    @Mock
     WeekOfYear weekOfYear;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        notesCalendarService = new CalendarServiceImp();
-        notesCalendarService.setCalendarEventRepository(calendarEventRepository);
+        notesCalendarService = new CalendarServiceImp(calendarEventRepository);
     }
 
     @Test
     public void shoudReturnAnIndividualListOfCalendarEvents() throws Exception {
         // Given
-        List<CalendarEvent> expectedCalendarEvents = Arrays.asList(new CalendarEvent());
-        given(calendarEventRepository.findCalendarEvents(anyString())).willReturn(expectedCalendarEvents);
+        given(calendarEventRepository.findCalendarEvents(anyString())).willReturn(calendarEvents);
 
         // When
-        List<CalendarEvent> calendarEvents = notesCalendarService.getCalendarEvents(USER_ID_1);
+        List<CalendarEvent> listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1);
 
         // Then
-        assertNotNull(calendarEvents);
-        assertThat(calendarEvents, IsInstanceOf.instanceOf(List.class));
-        assertFalse(calendarEvents.isEmpty());
-        assertThat(calendarEvents.get(0), IsInstanceOf.instanceOf(CalendarEvent.class));
+        assertNotNull(listOfEvents);
+        assertFalse(listOfEvents.isEmpty());
     }
 
     @Test
     public void shouldReturnCalendarEventsForASpecificDate() throws Exception {
         // Given
-        List<CalendarEvent> expectedCalendarEvents = Arrays.asList(new CalendarEvent());
         given(calendarEventRepository.findCalendarEvents(anyString(), any(WeekOfYear.class))).willReturn(
-                expectedCalendarEvents);
+                calendarEvents);
 
         // When
-        List<CalendarEvent> calendarEvents = notesCalendarService.getCalendarEvents(USER_ID_1, weekOfYear);
+        List<CalendarEvent> listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1, weekOfYear);
 
         // Then
-        assertNotNull(calendarEvents);
-        assertThat(calendarEvents, IsInstanceOf.instanceOf(List.class));
-        assertFalse(calendarEvents.isEmpty());
-        assertThat(calendarEvents.get(0), IsInstanceOf.instanceOf(CalendarEvent.class));
+        assertNotNull(listOfEvents);
+        assertFalse(listOfEvents.isEmpty());
     }
 
     @Test
@@ -103,7 +95,6 @@ public class NotesCalendarServiceTest {
 
         // Then
         assertNotNull(calendarEvents);
-        assertThat(calendarEvents, IsInstanceOf.instanceOf(List.class));
         assertTrue(calendarEvents.isEmpty());
     }
 
@@ -114,7 +105,6 @@ public class NotesCalendarServiceTest {
 
         // Then
         assertNotNull(calendarEvents);
-        assertThat(calendarEvents, IsInstanceOf.instanceOf(List.class));
         assertTrue(calendarEvents.isEmpty());
     }
 }
