@@ -40,7 +40,7 @@ public final class WeekNumber {
         this.weekNumber = weekNumber;
     }
 
-    public int getWeekNumber() {
+    public int getValue() {
         return weekNumber;
     }
 

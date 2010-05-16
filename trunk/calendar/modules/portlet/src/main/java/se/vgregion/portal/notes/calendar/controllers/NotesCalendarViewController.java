@@ -37,9 +37,9 @@ import se.vgregion.services.calendar.CalendarService;
 public class NotesCalendarViewController {
     public static final String VIEW_WEEK = "week";
 
-    @Autowired
     private CalendarService calendarService;
 
+    @Autowired
     public NotesCalendarViewController(CalendarService calendarService) {
         this.calendarService = calendarService;
     }

@@ -55,7 +55,7 @@ public class WeekNumberTest {
         WeekNumber wn = new WeekNumber(expectedWeekNumber);
 
         // When
-        int actualWeekNumber = wn.getWeekNumber();
+        int actualWeekNumber = wn.getValue();
 
         // Then
         assertEquals(expectedWeekNumber, actualWeekNumber);

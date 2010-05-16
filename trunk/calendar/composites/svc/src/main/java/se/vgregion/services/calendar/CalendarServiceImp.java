@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import se.vgregion.calendar.CalendarEvent;
@@ -33,9 +35,9 @@ import se.vgregion.calendar.WeekOfYear;
 @Service
 public class CalendarServiceImp implements CalendarService {
 
-    @Autowired
     private CalendarEventRepository calendarEventRepository;
 
+    @Autowired
     public CalendarServiceImp(CalendarEventRepository eventRepository) {
         this.calendarEventRepository = eventRepository;
     }
@@ -54,6 +56,13 @@ public class CalendarServiceImp implements CalendarService {
             return Collections.emptyList();
         }
         return calendarEventRepository.findCalendarEvents(userId, weekOfYear);
+    }
+
+    public static void main(String[] args) {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        CalendarService service = applicationContext.getBean(CalendarServiceImp.class);
+        List<CalendarEvent> events = service.getCalendarEvents("susro3");
+        System.out.println(events);
     }
 
 }

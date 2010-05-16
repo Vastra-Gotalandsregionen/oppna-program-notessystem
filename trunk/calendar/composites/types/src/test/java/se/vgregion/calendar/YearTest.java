@@ -55,7 +55,7 @@ public class YearTest {
         Year y = new Year(expectedYear);
 
         // When
-        int actualYear = y.getYear();
+        int actualYear = y.getValue();
 
         // Then
         assertEquals(expectedYear, actualYear);
