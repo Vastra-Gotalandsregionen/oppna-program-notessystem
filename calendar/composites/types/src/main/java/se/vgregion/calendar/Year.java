@@ -38,7 +38,7 @@ public class Year {
         this.year = year;
     }
 
-    public int getYear() {
+    public int getValue() {
         return year;
     }
 

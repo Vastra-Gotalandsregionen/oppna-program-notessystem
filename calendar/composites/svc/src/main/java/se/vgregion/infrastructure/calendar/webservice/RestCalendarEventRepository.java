@@ -27,10 +27,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestOperations;
 
 import se.vgregion.calendar.CalendarEvent;
 import se.vgregion.calendar.CalendarEventRepository;
@@ -41,13 +42,16 @@ import se.vgregion.calendar.WeekOfYear;
  * 
  */
 @Repository
-public class WSCalendarEventRepository implements CalendarEventRepository {
+public class RestCalendarEventRepository implements CalendarEventRepository {
 
-    private static final String WS_BASE_ADDRESS = "http://localhost:8080/getinfo.xml";
-    private RestTemplate restTemplate;
+    private static final String NOTES_CALENDAR_GET = "http://localhost:8080/getinfo.xml";
+    // private static final String NOTES_CALENDAR_GET =
+    // "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&week={week}&year={year}";
+    private RestOperations restTemplate;
 
-    public WSCalendarEventRepository() {
-        restTemplate = new RestTemplate();
+    @Autowired
+    public RestCalendarEventRepository(RestOperations restOperations) {
+        restTemplate = restOperations;
     }
 
     /*
@@ -66,43 +70,30 @@ public class WSCalendarEventRepository implements CalendarEventRepository {
      * se.vgregion.calendar.WeekOfYear)
      */
     public List<CalendarEvent> findCalendarEvents(String userId, WeekOfYear weekOfYear) {
-        return restTemplate.getForObject(WS_BASE_ADDRESS, CalendarEvents.class).getEvents();
+        CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class);
+        // CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, weekOfYear
+        // .getWeekNumber().getValue(), weekOfYear.getYear().getValue());
+        if (events.message.equalsIgnoreCase("ERROR")) {
+            // TODO: Handle error.
+        }
+        return events.eventList;
 
     }
 
+    @SuppressWarnings("unused")
     @XmlRootElement(name = "calendarItems")
-    private class CalendarEvents {
-        private CalendarEvents() {
-
-        }
-
+    private static class CalendarEvents {
         @XmlElement
         private String status;
         @XmlElement
         private String message;
         @XmlElement(name = "item")
-        private List<CalendarEvent> events;
-
-        public String getStatus() {
-            return status;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public List<CalendarEvent> getEvents() {
-            return events;
-        }
-
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-        }
+        private List<CalendarEvent> eventList;
     }
 
     public static void main(String[] args) {
-        CalendarEventRepository repo = new WSCalendarEventRepository();
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        CalendarEventRepository repo = applicationContext.getBean(RestCalendarEventRepository.class);
         List<CalendarEvent> events = repo.findCalendarEvents("");
         System.out.println(events);
     }
