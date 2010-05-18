@@ -25,20 +25,24 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<portlet:actionURL escapeXml="false" var="formAction" />
+<portlet:actionURL escapeXml="false" var="next">
+  <portlet:param name="navigate" value="next"/>
+</portlet:actionURL>
+<portlet:actionURL escapeXml="false" var="previous">
+  <portlet:param name="navigate" value="previous"/>
+</portlet:actionURL>
+
 <head>
-<style>
-#portlet-wrapper-NotesCalendar_WAR_NotesCalendar ul li.cal-private {
- list-style:none outside none;
- padding:2px 6px 2px 20px;
-}
+<style type="text/css">
+    @import url("${pageContext.request.contextPath}/style/module-calendar.css");
 </style>
 </head>
+<div id="module-calendar" class="module">
 <div class="yui-navset yui-navset-top">
 <div class="yui-content">
 <div class="tab-bd clearfix">
 
-<c:forEach items="${calenderEvents}" var="eventDay">
+<c:forEach items="${calendarItems}" var="eventDay">
   <h4>${eventDay[0].dayOfWeek}<span class="date"> &ndash; ${eventDay[0].dayOfMonth} ${eventDay[0].monthOfYear}</span></h4>
   <ul>
 <c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
@@ -47,7 +51,8 @@
 </c:forEach>
   </ul>
 </c:forEach>
-<p class="pager"><a class="prev" href="inactive">Föregående</a> <a class="next" href="inactive">Nästa</a></p>
+<p class="pager"><a class="prev" href="${previous}">Föregående</a> <a class="next" href="${next}">Nästa</a></p>
+</div>
 </div>
 </div>
 </div>

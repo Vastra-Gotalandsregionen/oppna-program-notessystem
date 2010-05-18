@@ -60,6 +60,9 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarEvent
     }
 
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
+        if (calendarItems.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<CalendarItem> sortedItems = new ArrayList<CalendarItem>(calendarItems);
         Collections.sort(sortedItems, ASCENDING_BY_START_DATE);
         List<List<CalendarItem>> groupedItems = new ArrayList<List<CalendarItem>>();

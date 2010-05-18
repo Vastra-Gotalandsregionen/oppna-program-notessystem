@@ -17,33 +17,36 @@
  *
  */
 
-package se.vgregion.core.domain.calendar;
+@CHARSET "UTF-8";
+/*
+Calendar list - used in mini calendar portlet
+*/
+#module-calendar h3 strong {
+  color: #000;
+}
 
-import javax.xml.bind.annotation.XmlElement;
+#module-calendar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
-public class CalendarEventItemPeriod {
-    @XmlElement
-    private String startDate;
-    @XmlElement
-    private String startTime;
-    @XmlElement
-    private String endDate;
-    @XmlElement
-    private String endTime;
+#module-calendar ul li {
+  list-style: none;
+}
 
-    public String getStartDate() {
-        return startDate;
-    }
+#module-calendar div div ul li {
+  padding: 2px 6px 2px 20px;
+}
 
-    public String getStartTime() {
-        return startTime;
-    }
+li.cal-private {
+  background: #edffed url(/vgr-theme/i/icons/date.png) no-repeat 1px 50%;
+}
 
-    public String getEndDate() {
-        return endDate;
-    }
+li.cal-work {
+  background: #ffefef url(/vgr-theme/i/icons/date.png) no-repeat 1px 50%;
+}
 
-    public String getEndTime() {
-        return endTime;
-    }
+#module-calendar h2 a {
+  background: url(/vgr-theme/i/icons/date.png) no-repeat 0 50%;
 }

@@ -37,7 +37,6 @@ import se.vgregion.core.domain.calendar.CalendarEventsId;
 @Repository
 public class RestCalendarEventRepository implements CalendarEventRepository {
 
-    // private static final String NOTES_CALENDAR_GET = "http://localhost:8080/getinfo.xml";
     private static final String NOTES_CALENDAR_GET = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&week={week}&year={year}";
     private RestOperations restTemplate;
 
@@ -53,7 +52,6 @@ public class RestCalendarEventRepository implements CalendarEventRepository {
      * se.vgregion.calendar.WeekOfYear)
      */
     public CalendarEvents findCalendarEventsById(CalendarEventsId id) {
-        // CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class);
         CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class,
                 id.getUserId(), id.getWeek().getWeekNumber().getValue(), id.getWeek().getYear().getValue());
         events.setCalendarEventsId(id);
