@@ -62,7 +62,7 @@ public class NotesCalendarViewController {
             events = calendarService.getCalendarEvents(userId, currentWeek);
         }
         List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
-        currentWeek = events.getId().getWeek();
+        currentWeek = events.getWeek();
         model.put("currentWeek", currentWeek);
         model.put("calendarItems", calendarItems);
         return VIEW_WEEK;

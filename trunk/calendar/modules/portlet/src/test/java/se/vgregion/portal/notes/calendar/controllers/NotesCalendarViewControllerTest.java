@@ -24,6 +24,7 @@ import static org.mockito.BDDMockito.*;
 import static org.mockito.Matchers.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -37,6 +38,8 @@ import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.ui.ModelMap;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
+import se.vgregion.core.domain.calendar.CalendarItem;
+import se.vgregion.core.domain.calendar.WeekOfYear;
 import se.vgregion.services.calendar.CalendarService;
 
 /**
@@ -67,15 +70,16 @@ public class NotesCalendarViewControllerTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void shouldContainModelWithListOfCalendarEvents() throws Exception {
+    public void modelShouldContainAListOfCalendarItems() throws Exception {
         // Given
         given(calendarService.getCalendarEvents(anyString())).willReturn(calendarEvents);
+        given(calendarEvents.getWeek()).willReturn(any(WeekOfYear.class));
 
         // When
         notesCalendarViewController.displayCalendarEvents(model, renderRequest);
 
         // Then
-        CalendarEvents events = (CalendarEvents) model.get("calenderEvents");
+        List<List<CalendarItem>> events = (List<List<CalendarItem>>) model.get("calendarItems");
         assertNotNull(events);
     }
 
