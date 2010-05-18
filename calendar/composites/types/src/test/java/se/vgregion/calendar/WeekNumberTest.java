@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import se.vgregion.calendar.WeekNumber;
+import se.vgregion.core.domain.calendar.WeekNumber;
 
 public class WeekNumberTest {
 

@@ -20,20 +20,19 @@
 /**
  * 
  */
-package se.vgregion.calendar;
+package se.vgregion.core.domain.calendar;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public class WeekOfYear {
+public class WeekOfYear extends AbstractValueObject<WeekOfYear> {
     private Year year;
     private WeekNumber weekNumber;
 
@@ -72,16 +71,6 @@ public class WeekOfYear {
         int weekNumber = calendar.get(Calendar.WEEK_OF_YEAR);
         int year = calendar.get(Calendar.YEAR);
         return new WeekOfYear(new Year(year), new WeekNumber(weekNumber));
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override

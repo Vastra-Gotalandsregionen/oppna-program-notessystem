@@ -26,11 +26,28 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <portlet:actionURL escapeXml="false" var="formAction" />
+<head>
+<style>
+#portlet-wrapper-NotesCalendar_WAR_NotesCalendar ul li.cal-private {
+ list-style:none outside none;
+ padding:2px 6px 2px 20px;
+}
+</style>
+</head>
+<div class="yui-navset yui-navset-top">
+<div class="yui-content">
+<div class="tab-bd clearfix">
 
-<ul class="list tasks">
-  <c:forEach items="${calenderEvents}" var="event">
-    <li>
-    ${event.title}
-    </li>
-  </c:forEach>
-</ul>
+<c:forEach items="${calenderEvents}" var="eventDay">
+  <h4>${eventDay[0].dayOfWeek}<span class="date"> &ndash; ${eventDay[0].dayOfMonth} ${eventDay[0].monthOfYear}</span></h4>
+  <ul>
+<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
+    <li class="cal-private">${event.startTime}&ndash;${event.endTime} <a class="dialog"
+      href="mitt_jobb/dialog_mote.html">${event.title}</a><span style="float: right;" id="calendar-type">${event.calendarType}</span></li>
+</c:forEach>
+  </ul>
+</c:forEach>
+<p class="pager"><a class="prev" href="inactive">Föregående</a> <a class="next" href="inactive">Nästa</a></p>
+</div>
+</div>
+</div>

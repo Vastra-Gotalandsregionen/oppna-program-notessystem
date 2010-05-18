@@ -30,6 +30,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
+import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.services.calendar.CalendarService;
 
 @Controller
@@ -47,7 +48,9 @@ public class NotesCalendarViewController {
     @RenderMapping
     public String displayCalendarEvents(ModelMap model, RenderRequest request) {
         String userId = getUserId(request);
-        model.put("calenderEvents", calendarService.getCalendarEvents(userId));
+        userId = "andcu1";
+        CalendarEvents events = calendarService.getCalendarEvents(userId);
+        model.put("calenderEvents", events.getCalendarItemsGroupedByStartDate());
         return VIEW_WEEK;
     }
 

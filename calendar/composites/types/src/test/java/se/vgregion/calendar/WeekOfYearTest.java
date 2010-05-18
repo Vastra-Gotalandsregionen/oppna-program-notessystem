@@ -30,9 +30,9 @@ import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
-import se.vgregion.calendar.WeekNumber;
-import se.vgregion.calendar.WeekOfYear;
-import se.vgregion.calendar.Year;
+import se.vgregion.core.domain.calendar.WeekNumber;
+import se.vgregion.core.domain.calendar.WeekOfYear;
+import se.vgregion.core.domain.calendar.Year;
 
 /**
  * @author Anders Asplund - Callsita Enterprise

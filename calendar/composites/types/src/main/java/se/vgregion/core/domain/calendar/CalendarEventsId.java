@@ -20,44 +20,40 @@
 /**
  * 
  */
-package se.vgregion.calendar;
+package se.vgregion.core.domain.calendar;
 
-import org.apache.commons.lang.builder.*;
+import java.io.Serializable;
+
+import org.apache.commons.lang.Validate;
+
+import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
  * @author Anders Asplund
  * 
  */
-public class Year {
-    private int year;
+public class CalendarEventsId extends AbstractValueObject<CalendarEventsId> implements Serializable {
 
-    public Year(int year) {
-        if (!Year.isValid(year)) {
-            throw new IllegalArgumentException("Year must be between 2000 and 2100");
-        }
-        this.year = year;
+    private static final long serialVersionUID = 3068540279744256010L;
+    private String userId;
+    private WeekOfYear week;
+
+    public CalendarEventsId(final String userId, WeekOfYear week) {
+        Validate.notNull(userId);
+        this.userId = userId;
+        this.week = week;
     }
 
-    public int getValue() {
-        return year;
+    public String getUserId() {
+        return userId;
     }
 
-    private static boolean isValid(int year) {
-        return year >= 2000 && year <= 2100;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that);
+    public WeekOfYear getWeek() {
+        return week;
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return userId + week.toString();
     }
 }

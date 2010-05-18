@@ -17,14 +17,10 @@
  *
  */
 
-package se.vgregion.calendar;
-
-import java.util.List;
+package se.vgregion.core.domain.calendar;
 
 public interface CalendarEventRepository {
 
-    List<CalendarEvent> findCalendarEvents(String userId);
-
-    List<CalendarEvent> findCalendarEvents(String userId, WeekOfYear weekOfYear);
+    CalendarEvents findCalendarEventsById(CalendarEventsId id);
 
 }

@@ -20,16 +20,15 @@
 /**
  * 
  */
-package se.vgregion.calendar;
+package se.vgregion.core.domain.calendar;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public final class WeekNumber {
+public final class WeekNumber extends AbstractValueObject<WeekNumber> {
 
     private int weekNumber;
 
@@ -46,16 +45,6 @@ public final class WeekNumber {
 
     public static boolean isValid(int weekNumber) {
         return weekNumber >= 1 && weekNumber <= 53;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override
