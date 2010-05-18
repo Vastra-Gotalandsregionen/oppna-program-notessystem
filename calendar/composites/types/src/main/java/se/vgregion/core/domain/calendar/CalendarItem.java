@@ -49,16 +49,22 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> {
     private Interval interval;
 
     public String getDayOfWeek() {
-        String dayOfWeek = DateTimeFormat.forPattern("EEEE").print(interval.getStart());
+        String dayOfWeek = interval.getStart().dayOfWeek().getAsText();
         return WordUtils.capitalize(dayOfWeek);
     }
 
     public String getDayOfMonth() {
-        return DateTimeFormat.forPattern("d").print(interval.getStart());
+        return interval.getStart().dayOfMonth().getAsText();
+    }
+
+    public WeekOfYear getWeekOfYear() {
+        String week = DateTimeFormat.forPattern("w").print(interval.getStart());
+        String year = DateTimeFormat.forPattern("yyyy").print(interval.getStart());
+        return new WeekOfYear(Integer.valueOf(year), Integer.valueOf(week));
     }
 
     public String getMonthOfYear() {
-        String monthOfYear = DateTimeFormat.forPattern("MMMM").print(interval.getStart());
+        String monthOfYear = interval.getStart().monthOfYear().getAsText();
         return WordUtils.capitalize(monthOfYear);
     }
 

@@ -19,6 +19,7 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -28,12 +29,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
+import se.vgregion.core.domain.calendar.CalendarItem;
+import se.vgregion.core.domain.calendar.WeekOfYear;
 import se.vgregion.services.calendar.CalendarService;
 
 @Controller
+@SessionAttributes("currentWeek")
 @RequestMapping("VIEW")
 public class NotesCalendarViewController {
     public static final String VIEW_WEEK = "week";
@@ -48,10 +54,36 @@ public class NotesCalendarViewController {
     @RenderMapping
     public String displayCalendarEvents(ModelMap model, RenderRequest request) {
         String userId = getUserId(request);
-        userId = "andcu1";
-        CalendarEvents events = calendarService.getCalendarEvents(userId);
-        model.put("calenderEvents", events.getCalendarItemsGroupedByStartDate());
+        CalendarEvents events = null;
+        WeekOfYear currentWeek = (WeekOfYear) model.get("currentWeek");
+        if (currentWeek == null) {
+            events = calendarService.getCalendarEvents(userId);
+        } else {
+            events = calendarService.getCalendarEvents(userId, currentWeek);
+        }
+        List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
+        currentWeek = events.getId().getWeek();
+        model.put("currentWeek", currentWeek);
+        model.put("calendarItems", calendarItems);
         return VIEW_WEEK;
+    }
+
+    @ActionMapping(params = "navigate=next")
+    public void nextWeek(ModelMap model) {
+        WeekOfYear currentWeek = (WeekOfYear) model.get("currentWeek");
+        System.out.println(currentWeek);
+        if (currentWeek != null) {
+            model.put("currentWeek", currentWeek.getNextWeek());
+        }
+    }
+
+    @ActionMapping(params = "navigate=previous")
+    public void previousWeek(ModelMap model) {
+        WeekOfYear currentWeek = (WeekOfYear) model.get("currentWeek");
+        System.out.println(currentWeek);
+        if (currentWeek != null) {
+            model.put("currentWeek", currentWeek.getPreviousWeek());
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -22,6 +22,7 @@
  */
 package se.vgregion.core.domain.calendar;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,7 +33,8 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public class WeekOfYear extends AbstractValueObject<WeekOfYear> {
+public class WeekOfYear extends AbstractValueObject<WeekOfYear> implements Serializable {
+    private static final long serialVersionUID = -895584731434843141L;
     private Year year;
     private WeekNumber weekNumber;
 
@@ -76,5 +78,13 @@ public class WeekOfYear extends AbstractValueObject<WeekOfYear> {
     @Override
     public String toString() {
         return year + "W" + weekNumber;
+    }
+
+    public WeekOfYear getNextWeek() {
+        return new WeekOfYear(year.getValue(), weekNumber.getValue() + 1);
+    }
+
+    public WeekOfYear getPreviousWeek() {
+        return new WeekOfYear(year.getValue(), weekNumber.getValue() - 1);
     }
 }
