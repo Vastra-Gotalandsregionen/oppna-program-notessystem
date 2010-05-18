@@ -20,61 +20,37 @@
 /**
  * 
  */
-package se.vgregion.calendar;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+package se.vgregion.core.domain.calendar;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+
+import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
  * @author Anders Asplund
  * 
  */
-@XmlRootElement(name = "item")
-public class CalendarEvent {
+public class Year extends AbstractValueObject<Year> {
+    private int year;
 
-    @XmlElement(name = "type")
-    private String calendarType;
-    @XmlElement
-    private String title;
-    @XmlElement
-    private String startDate;
-    @XmlElement
-    private String startTime;
-    @XmlElement
-    private String endDate;
-    @XmlElement
-    private String endTime;
-
-    public String getCalendarType() {
-        return calendarType;
+    public Year(int year) {
+        if (!Year.isValid(year)) {
+            throw new IllegalArgumentException("Year must be between 2000 and 2100");
+        }
+        this.year = year;
     }
 
-    public String getTitle() {
-        return title;
+    public int getValue() {
+        return year;
     }
 
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public String getEndTime() {
-        return endTime;
+    private static boolean isValid(int year) {
+        return year >= 2000 && year <= 2100;
     }
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
     }
-
 }

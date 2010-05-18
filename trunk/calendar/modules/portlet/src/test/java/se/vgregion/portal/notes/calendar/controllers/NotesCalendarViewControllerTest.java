@@ -23,12 +23,12 @@ import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Matchers.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.ReadOnlyException;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.portlet.MockRenderRequest;
 import org.springframework.ui.ModelMap;
 
-import se.vgregion.calendar.CalendarEvent;
+import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.services.calendar.CalendarService;
 
 /**
@@ -52,6 +52,9 @@ public class NotesCalendarViewControllerTest {
     @Mock
     private CalendarService calendarService;
 
+    @Mock
+    private CalendarEvents calendarEvents;
+
     private MockRenderRequest renderRequest;
 
     @Before
@@ -66,15 +69,14 @@ public class NotesCalendarViewControllerTest {
     @Test
     public void shouldContainModelWithListOfCalendarEvents() throws Exception {
         // Given
-        given(calendarService.getCalendarEvents(anyString())).willReturn(Arrays.asList(new CalendarEvent()));
+        given(calendarService.getCalendarEvents(anyString())).willReturn(calendarEvents);
 
         // When
         notesCalendarViewController.displayCalendarEvents(model, renderRequest);
 
         // Then
-        List<CalendarEvent> calendarEvents = (List<CalendarEvent>) model.get("calenderEvents");
-        assertThat(calendarEvents, IsInstanceOf.instanceOf(List.class));
-        assertThat(calendarEvents.get(0), IsInstanceOf.instanceOf(CalendarEvent.class));
+        CalendarEvents events = (CalendarEvents) model.get("calenderEvents");
+        assertNotNull(events);
     }
 
     private MockRenderRequest getMockRenderRequest() throws ReadOnlyException {

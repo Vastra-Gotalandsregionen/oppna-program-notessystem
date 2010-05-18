@@ -19,18 +19,10 @@
 
 package se.vgregion.services.calendar;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
-import se.vgregion.calendar.CalendarEvent;
-import se.vgregion.calendar.CalendarEventRepository;
-import se.vgregion.calendar.WeekOfYear;
+import se.vgregion.core.domain.calendar.*;
 
 @Service
 public class CalendarServiceImp implements CalendarService {
@@ -43,26 +35,12 @@ public class CalendarServiceImp implements CalendarService {
     }
 
     @Override
-    public List<CalendarEvent> getCalendarEvents(String userId) {
-        if (StringUtils.isBlank(userId)) {
-            return Collections.emptyList();
-        }
-        return calendarEventRepository.findCalendarEvents(userId);
+    public CalendarEvents getCalendarEvents(String userId) {
+        return getCalendarEvents(userId, WeekOfYear.getCurrentWeek());
     }
 
     @Override
-    public List<CalendarEvent> getCalendarEvents(String userId, WeekOfYear weekOfYear) {
-        if (StringUtils.isBlank(userId)) {
-            return Collections.emptyList();
-        }
-        return calendarEventRepository.findCalendarEvents(userId, weekOfYear);
+    public CalendarEvents getCalendarEvents(String userId, WeekOfYear weekOfYear) {
+        return calendarEventRepository.findCalendarEventsById(new CalendarEventsId(userId, weekOfYear));
     }
-
-    public static void main(String[] args) {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-        CalendarService service = applicationContext.getBean(CalendarServiceImp.class);
-        List<CalendarEvent> events = service.getCalendarEvents("susro3");
-        System.out.println(events);
-    }
-
 }
