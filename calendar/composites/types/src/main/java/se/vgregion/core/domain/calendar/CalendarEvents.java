@@ -59,6 +59,10 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarEvent
         return calendarItems;
     }
 
+    public WeekOfYear getWeek() {
+        return id.getWeek();
+    }
+
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
         if (calendarItems.isEmpty()) {
             return Collections.emptyList();
