@@ -23,6 +23,7 @@
 package se.vgregion.services.calendar;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
+import se.vgregion.core.domain.calendar.CalendarPeriod;
 import se.vgregion.core.domain.calendar.WeekOfYear;
 
 /**
@@ -34,5 +35,7 @@ public interface CalendarService {
     CalendarEvents getCalendarEvents(String userId);
 
     CalendarEvents getCalendarEvents(String userId, WeekOfYear weekOfYear);
+
+    CalendarEvents getCalendarEvents(String userId, CalendarPeriod period);
 
 }

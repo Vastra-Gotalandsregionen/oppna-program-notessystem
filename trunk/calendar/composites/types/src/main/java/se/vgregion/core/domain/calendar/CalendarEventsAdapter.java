@@ -22,29 +22,25 @@
  */
 package se.vgregion.core.domain.calendar;
 
-import java.text.SimpleDateFormat;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.joda.time.Interval;
-
 /**
- * @author Anders Asplund - Callista Enterprise
+ * @author Anders Asplund
  * 
  */
-public class IntervalAdapter extends XmlAdapter<CalendarEventItemPeriod, Interval> {
+public class CalendarEventsAdapter extends XmlAdapter<CalendarEvents, CalendarEvents> {
 
     @Override
-    public CalendarEventItemPeriod marshal(Interval v) throws Exception {
+    public CalendarEvents marshal(CalendarEvents event) throws Exception {
         throw new UnsupportedOperationException("Marshalling is unsupported for now.");
     }
 
     @Override
-    public Interval unmarshal(CalendarEventItemPeriod eventInterval) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
-        long start = sdf.parse(eventInterval.getStartDate() + eventInterval.getStartTime()).getTime();
-        long end = sdf.parse(eventInterval.getEndDate() + eventInterval.getEndTime()).getTime();
-        return new Interval(start, end);
+    public CalendarEvents unmarshal(CalendarEvents event) throws Exception {
+        if (event.getStatus().equalsIgnoreCase("ERROR")) {
+            throw new VgrCalendarWebServiceException(event.getMessage());
+        }
+        return event;
     }
 
 }

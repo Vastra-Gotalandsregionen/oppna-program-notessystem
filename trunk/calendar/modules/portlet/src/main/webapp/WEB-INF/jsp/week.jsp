@@ -22,8 +22,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="portlet" uri="http://java.sun.com/portlet_2_0"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <portlet:actionURL escapeXml="false" var="next">
   <portlet:param name="navigate" value="next"/>
@@ -46,8 +44,7 @@
   <h4>${eventDay[0].dayOfWeek}<span class="date"> &ndash; ${eventDay[0].dayOfMonth} ${eventDay[0].monthOfYear}</span></h4>
   <ul>
 <c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
-    <li class="cal-private">${event.startTime}&ndash;${event.endTime} <a class="dialog"
-      href="mitt_jobb/dialog_mote.html">${event.title}</a><span style="float: right;" id="calendar-type">${event.calendarType}</span></li>
+    <li class="cal-private">${event.startTime}&ndash;${event.endTime} ${event.title}<span style="float: right;" id="calendar-type">${event.calendarType}</span></li>
 </c:forEach>
   </ul>
 </c:forEach>

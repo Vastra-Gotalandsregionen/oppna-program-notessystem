@@ -32,6 +32,7 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  * 
  */
 public class Year extends AbstractValueObject<Year> {
+    private static final long serialVersionUID = 3605007190977571636L;
     private int year;
 
     public Year(int year) {
