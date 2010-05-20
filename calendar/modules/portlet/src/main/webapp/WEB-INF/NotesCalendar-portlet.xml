@@ -29,7 +29,7 @@
   <import resource="classpath:applicationContext.xml"/>
 
   <!-- Enables component scanning -->
-  <context:component-scan base-package="se.vgregion.portal.notes.calendar" />
+  <context:component-scan base-package="se.vgregion.portal" />
 
   <!-- Enables annotations -->
   <context:annotation-config />

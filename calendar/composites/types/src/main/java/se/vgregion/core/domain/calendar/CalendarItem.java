@@ -39,6 +39,7 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  */
 public class CalendarItem extends AbstractValueObject<CalendarItem> {
 
+    private static final long serialVersionUID = 6533441182147467365L;
     @XmlElement(name = "type")
     private String calendarType;
     @XmlElement

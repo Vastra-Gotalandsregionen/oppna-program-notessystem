@@ -28,8 +28,9 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public final class WeekNumber extends AbstractValueObject<WeekNumber> {
+public class WeekNumber extends AbstractValueObject<WeekNumber> {
 
+    private static final long serialVersionUID = 5214545888034326961L;
     private int weekNumber;
 
     public WeekNumber(int weekNumber) {

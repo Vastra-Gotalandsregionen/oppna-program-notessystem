@@ -22,8 +22,6 @@
  */
 package se.vgregion.core.domain.calendar;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang.Validate;
 
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
@@ -32,7 +30,7 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  * @author Anders Asplund
  * 
  */
-public class CalendarEventsId extends AbstractValueObject<CalendarEventsId> implements Serializable {
+public class CalendarEventsId extends AbstractValueObject<CalendarEventsId> {
 
     private static final long serialVersionUID = 3068540279744256010L;
     private String userId;

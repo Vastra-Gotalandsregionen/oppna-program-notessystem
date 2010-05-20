@@ -23,4 +23,6 @@ public interface CalendarEventRepository {
 
     CalendarEvents findCalendarEventsById(CalendarEventsId id);
 
+    CalendarEvents findCalendarEventsByCalendarPeriod(String userId, int year, int month, int day, int period);
+
 }

@@ -19,6 +19,9 @@
 
 package se.vgregion.services.calendar;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +45,13 @@ public class CalendarServiceImp implements CalendarService {
     @Override
     public CalendarEvents getCalendarEvents(String userId, WeekOfYear weekOfYear) {
         return calendarEventRepository.findCalendarEventsById(new CalendarEventsId(userId, weekOfYear));
+    }
+
+    @Override
+    public CalendarEvents getCalendarEvents(String userId, CalendarPeriod period) {
+        Calendar calendar = Calendar.getInstance(new Locale("sv", "SE"));
+        calendar.setTime(period.getStartDate());
+        return calendarEventRepository.findCalendarEventsByCalendarPeriod(userId, calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH), period.getDays());
     }
 }

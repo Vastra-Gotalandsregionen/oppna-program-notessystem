@@ -34,7 +34,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * 
  * @param <T>
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings( { "unchecked", "serial" })
 public abstract class AbstractValueObject<T extends ValueObject> implements ValueObject<T> {
 
     private transient int _cachedHashCode = 0;

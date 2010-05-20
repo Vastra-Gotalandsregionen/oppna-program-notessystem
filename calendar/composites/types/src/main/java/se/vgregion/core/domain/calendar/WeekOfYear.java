@@ -22,10 +22,9 @@
  */
 package se.vgregion.core.domain.calendar;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
@@ -33,7 +32,7 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public class WeekOfYear extends AbstractValueObject<WeekOfYear> implements Serializable {
+public class WeekOfYear extends AbstractValueObject<WeekOfYear> {
     private static final long serialVersionUID = -895584731434843141L;
     private Year year;
     private WeekNumber weekNumber;
@@ -68,11 +67,14 @@ public class WeekOfYear extends AbstractValueObject<WeekOfYear> implements Seria
     }
 
     public static WeekOfYear getWeekFromDate(Date date) {
-        Calendar calendar = new GregorianCalendar();
+        // Calendar calendar = new GregorianCalendar();
+        Calendar calendar = Calendar.getInstance(new Locale("sv", "SE"));
         calendar.setTime(date);
         int weekNumber = calendar.get(Calendar.WEEK_OF_YEAR);
         int year = calendar.get(Calendar.YEAR);
-        return new WeekOfYear(new Year(year), new WeekNumber(weekNumber));
+        WeekOfYear weekOfYear = new WeekOfYear(new Year(year), new WeekNumber(weekNumber));
+        System.out.println("Week " + weekOfYear + " extracted from date " + date);
+        return weekOfYear;
     }
 
     @Override

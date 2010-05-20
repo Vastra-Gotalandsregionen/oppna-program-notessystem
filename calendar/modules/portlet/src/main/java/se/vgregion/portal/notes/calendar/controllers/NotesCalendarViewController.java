@@ -20,10 +20,10 @@
 package se.vgregion.portal.notes.calendar.controllers;
 
 import java.util.List;
-import java.util.Map;
 
-import javax.portlet.PortletRequest;
+import javax.portlet.PortletConfig;
 import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import org.springframework.web.portlet.context.PortletConfigAware;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarItem;
@@ -41,19 +42,31 @@ import se.vgregion.services.calendar.CalendarService;
 @Controller
 @SessionAttributes("currentWeek")
 @RequestMapping("VIEW")
-public class NotesCalendarViewController {
+public class NotesCalendarViewController implements PortletConfigAware {
     public static final String VIEW_WEEK = "week";
 
     private CalendarService calendarService;
+    private PortletConfig portletConfig = null;
+    private PortletData portletData;
 
     @Autowired
     public NotesCalendarViewController(CalendarService calendarService) {
         this.calendarService = calendarService;
     }
 
+    public void setPortletConfig(PortletConfig portletConfig) {
+        this.portletConfig = portletConfig;
+    }
+
+    @Autowired
+    public void setPortletData(PortletData portletData) {
+        this.portletData = portletData;
+    }
+
     @RenderMapping
-    public String displayCalendarEvents(ModelMap model, RenderRequest request) {
-        String userId = getUserId(request);
+    public String displayCalendarEvents(ModelMap model, RenderRequest request, RenderResponse response) {
+        String userId = portletData.getUserId(request);
+        String title = portletData.getPortletTitle(portletConfig, request);
         CalendarEvents events = null;
         WeekOfYear currentWeek = (WeekOfYear) model.get("currentWeek");
         if (currentWeek == null) {
@@ -63,6 +76,7 @@ public class NotesCalendarViewController {
         }
         List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
         currentWeek = events.getWeek();
+        portletData.setPortletTitle(response, title + " - Vecka " + currentWeek.getWeekNumber());
         model.put("currentWeek", currentWeek);
         model.put("calendarItems", calendarItems);
         return VIEW_WEEK;
@@ -84,17 +98,6 @@ public class NotesCalendarViewController {
         if (currentWeek != null) {
             model.put("currentWeek", currentWeek.getPreviousWeek());
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private String getUserId(RenderRequest request) {
-        Map<String, String> attributes = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
-        String userId = "";
-
-        if (attributes != null) {
-            userId = attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
-        }
-        return userId;
     }
 
 }
