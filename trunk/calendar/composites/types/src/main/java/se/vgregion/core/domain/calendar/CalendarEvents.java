@@ -28,13 +28,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import se.vgregion.core.domain.patterns.entity.AbstractEntity;
-
 @XmlRootElement(name = "calendarItems")
-public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarPeriod> {
+public class CalendarEvents {
 
     private static final long serialVersionUID = -8404092455565896114L;
-    private transient CalendarPeriod id;
     @XmlElement
     private String status;
     @XmlElement
@@ -42,10 +39,6 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarPerio
     @XmlElementWrapper(name = "items")
     @XmlElement(name = "item")
     private List<CalendarItem> calendarItems;
-
-    public void setCalendarPeriod(CalendarPeriod id) {
-        this.id = id;
-    }
 
     public String getStatus() {
         return status;
@@ -85,9 +78,4 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarPerio
             return calendarEvent1.getInterval().getStart().compareTo(calendarEvent2.getInterval().getStart());
         }
     };
-
-    @Override
-    public CalendarPeriod getId() {
-        return id;
-    }
 }

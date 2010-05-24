@@ -20,5 +20,5 @@
 package se.vgregion.core.domain.calendar;
 
 public interface CalendarEventRepository {
-    CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarPeriod period);
+    CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventPeriod period);
 }

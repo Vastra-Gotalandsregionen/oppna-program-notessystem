@@ -20,27 +20,18 @@
 /**
  * 
  */
-package se.vgregion.core.domain.calendar;
-
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+package se.vgregion.core.domain.calendar.adapters;
 
 /**
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public class CalendarEventsAdapter extends XmlAdapter<CalendarEvents, CalendarEvents> {
+public class VgrCalendarWebServiceException extends Exception {
 
-    @Override
-    public CalendarEvents marshal(CalendarEvents event) throws Exception {
-        throw new UnsupportedOperationException("Marshalling is unsupported for now.");
-    }
+    private static final long serialVersionUID = 7331925814849375505L;
 
-    @Override
-    public CalendarEvents unmarshal(CalendarEvents event) throws Exception {
-        if (event.getStatus().equalsIgnoreCase("ERROR")) {
-            throw new VgrCalendarWebServiceException(event.getMessage());
-        }
-        return event;
+    public VgrCalendarWebServiceException(String message) {
+        super(message);
     }
 
 }

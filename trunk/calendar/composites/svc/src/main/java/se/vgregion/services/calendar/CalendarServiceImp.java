@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import se.vgregion.core.domain.calendar.CalendarEventRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventPeriod;
 
 @Service
 public class CalendarServiceImp implements CalendarService {
@@ -37,7 +37,7 @@ public class CalendarServiceImp implements CalendarService {
     }
 
     @Override
-    public CalendarEvents getCalendarEvents(String userId, CalendarPeriod period) {
+    public CalendarEvents getCalendarEvents(String userId, CalendarEventPeriod period) {
         return calendarEventRepository.findCalendarEventsByCalendarPeriod(userId, period);
     }
 }

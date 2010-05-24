@@ -31,6 +31,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 
+import se.vgregion.core.domain.calendar.adapters.IntervalAdapter;
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**

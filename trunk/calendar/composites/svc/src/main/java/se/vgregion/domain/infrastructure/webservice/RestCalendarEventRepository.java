@@ -28,7 +28,7 @@ import org.springframework.web.client.RestOperations;
 
 import se.vgregion.core.domain.calendar.CalendarEventRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventPeriod;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -46,11 +46,10 @@ public class RestCalendarEventRepository implements CalendarEventRepository {
     }
 
     @Override
-    public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarPeriod period) {
+    public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventPeriod period) {
         CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, userId, period
                 .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
                 .getDayOfMonth(), period.getDays().getDays());
-        events.setCalendarPeriod(period);
         return events;
     }
 
