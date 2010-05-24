@@ -22,10 +22,15 @@
  */
 package se.vgregion.core.domain.calendar;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.Interval;
 
 /**
@@ -41,10 +46,25 @@ public class IntervalAdapter extends XmlAdapter<CalendarEventItemPeriod, Interva
 
     @Override
     public Interval unmarshal(CalendarEventItemPeriod eventInterval) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss");
-        long start = sdf.parse(eventInterval.getStartDate() + eventInterval.getStartTime()).getTime();
-        long end = sdf.parse(eventInterval.getEndDate() + eventInterval.getEndTime()).getTime();
-        return new Interval(start, end);
+        if (StringUtils.isBlank(eventInterval.getStartDate()) || StringUtils.isBlank(eventInterval.getEndDate())) {
+            throw new VgrCalendarWebServiceException("Invalid date");
+        }
+        long start = parseStringDate(eventInterval.getStartDate(), eventInterval.getStartTime());
+        long end = parseStringDate(eventInterval.getEndDate(), eventInterval.getEndTime());
+        Interval interval = new Interval(start, end);
+        return interval;
     }
 
+    private Long parseStringDate(String date, String time) throws ParseException {
+        StringBuilder formatString = new StringBuilder("yyyy-MM-ddHH:mm:ss");
+        if (StringUtils.isBlank(time)) {
+            time = "00:00:00";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(formatString.toString());
+        Date d = sdf.parse(date + time);
+        Calendar calendar = Calendar.getInstance(new Locale("sv", "SE"));
+        calendar.setTime(d);
+        long dt = d.getTime() + calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
+        return dt;
+    }
 }

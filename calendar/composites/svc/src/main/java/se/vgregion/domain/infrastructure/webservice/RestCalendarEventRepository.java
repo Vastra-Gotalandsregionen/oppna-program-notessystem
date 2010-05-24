@@ -28,7 +28,7 @@ import org.springframework.web.client.RestOperations;
 
 import se.vgregion.core.domain.calendar.CalendarEventRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarEventsId;
+import se.vgregion.core.domain.calendar.CalendarPeriod;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -37,8 +37,7 @@ import se.vgregion.core.domain.calendar.CalendarEventsId;
 @Repository
 public class RestCalendarEventRepository implements CalendarEventRepository {
 
-    private static final String NOTES_CALENDAR_GET = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&week={week}&year={year}";
-    private static final String NOTES_CALENDAR_GET_NEW = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&year={year}&month={month}&day={day}&period={period}";
+    private static final String NOTES_CALENDAR_GET = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&year={year}&month={month}&day={day}&period={period}";
     private RestOperations restTemplate;
 
     @Autowired
@@ -46,24 +45,12 @@ public class RestCalendarEventRepository implements CalendarEventRepository {
         restTemplate = restOperations;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see se.vgregion.calendar.CalendarEventRepository#findCalendarEvents(java.lang.String,
-     * se.vgregion.calendar.WeekOfYear)
-     */
-    public CalendarEvents findCalendarEventsById(CalendarEventsId id) {
-        CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class,
-                id.getUserId(), id.getWeek().getWeekNumber().getValue(), id.getWeek().getYear().getValue());
-        events.setCalendarEventsId(id);
-        return events;
-    }
-
     @Override
-    public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, int year, int month, int day,
-            int period) {
-        CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET_NEW, CalendarEvents.class, year,
-                month, day, period);
+    public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarPeriod period) {
+        CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, userId, period
+                .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
+                .getDayOfMonth(), period.getDays().getDays());
+        events.setCalendarPeriod(period);
         return events;
     }
 

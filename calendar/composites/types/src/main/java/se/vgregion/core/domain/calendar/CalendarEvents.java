@@ -31,10 +31,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import se.vgregion.core.domain.patterns.entity.AbstractEntity;
 
 @XmlRootElement(name = "calendarItems")
-public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarEventsId> {
+public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarPeriod> {
 
     private static final long serialVersionUID = -8404092455565896114L;
-    private transient CalendarEventsId id;
+    private transient CalendarPeriod id;
     @XmlElement
     private String status;
     @XmlElement
@@ -43,7 +43,7 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarEvent
     @XmlElement(name = "item")
     private List<CalendarItem> calendarItems;
 
-    public void setCalendarEventsId(CalendarEventsId id) {
+    public void setCalendarPeriod(CalendarPeriod id) {
         this.id = id;
     }
 
@@ -57,10 +57,6 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarEvent
 
     public List<CalendarItem> getCalendarItems() {
         return calendarItems;
-    }
-
-    public WeekOfYear getWeek() {
-        return id.getWeek();
     }
 
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
@@ -85,13 +81,13 @@ public class CalendarEvents extends AbstractEntity<CalendarEvents, CalendarEvent
     }
 
     private static final Comparator<CalendarItem> ASCENDING_BY_START_DATE = new Comparator<CalendarItem>() {
-        public int compare(final CalendarItem ce1, final CalendarItem ce2) {
-            return ce1.getInterval().getStart().compareTo(ce2.getInterval().getStart());
+        public int compare(final CalendarItem calendarEvent1, final CalendarItem calendarEvent2) {
+            return calendarEvent1.getInterval().getStart().compareTo(calendarEvent2.getInterval().getStart());
         }
     };
 
     @Override
-    public CalendarEventsId getId() {
+    public CalendarPeriod getId() {
         return id;
     }
 }
