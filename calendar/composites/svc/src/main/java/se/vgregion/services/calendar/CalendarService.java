@@ -23,7 +23,7 @@
 package se.vgregion.services.calendar;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventPeriod;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -31,6 +31,6 @@ import se.vgregion.core.domain.calendar.CalendarPeriod;
  */
 public interface CalendarService {
 
-    CalendarEvents getCalendarEvents(String userId, CalendarPeriod period);
+    CalendarEvents getCalendarEvents(String userId, CalendarEventPeriod period);
 
 }

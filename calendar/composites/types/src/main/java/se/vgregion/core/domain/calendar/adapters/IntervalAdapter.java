@@ -20,7 +20,7 @@
 /**
  * 
  */
-package se.vgregion.core.domain.calendar;
+package se.vgregion.core.domain.calendar.adapters;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,19 +33,21 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.Interval;
 
+import se.vgregion.core.domain.calendar.CalendarItemPeriod;
+
 /**
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public class IntervalAdapter extends XmlAdapter<CalendarEventItemPeriod, Interval> {
+public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
 
     @Override
-    public CalendarEventItemPeriod marshal(Interval v) throws Exception {
+    public CalendarItemPeriod marshal(Interval v) throws Exception {
         throw new UnsupportedOperationException("Marshalling is unsupported for now.");
     }
 
     @Override
-    public Interval unmarshal(CalendarEventItemPeriod eventInterval) throws Exception {
+    public Interval unmarshal(CalendarItemPeriod eventInterval) throws Exception {
         if (StringUtils.isBlank(eventInterval.getStartDate()) || StringUtils.isBlank(eventInterval.getEndDate())) {
             throw new VgrCalendarWebServiceException("Invalid date");
         }
@@ -55,16 +57,15 @@ public class IntervalAdapter extends XmlAdapter<CalendarEventItemPeriod, Interva
         return interval;
     }
 
-    private Long parseStringDate(String date, String time) throws ParseException {
+    private Long parseStringDate(String dateStr, String timeStr) throws ParseException {
         StringBuilder formatString = new StringBuilder("yyyy-MM-ddHH:mm:ss");
-        if (StringUtils.isBlank(time)) {
-            time = "00:00:00";
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat(formatString.toString());
-        Date d = sdf.parse(date + time);
         Calendar calendar = Calendar.getInstance(new Locale("sv", "SE"));
-        calendar.setTime(d);
-        long dt = d.getTime() + calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
-        return dt;
+        SimpleDateFormat sdf = new SimpleDateFormat(formatString.toString());
+        if (StringUtils.isBlank(timeStr)) {
+            timeStr = "00:00:00";
+        }
+        Date date = sdf.parse(dateStr + timeStr);
+        calendar.setTime(date);
+        return date.getTime() + calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
     }
 }

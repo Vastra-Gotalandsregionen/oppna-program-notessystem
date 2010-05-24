@@ -38,7 +38,7 @@ import org.springframework.web.portlet.context.PortletConfigAware;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarItem;
-import se.vgregion.core.domain.calendar.CalendarPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventPeriod;
 import se.vgregion.services.calendar.CalendarService;
 
 @Controller
@@ -71,9 +71,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
         String userId = portletData.getUserId(request);
         // String title = portletData.getPortletTitle(portletConfig, request);
         CalendarEvents events = null;
-        CalendarPeriod displayPeriod = (CalendarPeriod) model.get("displayPeriod");
+        CalendarEventPeriod displayPeriod = (CalendarEventPeriod) model.get("displayPeriod");
         if (displayPeriod == null) {
-            displayPeriod = new CalendarPeriod(new DateTime(), DEFAULT_PERIOD_LENGTH);
+            displayPeriod = new CalendarEventPeriod(new DateTime(), DEFAULT_PERIOD_LENGTH);
             model.put("displayPeriod", displayPeriod);
         }
         events = calendarService.getCalendarEvents(userId, displayPeriod);
@@ -85,7 +85,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     @ActionMapping(params = "navigate=next")
     public void nextWeek(ModelMap model) {
-        CalendarPeriod displayPeriod = (CalendarPeriod) model.get("displayPeriod");
+        CalendarEventPeriod displayPeriod = (CalendarEventPeriod) model.get("displayPeriod");
         if (displayPeriod != null) {
             model.put("displayPeriod", displayPeriod.next());
         }
@@ -93,7 +93,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     @ActionMapping(params = "navigate=previous")
     public void previousWeek(ModelMap model) {
-        CalendarPeriod displayPeriod = (CalendarPeriod) model.get("displayPeriod");
+        CalendarEventPeriod displayPeriod = (CalendarEventPeriod) model.get("displayPeriod");
         if (displayPeriod != null) {
             model.put("displayPeriod", displayPeriod.previous());
         }

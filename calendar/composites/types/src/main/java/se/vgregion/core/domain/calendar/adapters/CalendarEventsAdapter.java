@@ -17,33 +17,32 @@
  *
  */
 
-package se.vgregion.core.domain.calendar;
+/**
+ * 
+ */
+package se.vgregion.core.domain.calendar.adapters;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class CalendarEventItemPeriod {
-    @XmlElement
-    private String startDate;
-    @XmlElement
-    private String startTime;
-    @XmlElement
-    private String endDate;
-    @XmlElement
-    private String endTime;
+import se.vgregion.core.domain.calendar.CalendarEvents;
 
-    public String getStartDate() {
-        return startDate;
+/**
+ * @author Anders Asplund - Callista Enterprise
+ * 
+ */
+public class CalendarEventsAdapter extends XmlAdapter<CalendarEvents, CalendarEvents> {
+
+    @Override
+    public CalendarEvents marshal(CalendarEvents event) throws Exception {
+        throw new UnsupportedOperationException("Marshalling is unsupported for now.");
     }
 
-    public String getStartTime() {
-        return startTime;
+    @Override
+    public CalendarEvents unmarshal(CalendarEvents event) throws Exception {
+        if (event.getStatus().equalsIgnoreCase("ERROR")) {
+            throw new VgrCalendarWebServiceException(event.getMessage());
+        }
+        return event;
     }
 
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
 }
