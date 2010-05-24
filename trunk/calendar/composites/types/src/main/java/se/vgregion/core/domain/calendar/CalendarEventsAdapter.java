@@ -25,7 +25,7 @@ package se.vgregion.core.domain.calendar;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * @author Anders Asplund
+ * @author Anders Asplund - Callista Enterprise
  * 
  */
 public class CalendarEventsAdapter extends XmlAdapter<CalendarEvents, CalendarEvents> {

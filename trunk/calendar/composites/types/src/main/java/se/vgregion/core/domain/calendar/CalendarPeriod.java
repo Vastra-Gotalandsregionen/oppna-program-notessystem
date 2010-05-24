@@ -1,24 +1,35 @@
 package se.vgregion.core.domain.calendar;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
-public class CalendarPeriod {
+import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
-    private Date startDate;
-    private int days;
+public class CalendarPeriod extends AbstractValueObject<CalendarPeriod> {
 
-    public CalendarPeriod(Date startDate, int days) {
+    private static final long serialVersionUID = -7922598817193391527L;
+    private DateTime startDate;
+    private Days days;
+
+    public CalendarPeriod(DateTime startDate, Days days) {
         super();
         this.startDate = startDate;
         this.days = days;
     }
 
-    public Date getStartDate() {
-        return new Date(startDate.getTime());
+    public DateTime getStartDate() {
+        return startDate;
     }
 
-    public int getDays() {
+    public Days getDays() {
         return days;
     }
 
+    public CalendarPeriod next() {
+        return new CalendarPeriod(startDate.plusDays(days.getDays()), days);
+    }
+
+    public CalendarPeriod previous() {
+        return new CalendarPeriod(startDate.minusDays(days.getDays()), days);
+    }
 }

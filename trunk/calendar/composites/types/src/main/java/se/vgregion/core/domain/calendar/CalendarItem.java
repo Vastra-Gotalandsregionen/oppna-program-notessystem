@@ -58,12 +58,6 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> {
         return interval.getStart().dayOfMonth().getAsText();
     }
 
-    public WeekOfYear getWeekOfYear() {
-        String week = DateTimeFormat.forPattern("w").print(interval.getStart());
-        String year = DateTimeFormat.forPattern("yyyy").print(interval.getStart());
-        return new WeekOfYear(Integer.valueOf(year), Integer.valueOf(week));
-    }
-
     public String getMonthOfYear() {
         String monthOfYear = interval.getStart().monthOfYear().getAsText();
         return WordUtils.capitalize(monthOfYear);
