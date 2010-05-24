@@ -22,22 +22,22 @@ package se.vgregion.services.calendar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import se.vgregion.core.domain.calendar.CalendarEventRepository;
+import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarEventPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 
 @Service
 public class CalendarServiceImp implements CalendarService {
 
-    private CalendarEventRepository calendarEventRepository;
+    private CalendarEventsRepository calendarEventRepository;
 
     @Autowired
-    public CalendarServiceImp(CalendarEventRepository eventRepository) {
+    public CalendarServiceImp(CalendarEventsRepository eventRepository) {
         this.calendarEventRepository = eventRepository;
     }
 
     @Override
-    public CalendarEvents getCalendarEvents(String userId, CalendarEventPeriod period) {
+    public CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period) {
         return calendarEventRepository.findCalendarEventsByCalendarPeriod(userId, period);
     }
 }

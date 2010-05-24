@@ -24,13 +24,13 @@ import org.joda.time.Days;
 
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
-public class CalendarEventPeriod extends AbstractValueObject<CalendarEventPeriod> {
+public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeriod> {
 
     private static final long serialVersionUID = -7922598817193391527L;
     private DateTime startDate;
     private Days days;
 
-    public CalendarEventPeriod(DateTime startDate, Days days) {
+    public CalendarEventsPeriod(DateTime startDate, Days days) {
         super();
         this.startDate = startDate;
         this.days = days;
@@ -44,11 +44,11 @@ public class CalendarEventPeriod extends AbstractValueObject<CalendarEventPeriod
         return days;
     }
 
-    public CalendarEventPeriod next() {
-        return new CalendarEventPeriod(startDate.plusDays(days.getDays()), days);
+    public CalendarEventsPeriod next() {
+        return new CalendarEventsPeriod(startDate.plusDays(days.getDays()), days);
     }
 
-    public CalendarEventPeriod previous() {
-        return new CalendarEventPeriod(startDate.minusDays(days.getDays()), days);
+    public CalendarEventsPeriod previous() {
+        return new CalendarEventsPeriod(startDate.minusDays(days.getDays()), days);
     }
 }

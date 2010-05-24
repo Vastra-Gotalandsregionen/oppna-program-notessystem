@@ -26,16 +26,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestOperations;
 
-import se.vgregion.core.domain.calendar.CalendarEventRepository;
+import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarEventPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 
 /**
  * @author Anders Asplund - Callista Enterprise
  * 
  */
 @Repository
-public class RestCalendarEventRepository implements CalendarEventRepository {
+public class RestCalendarEventRepository implements CalendarEventsRepository {
 
     private static final String NOTES_CALENDAR_GET = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&year={year}&month={month}&day={day}&period={period}";
     private RestOperations restTemplate;
@@ -46,7 +46,7 @@ public class RestCalendarEventRepository implements CalendarEventRepository {
     }
 
     @Override
-    public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventPeriod period) {
+    public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, userId, period
                 .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
                 .getDayOfMonth(), period.getDays().getDays());

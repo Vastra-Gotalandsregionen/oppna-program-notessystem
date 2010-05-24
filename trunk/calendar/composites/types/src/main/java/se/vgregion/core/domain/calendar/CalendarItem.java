@@ -76,12 +76,20 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> {
         return WordUtils.capitalize(calendarType.toLowerCase());
     }
 
+    void setCalendarType(String calendarType) {
+        this.calendarType = calendarType;
+    }
+
     public String getTitle() {
         return title;
     }
 
     public Interval getInterval() {
         return interval;
+    }
+
+    void setInterval(Interval interval) {
+        this.interval = interval;
     }
 
     @Override

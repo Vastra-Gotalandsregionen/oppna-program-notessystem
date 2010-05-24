@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import se.vgregion.core.domain.calendar.CalendarEventRepository;
+import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 
 /**
@@ -40,7 +40,7 @@ public class NotesCalendarServiceTest {
     private CalendarService notesCalendarService = null;
 
     @Mock
-    private CalendarEventRepository calendarEventRepository;
+    private CalendarEventsRepository calendarEventRepository;
 
     @Mock
     private CalendarEvents calendarEvents;
