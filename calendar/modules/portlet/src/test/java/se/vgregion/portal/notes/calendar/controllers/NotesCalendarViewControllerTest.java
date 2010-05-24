@@ -19,13 +19,6 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
-import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-
 import javax.portlet.PortletConfig;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -38,8 +31,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.ui.ModelMap;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
-import se.vgregion.core.domain.calendar.CalendarItem;
-import se.vgregion.core.domain.calendar.WeekOfYear;
 import se.vgregion.services.calendar.CalendarService;
 
 /**
@@ -78,18 +69,18 @@ public class NotesCalendarViewControllerTest {
     @Ignore
     @Test
     public void modelShouldContainAListOfCalendarItems() throws Exception {
-        // Given
-        given(calendarService.getCalendarEvents(anyString())).willReturn(calendarEvents);
-        given(calendarEvents.getWeek()).willReturn(any(WeekOfYear.class));
-        given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn(null);
-        doNothing().when(portletData).setPortletTitle(null, null);
-
-        // When
-        notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
-
-        // Then
-        List<List<CalendarItem>> events = (List<List<CalendarItem>>) model.get("calendarItems");
-        assertNotNull(events);
+        // // Given
+        // given(calendarService.getCalendarEvents(anyString())).willReturn(calendarEvents);
+        // given(calendarEvents.getWeek()).willReturn(any(WeekOfYear.class));
+        // given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn(null);
+        // doNothing().when(portletData).setPortletTitle(null, null);
+        //
+        // // When
+        // notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
+        //
+        // // Then
+        // List<List<CalendarItem>> events = (List<List<CalendarItem>>) model.get("calendarItems");
+        // assertNotNull(events);
     }
 
     // private MockRenderRequest getMockRenderRequest() throws ReadOnlyException {
