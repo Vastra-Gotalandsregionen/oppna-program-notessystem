@@ -24,11 +24,12 @@ package se.vgregion.domain.infrastructure.webservice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
-import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -47,9 +48,15 @@ public class RestCalendarEventRepository implements CalendarEventsRepository {
 
     @Override
     public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
-        CalendarEvents events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, userId, period
-                .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
-                .getDayOfMonth(), period.getDays().getDays());
+        CalendarEvents events = CalendarEvents.EMPTY_CALENDAR_EVENTS;
+        System.out.println(period);
+        try {
+            events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, "susro3", period
+                    .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
+                    .getDayOfMonth(), period.getDays().getDays());
+        } catch (RestClientException e) {
+            e.printStackTrace();
+        }
         return events;
     }
 

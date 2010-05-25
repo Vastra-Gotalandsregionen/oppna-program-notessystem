@@ -19,6 +19,7 @@
 
 package se.vgregion.core.domain.calendar;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -50,5 +51,10 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
 
     public CalendarEventsPeriod previous() {
         return new CalendarEventsPeriod(startDate.minusDays(days.getDays()), days);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
