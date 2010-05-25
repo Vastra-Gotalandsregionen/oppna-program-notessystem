@@ -85,7 +85,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     }
 
     private String getFormatedDateIntervallToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
-        DateTimeFormatter formatter = DateTimeFormat.shortDate().withLocale(locale);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM").withLocale(locale);
         StringBuilder title = new StringBuilder(23);
 
         title.append(formatter.print(displayPeriod.getStartDate()));
