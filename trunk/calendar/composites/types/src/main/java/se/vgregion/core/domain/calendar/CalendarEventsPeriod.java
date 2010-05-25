@@ -30,6 +30,7 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
     private static final long serialVersionUID = -7922598817193391527L;
     private DateTime startDate;
     private Days days;
+    public static final Days DEFAULT_PERIOD_LENGTH = Days.SEVEN;
 
     public CalendarEventsPeriod(DateTime startDate, Days days) {
         super();
@@ -39,6 +40,10 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
 
     public DateTime getStartDate() {
         return startDate;
+    }
+
+    public DateTime getEndDate() {
+        return startDate.plus(days.minus(Days.ONE));
     }
 
     public Days getDays() {
