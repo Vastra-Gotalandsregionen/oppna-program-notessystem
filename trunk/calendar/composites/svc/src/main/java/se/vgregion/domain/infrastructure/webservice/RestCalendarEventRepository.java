@@ -49,9 +49,8 @@ public class RestCalendarEventRepository implements CalendarEventsRepository {
     @Override
     public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = CalendarEvents.EMPTY_CALENDAR_EVENTS;
-        System.out.println(period);
         try {
-            events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, "susro3", period
+            events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, userId, period
                     .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
                     .getDayOfMonth(), period.getDays().getDays());
         } catch (RestClientException e) {

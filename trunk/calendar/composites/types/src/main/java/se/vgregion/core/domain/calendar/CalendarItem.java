@@ -22,6 +22,8 @@
  */
 package se.vgregion.core.domain.calendar;
 
+import java.util.Locale;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -49,18 +51,23 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> {
     @XmlJavaTypeAdapter(IntervalAdapter.class)
     @XmlElement(name = "period")
     private Interval interval;
+    private Locale locale = new Locale("sv", "SE");
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
 
     public String getDayOfWeek() {
-        String dayOfWeek = interval.getStart().dayOfWeek().getAsText();
+        String dayOfWeek = interval.getStart().dayOfWeek().getAsText(locale);
         return WordUtils.capitalize(dayOfWeek);
     }
 
     public String getDayOfMonth() {
-        return interval.getStart().dayOfMonth().getAsText();
+        return interval.getStart().dayOfMonth().getAsText(locale);
     }
 
     public String getMonthOfYear() {
-        String monthOfYear = interval.getStart().monthOfYear().getAsText();
+        String monthOfYear = interval.getStart().monthOfYear().getAsText(locale);
         return WordUtils.capitalize(monthOfYear);
     }
 
