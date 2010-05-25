@@ -27,18 +27,27 @@ import java.util.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import se.vgregion.core.domain.calendar.adapters.CalendarEventsAdapter;
 
 @XmlRootElement(name = "calendarItems")
+@XmlJavaTypeAdapter(CalendarEventsAdapter.class)
 public class CalendarEvents {
 
     private static final long serialVersionUID = -8404092455565896114L;
+    public static final CalendarEvents EMPTY_CALENDAR_EVENTS = new CalendarEvents();
+
     @XmlElement
     private String status;
     @XmlElement
     private String message;
-    @XmlElementWrapper(name = "items")
-    @XmlElement(name = "item")
     private List<CalendarItem> calendarItems;
+
+    static {
+        List<CalendarItem> e = Collections.emptyList();
+        EMPTY_CALENDAR_EVENTS.setCalendarItems(e);
+    }
 
     public String getStatus() {
         return status;
@@ -50,6 +59,12 @@ public class CalendarEvents {
 
     public List<CalendarItem> getCalendarItems() {
         return calendarItems;
+    }
+
+    @XmlElementWrapper(name = "items")
+    @XmlElement(name = "item")
+    public void setCalendarItems(List<CalendarItem> calendarItems) {
+        this.calendarItems = calendarItems;
     }
 
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
@@ -78,4 +93,5 @@ public class CalendarEvents {
             return calendarEvent1.getInterval().getStart().compareTo(calendarEvent2.getInterval().getStart());
         }
     };
+
 }

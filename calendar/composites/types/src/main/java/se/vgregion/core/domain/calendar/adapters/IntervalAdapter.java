@@ -53,8 +53,7 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
         }
         long start = parseStringDate(eventInterval.getStartDate(), eventInterval.getStartTime());
         long end = parseStringDate(eventInterval.getEndDate(), eventInterval.getEndTime());
-        Interval interval = new Interval(start, end);
-        return interval;
+        return new Interval(start, end);
     }
 
     private Long parseStringDate(String dateStr, String timeStr) throws ParseException {
