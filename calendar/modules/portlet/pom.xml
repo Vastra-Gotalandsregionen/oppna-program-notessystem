@@ -35,11 +35,6 @@ Generation time : 2010-05-11 14:04:57 CEST
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>oppna-program-notessystem-calendar-composite-webcomp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>javax.portlet</groupId>
       <artifactId>portlet-api</artifactId>
     </dependency>
