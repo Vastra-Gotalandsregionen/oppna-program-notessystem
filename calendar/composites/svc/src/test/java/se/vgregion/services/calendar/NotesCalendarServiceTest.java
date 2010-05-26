@@ -22,13 +22,18 @@
  */
 package se.vgregion.services.calendar;
 
+import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Matchers.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 import se.vgregion.core.domain.calendar.CalendarEvents;
+import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -52,16 +57,17 @@ public class NotesCalendarServiceTest {
     }
 
     @Test
-    public void shoudReturnAListOfCalendarEvents() throws Exception {
+    public void shoudReturnACalendarEvents() throws Exception {
         // // Given
-        // given(calendarEventRepository.findCalendarEventsById(any(CalendarEventsId.class))).willReturn(
-        // calendarEvents);
-        //
-        // // When
-        // CalendarEvents listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1);
-        //
-        // // Then
-        // assertNotNull(listOfEvents);
+        given(
+                calendarEventRepository.findCalendarEventsByCalendarPeriod(anyString(),
+                        any(CalendarEventsPeriod.class))).willReturn(calendarEvents);
+        given(calendarEvents.filter()).willReturn(calendarEvents);
+        // When
+        CalendarEvents listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1, null);
+
+        // Then
+        assertNotNull(listOfEvents);
     }
     //
     // @Test

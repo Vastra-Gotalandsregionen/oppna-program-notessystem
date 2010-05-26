@@ -90,4 +90,15 @@ public class CalendarEvents {
         return Collections.unmodifiableList(groupedItems);
     }
 
+    public CalendarEvents filter() {
+        List<CalendarItem> filteredItems = new ArrayList<CalendarItem>();
+        for (CalendarItem item : calendarItems) {
+            if (item.getInterval() != null) {
+                filteredItems.add(item);
+            }
+        }
+        calendarItems = filteredItems;
+        return this;
+    }
+
 }
