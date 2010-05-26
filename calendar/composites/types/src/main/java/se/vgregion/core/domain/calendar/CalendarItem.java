@@ -40,7 +40,7 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-public class CalendarItem extends AbstractValueObject<CalendarItem> {
+public class CalendarItem extends AbstractValueObject<CalendarItem> implements Comparable<CalendarItem> {
 
     private static final long serialVersionUID = 6533441182147467365L;
     @XmlElement(name = "type")
@@ -102,6 +102,11 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
+
+    @Override
+    public int compareTo(CalendarItem ci) {
+        return interval.getStart().compareTo(ci.interval.getStart());
     }
 
 }
