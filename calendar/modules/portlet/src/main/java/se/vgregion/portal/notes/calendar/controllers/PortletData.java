@@ -43,6 +43,9 @@ public class PortletData {
 
         if (attributes != null) {
             userId = attributes.get(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString());
+            if (userId == null) {
+                userId = "";
+            }
         }
         return userId;
     }
