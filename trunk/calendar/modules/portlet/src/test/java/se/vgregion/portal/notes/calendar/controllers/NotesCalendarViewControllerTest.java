@@ -19,6 +19,13 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
+import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+
 import javax.portlet.PortletConfig;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -31,6 +38,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.ui.ModelMap;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
+import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
+import se.vgregion.core.domain.calendar.CalendarItem;
 import se.vgregion.services.calendar.CalendarService;
 
 /**
@@ -40,6 +49,7 @@ public class NotesCalendarViewControllerTest {
     private static final String USER_ID = String.valueOf(1);
 
     private NotesCalendarViewController notesCalendarViewController;
+    @Mock
     private ModelMap model;
     @Mock
     private RenderRequest renderRequest;
@@ -53,42 +63,50 @@ public class NotesCalendarViewControllerTest {
     private CalendarEvents calendarEvents;
     @Mock
     private PortletData portletData;
+    @Mock
+    private List<List<CalendarItem>> calendarItems;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        // renderRequest = getMockRenderRequest();
-        // portletConfig = new MockPortletConfig();
         notesCalendarViewController = new NotesCalendarViewController(calendarService);
-        notesCalendarViewController.setPortletConfig(portletConfig);
         notesCalendarViewController.setPortletData(portletData);
-        model = new ModelMap();
     }
 
-    @SuppressWarnings("unchecked")
-    @Ignore
     @Test
-    public void modelShouldContainAListOfCalendarItems() throws Exception {
-        // // Given
-        // given(calendarService.getCalendarEvents(anyString())).willReturn(calendarEvents);
-        // given(calendarEvents.getWeek()).willReturn(any(WeekOfYear.class));
-        // given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn(null);
-        // doNothing().when(portletData).setPortletTitle(null, null);
-        //
-        // // When
-        // notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
-        //
-        // // Then
-        // List<List<CalendarItem>> events = (List<List<CalendarItem>>) model.get("calendarItems");
-        // assertNotNull(events);
+    public void shouldAddACalendarEventsPeriodToModel() throws Exception {
+        // Given
+
+        ModelMap aModel = new ModelMap();
+        given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn("");
+        given(portletData.getUserId(any(RenderRequest.class))).willReturn("");
+        given(calendarService.getCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
+                calendarEvents);
+        given(calendarEvents.getCalendarItemsGroupedByStartDate()).willReturn(calendarItems);
+
+        // When
+        notesCalendarViewController.displayCalendarEvents(aModel, renderRequest, renderResponse);
+
+        // Then
+        CalendarEventsPeriod period = (CalendarEventsPeriod) aModel.get("displayPeriod");
+        assertNotNull(period);
     }
 
-    // private MockRenderRequest getMockRenderRequest() throws ReadOnlyException {
-    // MockRenderRequest mockRenderRequest = new MockRenderRequest();
-    // // Create user login id attribute.
-    // Map<String, String> userInfo = new HashMap<String, String>();
-    // userInfo.put(PortletRequest.P3PUserInfos.USER_LOGIN_ID.toString(), USER_ID);
-    // mockRenderRequest.setAttribute(PortletRequest.USER_INFO, userInfo);
-    // return mockRenderRequest;
-    // }
+    @Test
+    @Ignore
+    public void shouldUseExistingCalendarEventsPeriodIfExists() throws Exception {
+        // Given
+        given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn("");
+        given(portletData.getUserId(any(RenderRequest.class))).willReturn("");
+        given(calendarService.getCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
+                calendarEvents);
+        given(calendarEvents.getCalendarItemsGroupedByStartDate()).willReturn(calendarItems);
+        model.put("displayPeriod", any(CalendarEventsPeriod.class));
+
+        // When
+        notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
+
+        // Then
+        verify(model, never()).put("displayPeriod", any(CalendarEventsPeriod.class));
+    }
 }
