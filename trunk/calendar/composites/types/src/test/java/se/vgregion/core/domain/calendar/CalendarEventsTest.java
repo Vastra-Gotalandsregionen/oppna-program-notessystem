@@ -62,7 +62,15 @@ public class CalendarEventsTest {
     @Test
     public final void testGetCalendarItemsGroupedByStartDate() throws Exception {
         // Given
-        calendarEvents.setCalendarItems(setUpListOfStubbedCalendarItems());
+        List<CalendarItem> items = new ArrayList<CalendarItem>();
+
+        items.add(createStubbedCalendarItem(new Interval(new DateTime(2010, 5, 1, 12, 0, 0, 0), new DateTime(2010,
+                5, 1, 13, 0, 0, 0))));
+        items.add(createStubbedCalendarItem(new Interval(new DateTime(2010, 5, 1, 11, 0, 0, 0), new DateTime(2010,
+                5, 1, 12, 0, 0, 0))));
+        items.add(createStubbedCalendarItem(new Interval(new DateTime(2010, 4, 4, 12, 0, 0, 0), new DateTime(2010,
+                4, 4, 13, 0, 0, 0))));
+        calendarEvents.setCalendarItems(items);
         // When
         List<List<CalendarItem>> calendarItemsGroupedByStartDate = calendarEvents
                 .getCalendarItemsGroupedByStartDate();
@@ -91,7 +99,6 @@ public class CalendarEventsTest {
     @Test
     public void shouldReturnEmptyListIfCalendarItemsIsEmpty() throws Exception {
         // Given
-
         List<CalendarItem> emptyList = Collections.emptyList();
         calendarEvents.setCalendarItems(emptyList);
 
@@ -104,25 +111,30 @@ public class CalendarEventsTest {
         assertTrue(calendarItemsGroupedByStartDate.isEmpty());
     }
 
-    private final List<CalendarItem> setUpListOfStubbedCalendarItems() {
+    @Test
+    public void sholdFilterOutCalendarItemsWithNullInterval() throws Exception {
+        // Given
         List<CalendarItem> items = new ArrayList<CalendarItem>();
 
-        CalendarItem i1 = new CalendarItem();
-        i1.setCalendarType("Type1");
-        i1.setInterval(new Interval(new DateTime(2010, 5, 1, 12, 0, 0, 0), new DateTime(2010, 5, 1, 13, 0, 0, 0)));
-        items.add(i1);
+        items.add(createStubbedCalendarItem(new Interval(new DateTime(2010, 5, 1, 12, 0, 0, 0), new DateTime(2010,
+                5, 1, 13, 0, 0, 0))));
+        items.add(createStubbedCalendarItem(null));
+        items.add(createStubbedCalendarItem(new Interval(new DateTime(2010, 4, 4, 12, 0, 0, 0), new DateTime(2010,
+                4, 4, 13, 0, 0, 0))));
+        calendarEvents.setCalendarItems(items);
 
-        CalendarItem i2 = new CalendarItem();
-        i2.setCalendarType("Type1");
-        i2.setInterval(new Interval(new DateTime(2010, 5, 1, 11, 0, 0, 0), new DateTime(2010, 5, 1, 12, 0, 0, 0)));
-        items.add(i2);
+        // When
+        calendarEvents.filter();
 
-        CalendarItem i3 = new CalendarItem();
-        i3.setCalendarType("Type1");
-        i3.setInterval(new Interval(new DateTime(2010, 4, 4, 12, 0, 0, 0), new DateTime(2010, 4, 4, 13, 0, 0, 0)));
-        items.add(i3);
+        // Then
+        assertEquals(2, calendarEvents.getCalendarItems().size());
+    }
 
-        return items;
+    private CalendarItem createStubbedCalendarItem(Interval interval) {
+        CalendarItem item = new CalendarItem();
+        item.setCalendarType("CalendarType");
+        item.setInterval(interval);
+        return item;
     }
 
 }
