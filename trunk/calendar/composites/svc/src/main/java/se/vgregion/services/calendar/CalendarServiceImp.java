@@ -19,13 +19,12 @@
 
 package se.vgregion.services.calendar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import se.vgregion.core.domain.calendar.*;
+import se.vgregion.core.domain.calendar.CalendarEvents;
+import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
+import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 
 @Service
 public class CalendarServiceImp implements CalendarService {
@@ -40,13 +39,7 @@ public class CalendarServiceImp implements CalendarService {
     @Override
     public CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = calendarEventRepository.findCalendarEventsByCalendarPeriod(userId, period);
-        List<CalendarItem> filteredItems = new ArrayList<CalendarItem>();
-        for (CalendarItem item : events.getCalendarItems()) {
-            if (item.getInterval() != null) {
-                filteredItems.add(item);
-            }
-        }
-        events.setCalendarItems(filteredItems);
-        return events;
+        return events.filter();
     }
+
 }

@@ -22,6 +22,8 @@
  */
 package se.vgregion.domain.infrastructure.webservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
@@ -38,6 +40,7 @@ import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 @Repository
 public class RestCalendarEventRepository implements CalendarEventsRepository {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestCalendarEventRepository.class);
     private static final String NOTES_CALENDAR_GET = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&year={year}&month={month}&day={day}&period={period}";
     private RestOperations restTemplate;
 
@@ -54,7 +57,9 @@ public class RestCalendarEventRepository implements CalendarEventsRepository {
                     .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
                     .getDayOfMonth(), period.getDays().getDays());
         } catch (RestClientException e) {
-            e.printStackTrace();
+            LOGGER.error("Unable to retreive information from web service: {}. CalendarEventPeriod={}",
+                    new Object[] { NOTES_CALENDAR_GET, period });
+            LOGGER.error("Web service exception", e);
         }
         return events;
     }
