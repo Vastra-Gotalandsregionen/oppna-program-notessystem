@@ -38,11 +38,11 @@ public class CalendarEventsAdapter extends XmlAdapter<CalendarEvents, CalendarEv
     }
 
     @Override
-    public CalendarEvents unmarshal(CalendarEvents event) throws Exception {
-        if (event.getStatus().equalsIgnoreCase("ERROR")) {
-            throw new VgrCalendarWebServiceException(event.getMessage());
+    public CalendarEvents unmarshal(CalendarEvents events) throws Exception {
+        if (events.getStatus().equalsIgnoreCase("ERROR")) {
+            throw new VgrCalendarWebServiceException(events.getMessage());
         }
-        return event;
+        return events;
     }
 
 }

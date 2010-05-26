@@ -31,7 +31,10 @@ import java.util.Locale;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import se.vgregion.core.domain.calendar.CalendarItemPeriod;
 
@@ -40,6 +43,8 @@ import se.vgregion.core.domain.calendar.CalendarItemPeriod;
  * 
  */
 public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntervalAdapter.class);
 
     @Override
     public CalendarItemPeriod marshal(Interval v) throws Exception {
@@ -51,8 +56,12 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
         if (StringUtils.isBlank(eventInterval.getStartDate()) || StringUtils.isBlank(eventInterval.getEndDate())) {
             throw new VgrCalendarWebServiceException("Invalid date");
         }
-        long start = parseStringDate(eventInterval.getStartDate(), eventInterval.getStartTime());
-        long end = parseStringDate(eventInterval.getEndDate(), eventInterval.getEndTime());
+        DateTime start = new DateTime(parseStringDate(eventInterval.getStartDate(), eventInterval.getStartTime()));
+        DateTime end = new DateTime(parseStringDate(eventInterval.getEndDate(), eventInterval.getEndTime()));
+        if (end.isBefore(start)) {
+            LOGGER.error("Sluttid är före starttid: {}", eventInterval);
+            throw new VgrCalendarWebServiceException("Sluttid är före starttid");
+        }
         return new Interval(start, end);
     }
 
