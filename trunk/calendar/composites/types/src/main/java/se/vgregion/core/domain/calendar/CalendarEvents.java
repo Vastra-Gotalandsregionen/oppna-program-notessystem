@@ -22,7 +22,9 @@
  */
 package se.vgregion.core.domain.calendar;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -72,7 +74,7 @@ public class CalendarEvents {
             return Collections.emptyList();
         }
         List<CalendarItem> sortedItems = new ArrayList<CalendarItem>(calendarItems);
-        Collections.sort(sortedItems, ASCENDING_BY_START_DATE);
+        Collections.sort(sortedItems);
         List<List<CalendarItem>> groupedItems = new ArrayList<List<CalendarItem>>();
         int fromIndex = 0;
         for (int toIndex = 0; toIndex < sortedItems.size(); toIndex++) {
@@ -87,11 +89,5 @@ public class CalendarEvents {
         groupedItems.add(Collections.unmodifiableList(sortedItems.subList(fromIndex, sortedItems.size())));
         return Collections.unmodifiableList(groupedItems);
     }
-
-    private static final Comparator<CalendarItem> ASCENDING_BY_START_DATE = new Comparator<CalendarItem>() {
-        public int compare(final CalendarItem calendarEvent1, final CalendarItem calendarEvent2) {
-            return calendarEvent1.getInterval().getStart().compareTo(calendarEvent2.getInterval().getStart());
-        }
-    };
 
 }
