@@ -49,7 +49,7 @@ public class CalendarEvents {
     private String status;
     @XmlElement
     private String message;
-    private List<CalendarItem> calendarItems;
+    private List<CalendarItem> calendarItems = null;
 
     static {
         List<CalendarItem> e = Collections.emptyList();
