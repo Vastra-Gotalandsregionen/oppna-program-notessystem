@@ -50,7 +50,7 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
 
     @XmlJavaTypeAdapter(IntervalAdapter.class)
     @XmlElement(name = "period")
-    private Interval interval;
+    private Interval interval = null;
     private static final Locale DEFAULT_LOCALE = new Locale("sv", "SE");
 
     public String getDayOfWeek() {
@@ -118,6 +118,10 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
 
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Interval getInterval() {

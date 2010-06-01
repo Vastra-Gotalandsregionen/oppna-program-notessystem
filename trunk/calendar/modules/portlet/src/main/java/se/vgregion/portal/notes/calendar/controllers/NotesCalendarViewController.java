@@ -48,15 +48,19 @@ import se.vgregion.services.calendar.CalendarService;
 @RequestMapping("VIEW")
 public class NotesCalendarViewController implements PortletConfigAware {
     private static final String TIME_FORMAT = "dd MMMM";
-    public static final String VIEW_WEEK = "week";
+    /**
+     * The name of the view page to dispatch to on a render request.
+     */
+    public static final String VIEW = "view";
     private CalendarService calendarService;
     private PortletConfig portletConfig = null;
-    private PortletData portletData;
+    private PortletData portletData = null;
 
     /**
-     * Constructs a NotesCalendarViewController
+     * Constructs a NotesCalendarViewController.
      * 
      * @param calendarService
+     *            a CalendarService
      */
     @Autowired
     public NotesCalendarViewController(CalendarService calendarService) {
@@ -98,7 +102,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
         portletData.setPortletTitle(response, title + " "
                 + getFormatedDateIntervallToTitle(displayPeriod, response.getLocale()));
         model.put("calendarItems", calendarItems);
-        return VIEW_WEEK;
+        return VIEW;
     }
 
     private String getFormatedDateIntervallToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
