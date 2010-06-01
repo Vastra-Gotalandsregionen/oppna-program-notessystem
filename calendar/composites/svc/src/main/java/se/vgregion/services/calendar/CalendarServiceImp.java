@@ -39,7 +39,7 @@ public class CalendarServiceImp implements CalendarService {
     @Override
     public CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = calendarEventRepository.findCalendarEventsByCalendarPeriod(userId, period);
-        return events.filter();
+        return events.filterOutCalendarItemsWithValidInterval();
     }
 
 }

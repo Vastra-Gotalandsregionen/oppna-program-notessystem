@@ -62,7 +62,7 @@ public class NotesCalendarServiceTest {
         given(
                 calendarEventRepository.findCalendarEventsByCalendarPeriod(anyString(),
                         any(CalendarEventsPeriod.class))).willReturn(calendarEvents);
-        given(calendarEvents.filter()).willReturn(calendarEvents);
+        given(calendarEvents.filterOutCalendarItemsWithValidInterval()).willReturn(calendarEvents);
         // When
         CalendarEvents listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1, null);
 

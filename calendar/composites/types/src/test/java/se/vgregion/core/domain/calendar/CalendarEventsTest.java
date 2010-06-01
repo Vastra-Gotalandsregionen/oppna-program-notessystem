@@ -124,10 +124,10 @@ public class CalendarEventsTest {
         calendarEvents.setCalendarItems(items);
 
         // When
-        calendarEvents.filter();
+        CalendarEvents modifiedEvents = calendarEvents.filterOutCalendarItemsWithValidInterval();
 
         // Then
-        assertEquals(2, calendarEvents.getCalendarItems().size());
+        assertEquals(2, modifiedEvents.getCalendarItems().size());
     }
 
     private CalendarItem createStubbedCalendarItem(Interval interval) {
