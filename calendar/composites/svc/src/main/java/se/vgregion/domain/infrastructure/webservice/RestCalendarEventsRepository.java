@@ -25,7 +25,6 @@ package se.vgregion.domain.infrastructure.webservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
@@ -34,31 +33,50 @@ import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 
 /**
+ * Implementation of {@link CalendarEventsRepository} which is used for restfull requests against service endpoint.
+ * The service url is specified with the following pattern:
+ * http://<host>?userid=<userid>&year=<year>&month=<month>&day=<day>&period=<period>
+ * 
  * @author Anders Asplund - Callista Enterprise
  * 
  */
-@Repository
-public class RestCalendarEventRepository implements CalendarEventsRepository {
+public class RestCalendarEventsRepository implements CalendarEventsRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestCalendarEventRepository.class);
-    private static final String NOTES_CALENDAR_GET = "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&userid={userid}&year={year}&month={month}&day={day}&period={period}";
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestCalendarEventsRepository.class);
+    private String serviceUrl;
     private RestOperations restTemplate;
 
+    /**
+     * Constructs a RestCalendarEventsRepository for a restfull reqest to the specified service endpoint.
+     * 
+     * @param restTemplate
+     *            a restTemplate to use for making a request
+     * @param serviceEndpoint
+     *            the service endpoint
+     */
     @Autowired
-    public RestCalendarEventRepository(RestOperations restOperations) {
-        restTemplate = restOperations;
+    public RestCalendarEventsRepository(RestOperations restTemplate, String serviceEndpoint) {
+        this.restTemplate = restTemplate;
+        this.serviceUrl = serviceEndpoint + "userid={userid}&year={year}&month={month}&day={day}&period={period}";
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * se.vgregion.core.domain.calendar.CalendarEventsRepository#findCalendarEventsByCalendarPeriod(java.lang.String
+     * , se.vgregion.core.domain.calendar.CalendarEventsPeriod)
+     */
     @Override
     public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = CalendarEvents.EMPTY_CALENDAR_EVENTS;
         try {
-            events = restTemplate.getForObject(NOTES_CALENDAR_GET, CalendarEvents.class, userId, period
-                    .getStartDate().getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate()
-                    .getDayOfMonth(), period.getDays().getDays());
+            events = restTemplate.getForObject(serviceUrl, CalendarEvents.class, userId, period.getStartDate()
+                    .getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
+                    period.getDays().getDays());
         } catch (RestClientException e) {
             LOGGER.error("Unable to retreive information from web service: {}. CalendarEventPeriod={}",
-                    new Object[] { NOTES_CALENDAR_GET, period });
+                    new Object[] { serviceUrl, period });
             LOGGER.error("Web service exception", e);
         }
         return events;

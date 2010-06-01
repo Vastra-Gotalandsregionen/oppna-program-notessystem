@@ -30,7 +30,15 @@ import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
  * 
  */
 public interface CalendarService {
-
+    /**
+     * Find calendar events for a specific user and over a specified period.
+     * 
+     * @param userId
+     *            a userId
+     * @param period
+     *            a period
+     * @return CalendarEvents containing all calendar items for user and period
+     */
     CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period);
 
 }

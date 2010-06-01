@@ -29,16 +29,27 @@ import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 @Service
 public class CalendarServiceImp implements CalendarService {
 
-    private CalendarEventsRepository calendarEventRepository;
+    private CalendarEventsRepository calendarEventsRepository;
 
+    /**
+     * Constructs a CalendarServiceImp
+     * 
+     * @param eventsRepository
+     */
     @Autowired
-    public CalendarServiceImp(CalendarEventsRepository eventRepository) {
-        this.calendarEventRepository = eventRepository;
+    public CalendarServiceImp(CalendarEventsRepository eventsRepository) {
+        this.calendarEventsRepository = eventsRepository;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see se.vgregion.services.calendar.CalendarService#getCalendarEvents(java.lang.String,
+     * se.vgregion.core.domain.calendar.CalendarEventsPeriod)
+     */
     @Override
     public CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period) {
-        CalendarEvents events = calendarEventRepository.findCalendarEventsByCalendarPeriod(userId, period);
+        CalendarEvents events = calendarEventsRepository.findCalendarEventsByCalendarPeriod(userId, period);
         return events.filterOutCalendarItemsWithValidInterval();
     }
 
