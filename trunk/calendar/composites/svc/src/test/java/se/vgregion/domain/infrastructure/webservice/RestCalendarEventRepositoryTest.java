@@ -44,12 +44,12 @@ import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
  */
 public class RestCalendarEventRepositoryTest {
 
-    RestCalendarEventRepository repo;
+    private RestCalendarEventsRepository repo;
 
     @Mock
-    RestOperations restTemplate;
+    private RestOperations restTemplate;
     @Mock
-    CalendarEventsPeriod period;
+    private CalendarEventsPeriod period;
 
     /**
      * @throws java.lang.Exception
@@ -57,7 +57,8 @@ public class RestCalendarEventRepositoryTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        repo = new RestCalendarEventRepository(restTemplate);
+        repo = new RestCalendarEventsRepository(restTemplate,
+                "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&");
     }
 
     @SuppressWarnings("unchecked")
