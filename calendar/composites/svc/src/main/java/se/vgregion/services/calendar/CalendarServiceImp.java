@@ -35,6 +35,7 @@ public class CalendarServiceImp implements CalendarService {
      * Constructs a CalendarServiceImp
      * 
      * @param eventsRepository
+     *            an eventsRepository
      */
     @Autowired
     public CalendarServiceImp(CalendarEventsRepository eventsRepository) {

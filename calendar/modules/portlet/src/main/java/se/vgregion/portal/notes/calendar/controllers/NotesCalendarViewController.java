@@ -60,7 +60,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
      * Constructs a NotesCalendarViewController.
      * 
      * @param calendarService
-     *            a CalendarService
+     *            a calendarService
      */
     @Autowired
     public NotesCalendarViewController(CalendarService calendarService) {
