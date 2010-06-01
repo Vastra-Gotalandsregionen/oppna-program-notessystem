@@ -30,8 +30,9 @@ import javax.portlet.PortletConfig;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -45,9 +46,8 @@ import se.vgregion.services.calendar.CalendarService;
 /**
  * @author Anders Asplund - Callista Enterprise
  */
+@SuppressWarnings("unused")
 public class NotesCalendarViewControllerTest {
-    private static final String USER_ID = String.valueOf(1);
-
     private NotesCalendarViewController notesCalendarViewController;
     @Mock
     private ModelMap model;
@@ -56,8 +56,6 @@ public class NotesCalendarViewControllerTest {
     @Mock
     private RenderResponse renderResponse;
     @Mock
-    private PortletConfig portletConfig;
-    @Mock
     private CalendarService calendarService;
     @Mock
     private CalendarEvents calendarEvents;
@@ -65,6 +63,8 @@ public class NotesCalendarViewControllerTest {
     private PortletData portletData;
     @Mock
     private List<List<CalendarItem>> calendarItems;
+    @Mock
+    private CalendarEventsPeriod displayPeriod;
 
     @Before
     public void setUp() throws Exception {
@@ -76,37 +76,69 @@ public class NotesCalendarViewControllerTest {
     @Test
     public void shouldAddACalendarEventsPeriodToModel() throws Exception {
         // Given
-
-        ModelMap aModel = new ModelMap();
         given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn("");
         given(portletData.getUserId(any(RenderRequest.class))).willReturn("");
         given(calendarService.getCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
                 calendarEvents);
         given(calendarEvents.getCalendarItemsGroupedByStartDate()).willReturn(calendarItems);
-
-        // When
-        notesCalendarViewController.displayCalendarEvents(aModel, renderRequest, renderResponse);
-
-        // Then
-        CalendarEventsPeriod period = (CalendarEventsPeriod) aModel.get("displayPeriod");
-        assertNotNull(period);
-    }
-
-    @Test
-    @Ignore
-    public void shouldUseExistingCalendarEventsPeriodIfExists() throws Exception {
-        // Given
-        given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn("");
-        given(portletData.getUserId(any(RenderRequest.class))).willReturn("");
-        given(calendarService.getCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
-                calendarEvents);
-        given(calendarEvents.getCalendarItemsGroupedByStartDate()).willReturn(calendarItems);
-        model.put("displayPeriod", any(CalendarEventsPeriod.class));
+        given(model.get(anyString())).willReturn(displayPeriod);
 
         // When
         notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
 
         // Then
-        verify(model, never()).put("displayPeriod", any(CalendarEventsPeriod.class));
+        CalendarEventsPeriod period = (CalendarEventsPeriod) model.get("displayPeriod");
+        assertNotNull(period);
+    }
+
+    @Test
+    public void shouldUseExistingCalendarEventsPeriodIfExists() throws Exception {
+        // Given
+        given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn("");
+        given(portletData.getUserId(any(RenderRequest.class))).willReturn("");
+        given(model.get("displayPeriod")).willReturn(displayPeriod);
+        given(calendarService.getCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
+                calendarEvents);
+        given(calendarEvents.getCalendarItemsGroupedByStartDate()).willReturn(calendarItems);
+
+        // When
+        notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
+
+        // Then
+        verify(model, times(1)).put(anyString(), any(CalendarEventsPeriod.class));
+    }
+
+    @Test
+    public void shouldIncrementDisplayedWeekInModelWithOneWeek() throws Exception {
+        // Given
+        ModelMap aModel = new ModelMap();
+        CalendarEventsPeriod displayPeriod1 = new CalendarEventsPeriod(new DateTime(),
+                CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
+        aModel.put("displayPeriod", displayPeriod1);
+
+        // When
+        notesCalendarViewController.nextWeek(aModel);
+
+        // Then
+        CalendarEventsPeriod displayPeriod2 = (CalendarEventsPeriod) aModel.get("displayPeriod");
+        assertEquals(CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH, Days.daysBetween(displayPeriod1.getStartDate(),
+                displayPeriod2.getStartDate()));
+    }
+
+    @Test
+    public void shouldDecreaseDisplayedWeekInModelWithOneWeek() throws Exception {
+        // Given
+        ModelMap aModel = new ModelMap();
+        CalendarEventsPeriod displayPeriod1 = new CalendarEventsPeriod(new DateTime(),
+                CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
+        aModel.put("displayPeriod", displayPeriod1);
+
+        // When
+        notesCalendarViewController.previousWeek(aModel);
+
+        // Then
+        CalendarEventsPeriod displayPeriod2 = (CalendarEventsPeriod) aModel.get("displayPeriod");
+        assertEquals(CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH, Days.daysBetween(displayPeriod2.getStartDate(),
+                displayPeriod1.getStartDate()));
     }
 }

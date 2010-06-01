@@ -44,7 +44,7 @@
   <h4>${eventDay[0].dayOfWeek}<span class="date"> &ndash; ${eventDay[0].dayOfMonth} ${eventDay[0].monthOfYear}</span></h4>
   <ul>
 <c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
-    <li class="cal-private">${event.startTime}&ndash;${event.endTime} ${event.title}<span style="float: right;" id="calendar-type">${event.calendarType}</span></li>
+    <li class="cal-private"><span style="float: right;" id="calendar-type">${event.calendarType}</span>${event.startTime}&ndash;${event.endTime} ${event.title}</li>
 </c:forEach>
   </ul>
 </c:forEach>
