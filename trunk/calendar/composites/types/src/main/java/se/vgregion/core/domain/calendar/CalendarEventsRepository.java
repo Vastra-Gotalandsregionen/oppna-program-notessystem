@@ -25,7 +25,9 @@ public interface CalendarEventsRepository {
      * Find calendar events for a specific user and over a specified period.
      * 
      * @param userId
+     *            a userId
      * @param period
+     *            a period
      * @return CalendarEvents containing all calendar items for user and period
      */
     CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period);

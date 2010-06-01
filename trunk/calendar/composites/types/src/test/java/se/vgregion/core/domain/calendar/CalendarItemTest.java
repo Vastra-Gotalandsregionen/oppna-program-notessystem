@@ -24,6 +24,8 @@ package se.vgregion.core.domain.calendar;
 
 import static org.junit.Assert.*;
 
+import java.util.Locale;
+
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.junit.Before;
@@ -61,6 +63,15 @@ public class CalendarItemTest {
     }
 
     /**
+     * Test method for {@link se.vgregion.core.domain.calendar.CalendarItem#getDayOfWeek()}.
+     */
+    @Test
+    public final void testGetLocalizedDayOfWeek() {
+        String dayOfWeek = item.getDayOfWeek(new Locale("sv", "SE"));
+        assertEquals("Lördag", dayOfWeek);
+    }
+
+    /**
      * Test method for {@link se.vgregion.core.domain.calendar.CalendarItem#getDayOfMonth()}.
      */
     @Test
@@ -70,11 +81,29 @@ public class CalendarItemTest {
     }
 
     /**
+     * Test method for {@link se.vgregion.core.domain.calendar.CalendarItem#getDayOfMonth()}.
+     */
+    @Test
+    public final void testGetLocalizedDayOfMonth() {
+        String dayOfMonth = item.getDayOfMonth(new Locale("sv", "SE"));
+        assertEquals("1", dayOfMonth);
+    }
+
+    /**
      * Test method for {@link se.vgregion.core.domain.calendar.CalendarItem#getMonthOfYear()}.
      */
     @Test
     public final void testGetMonthOfYear() {
         String monthOfYear = item.getMonthOfYear();
+        assertEquals("Maj", monthOfYear);
+    }
+
+    /**
+     * Test method for {@link se.vgregion.core.domain.calendar.CalendarItem#getMonthOfYear()}.
+     */
+    @Test
+    public final void testGetLocalizedMonthOfYear() {
+        String monthOfYear = item.getMonthOfYear(new Locale("sv", "SE"));
         assertEquals("Maj", monthOfYear);
     }
 

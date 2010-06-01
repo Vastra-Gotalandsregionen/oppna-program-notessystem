@@ -24,7 +24,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Supporting base class for value objects.
- * <p/>
+ * <p>
  * While the ValueObject interface makes the pattern properties explicit, this class is less general and is suited
  * for this particular application.
  * </p>
@@ -37,8 +37,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 @SuppressWarnings( { "unchecked", "serial" })
 public abstract class AbstractValueObject<T extends ValueObject> implements ValueObject<T> {
 
-    private transient int _cachedHashCode = 0;
-    private static final String[] EXCLUDED_FIELDS = { "_cachedHashCode" };
+    private transient int cachedHashCode = 0;
+    private static final String[] EXCLUDED_FIELDS = { "cachedHashCode" };
 
     /**
      * @param other
@@ -62,12 +62,12 @@ public abstract class AbstractValueObject<T extends ValueObject> implements Valu
         // with multiple reads of the _cachedHashCode field.
         //
         // See java.lang.String.hashCode()
-        int h = _cachedHashCode;
+        int h = cachedHashCode;
         if (h == 0) {
             // Lazy initialization of hash code.
             // Value objects are immutable, so the hash code never changes.
             h = HashCodeBuilder.reflectionHashCode(this, false);
-            _cachedHashCode = h;
+            cachedHashCode = h;
         }
 
         return h;

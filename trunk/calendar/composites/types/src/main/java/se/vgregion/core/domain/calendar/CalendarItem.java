@@ -51,22 +51,51 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
     @XmlJavaTypeAdapter(IntervalAdapter.class)
     @XmlElement(name = "period")
     private Interval interval;
-    private Locale locale = new Locale("sv", "SE");
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
+    private static final Locale DEFAULT_LOCALE = new Locale("sv", "SE");
 
     public String getDayOfWeek() {
+        return getDayOfWeek(DEFAULT_LOCALE);
+    }
+
+    /**
+     * Capitalized and localized string of the day of week.
+     * 
+     * @param locale
+     *            to use on the returned string
+     * @return Capitalized and localized string of the day of week
+     */
+    public String getDayOfWeek(Locale locale) {
         String dayOfWeek = interval.getStart().dayOfWeek().getAsText(locale);
         return WordUtils.capitalize(dayOfWeek);
     }
 
     public String getDayOfMonth() {
+        return getDayOfMonth(DEFAULT_LOCALE);
+    }
+
+    /**
+     * Capitalized and localized string of the day of month.
+     * 
+     * @param locale
+     *            to use on the returned string
+     * @return Capitalized and localized string of the day of month
+     */
+    public String getDayOfMonth(Locale locale) {
         return interval.getStart().dayOfMonth().getAsText(locale);
     }
 
     public String getMonthOfYear() {
+        return getMonthOfYear(DEFAULT_LOCALE);
+    }
+
+    /**
+     * Capitalized and localized string of the month of year.
+     * 
+     * @param locale
+     *            to use on the returned string
+     * @return Capitalized and localized string of the month of year
+     */
+    public String getMonthOfYear(Locale locale) {
         String monthOfYear = interval.getStart().monthOfYear().getAsText(locale);
         return WordUtils.capitalize(monthOfYear);
     }
