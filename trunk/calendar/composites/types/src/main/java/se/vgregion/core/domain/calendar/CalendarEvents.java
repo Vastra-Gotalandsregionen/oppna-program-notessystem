@@ -29,15 +29,20 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import se.vgregion.core.domain.calendar.adapters.CalendarEventsAdapter;
-
+/**
+ * Wraps a calendar web service response.
+ * 
+ * @author Anders Asplund - Callista Enterprise
+ */
 @XmlRootElement(name = "calendarItems")
-@XmlJavaTypeAdapter(CalendarEventsAdapter.class)
 public class CalendarEvents {
 
     private static final long serialVersionUID = -8404092455565896114L;
+
+    /**
+     * Returns an empty {@link CalendarEvents}.
+     */
     public static final CalendarEvents EMPTY_CALENDAR_EVENTS = new CalendarEvents();
 
     @XmlElement
@@ -69,6 +74,12 @@ public class CalendarEvents {
         this.calendarItems = calendarItems;
     }
 
+    /**
+     * Groups calendar items in order of the start date of the calendar item.
+     * 
+     * @return an unmodifiable list of list with calendar items
+     * @author Anders Asplund - Callista Enterprise
+     */
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
         if (calendarItems == null || calendarItems.isEmpty()) {
             return Collections.emptyList();
@@ -90,15 +101,23 @@ public class CalendarEvents {
         return Collections.unmodifiableList(groupedItems);
     }
 
-    public CalendarEvents filter() {
+    /**
+     * Filters out all calendar items with a valid interval.
+     * 
+     * @return a copy of this calendarevents with the calendar items filtered
+     */
+    public CalendarEvents filterOutCalendarItemsWithValidInterval() {
         List<CalendarItem> filteredItems = new ArrayList<CalendarItem>();
+        CalendarEvents events = new CalendarEvents();
         for (CalendarItem item : calendarItems) {
             if (item.getInterval() != null) {
                 filteredItems.add(item);
             }
         }
-        calendarItems = filteredItems;
-        return this;
+        events.setCalendarItems(filteredItems);
+        events.message = getMessage();
+        events.status = getStatus();
+        return events;
     }
 
 }

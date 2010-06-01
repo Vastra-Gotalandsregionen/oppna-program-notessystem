@@ -39,27 +39,59 @@ import org.slf4j.LoggerFactory;
 import se.vgregion.core.domain.calendar.CalendarItemPeriod;
 
 /**
+ * Adapter used by Jaxb when unmarshalling the calendar web service content. It handles the conversion of the
+ * content in the period-tag and a Joda time {@link org.joda.time.Interval}.
+ * 
  * @author Anders Asplund - Callista Enterprise
+ * @see org.joda.time.Interval
  * 
  */
 public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IntervalAdapter.class);
 
+    /**
+     * The adpater only supports unmarshalling for now.
+     * 
+     * @param interval
+     *            the interval that should be converted to a {@link CalendarItemPeriod}
+     * @throws UnsupportedOperationException
+     *             The adpater only supports unmarshalling for now.
+     * @author Anders Asplund - Callista Enterprise
+     * @return {@link CalendarItemPeriod}
+     */
     @Override
-    public CalendarItemPeriod marshal(Interval v) throws Exception {
+    public CalendarItemPeriod marshal(Interval interval) {
         throw new UnsupportedOperationException("Marshalling is unsupported for now.");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.xml.bind.annotation.adapters.XmlAdapter#unmarshal(java.lang.Object)
+     */
+    /**
+     * Jaxb uses this method to converts the period tag from the web service response to a Joda time
+     * {@link org.joda.time.Interval}.
+     * 
+     * @param period
+     *            the {@link CalendarItemPeriod} that should be converted to an Interval.
+     * @throws VgrCalendarWebServiceException
+     *             if the web service response contains a valid start or end date.
+     * @throws ParseException
+     *             if unable to parse the date periods in the web service response.
+     * @author Anders Asplund - Callista Enterprise
+     * @return {@link Interval}
+     */
     @Override
-    public Interval unmarshal(CalendarItemPeriod eventInterval) throws Exception {
-        if (StringUtils.isBlank(eventInterval.getStartDate()) || StringUtils.isBlank(eventInterval.getEndDate())) {
+    public Interval unmarshal(CalendarItemPeriod period) throws VgrCalendarWebServiceException, ParseException {
+        if (StringUtils.isBlank(period.getStartDate()) || StringUtils.isBlank(period.getEndDate())) {
             throw new VgrCalendarWebServiceException("Invalid date");
         }
-        DateTime start = new DateTime(parseStringDate(eventInterval.getStartDate(), eventInterval.getStartTime()));
-        DateTime end = new DateTime(parseStringDate(eventInterval.getEndDate(), eventInterval.getEndTime()));
+        DateTime start = new DateTime(parseStringDate(period.getStartDate(), period.getStartTime()));
+        DateTime end = new DateTime(parseStringDate(period.getEndDate(), period.getEndTime()));
         if (end.isBefore(start)) {
-            LOGGER.error("Sluttid är före starttid: {}", eventInterval);
+            LOGGER.error("Sluttid är före starttid: {}", period);
             throw new VgrCalendarWebServiceException("Sluttid är före starttid");
         }
         return new Interval(start, end);

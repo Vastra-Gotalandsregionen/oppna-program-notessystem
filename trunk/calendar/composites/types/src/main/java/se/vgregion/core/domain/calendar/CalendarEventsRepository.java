@@ -20,5 +20,13 @@
 package se.vgregion.core.domain.calendar;
 
 public interface CalendarEventsRepository {
+
+    /**
+     * Find calendar events for a specific user and over a specified period.
+     * 
+     * @param userId
+     * @param period
+     * @return CalendarEvents containing all calendar items for user and period
+     */
     CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period);
 }

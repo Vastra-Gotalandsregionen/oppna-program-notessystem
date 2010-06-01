@@ -23,13 +23,21 @@
 package se.vgregion.core.domain.calendar.adapters;
 
 /**
- * @author Anders Asplund - Callista Enterprise
+ * Exception indicating an error in the Web Service communication.
  * 
+ * @author Anders Asplund - Callista Enterprise
  */
 public class VgrCalendarWebServiceException extends Exception {
 
     private static final long serialVersionUID = 7331925814849375505L;
 
+    /**
+     * Constructs a new exception with the specified detail message.
+     * 
+     * @param message
+     *            the detail message. The detail message is saved for later retrieval by the {@link #getMessage()}
+     *            method.
+     */
     public VgrCalendarWebServiceException(String message) {
         super(message);
     }
