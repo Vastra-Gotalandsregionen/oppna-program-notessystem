@@ -34,8 +34,18 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PortletData {
+    /**
+     * Resource variable for the portlet title.
+     */
     public static final String JAVAX_PORTLET_TITLE = "javax.portlet.title";
 
+    /**
+     * Returns the id of the logged in user.
+     * 
+     * @param request
+     *            the portletRequest
+     * @return the id of the logged in user
+     */
     @SuppressWarnings("unchecked")
     public String getUserId(RenderRequest request) {
         Map<String, String> attributes = (Map<String, String>) request.getAttribute(PortletRequest.USER_INFO);
@@ -50,10 +60,27 @@ public class PortletData {
         return userId;
     }
 
+    /**
+     * Returns the portlet title.
+     * 
+     * @param portletConfig
+     *            the portletConfit
+     * @param request
+     *            the portletRequest
+     * @return the portlet title
+     */
     public String getPortletTitle(PortletConfig portletConfig, RenderRequest request) {
         return portletConfig.getResourceBundle(request.getLocale()).getString(JAVAX_PORTLET_TITLE);
     }
 
+    /**
+     * Sets the portlet title.
+     * 
+     * @param response
+     *            the portletResponse
+     * @param title
+     *            the new title of the portlet
+     */
     public void setPortletTitle(RenderResponse response, String title) {
         response.setTitle(title);
     }

@@ -47,11 +47,17 @@ import se.vgregion.services.calendar.CalendarService;
 @SessionAttributes("displayPeriod")
 @RequestMapping("VIEW")
 public class NotesCalendarViewController implements PortletConfigAware {
+    private static final String TIME_FORMAT = "dd MMMM";
     public static final String VIEW_WEEK = "week";
     private CalendarService calendarService;
     private PortletConfig portletConfig = null;
     private PortletData portletData;
 
+    /**
+     * Constructs a NotesCalendarViewController
+     * 
+     * @param calendarService
+     */
     @Autowired
     public NotesCalendarViewController(CalendarService calendarService) {
         this.calendarService = calendarService;
@@ -66,6 +72,17 @@ public class NotesCalendarViewController implements PortletConfigAware {
         this.portletData = portletData;
     }
 
+    /**
+     * Displays the calendar events for the logged in user.
+     * 
+     * @param model
+     *            the model
+     * @param request
+     *            the portletRequest
+     * @param response
+     *            the portletResponse
+     * @return the view to display
+     */
     @RenderMapping
     public String displayCalendarEvents(ModelMap model, RenderRequest request, RenderResponse response) {
         String userId = portletData.getUserId(request);
@@ -85,8 +102,8 @@ public class NotesCalendarViewController implements PortletConfigAware {
     }
 
     private String getFormatedDateIntervallToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd MMMM").withLocale(locale);
-        StringBuilder title = new StringBuilder(23);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(TIME_FORMAT).withLocale(locale);
+        StringBuilder title = new StringBuilder(TIME_FORMAT.length() * 2 + " - ".length());
 
         title.append(formatter.print(displayPeriod.getStartDate()));
         title.append(" - ");
@@ -95,6 +112,12 @@ public class NotesCalendarViewController implements PortletConfigAware {
         return title.toString();
     }
 
+    /**
+     * Action method to step one period ahead.
+     * 
+     * @param model
+     *            the model
+     */
     @ActionMapping(params = "navigate=next")
     public void nextWeek(ModelMap model) {
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
@@ -103,6 +126,12 @@ public class NotesCalendarViewController implements PortletConfigAware {
         }
     }
 
+    /**
+     * Action method to step one period back.
+     * 
+     * @param model
+     *            the model
+     */
     @ActionMapping(params = "navigate=previous")
     public void previousWeek(ModelMap model) {
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
