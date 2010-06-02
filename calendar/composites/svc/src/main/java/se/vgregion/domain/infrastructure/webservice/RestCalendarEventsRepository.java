@@ -71,6 +71,11 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
     public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = CalendarEvents.EMPTY_CALENDAR_EVENTS;
         try {
+            LOGGER.debug("Calling the following web service: {}", serviceUrl);
+            LOGGER.debug("Paramters sent to web service: userid={}, year={}, month={}, day={}, period={}",
+                    new Object[] { userId, period.getStartDate().getYear(),
+                            period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
+                            period.getDays().getDays() });
             events = restTemplate.getForObject(serviceUrl, CalendarEvents.class, userId, period.getStartDate()
                     .getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
                     period.getDays().getDays());
