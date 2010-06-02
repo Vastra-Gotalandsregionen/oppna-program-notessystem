@@ -29,6 +29,8 @@ import javax.portlet.RenderResponse;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -52,6 +54,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
      * The name of the view page to dispatch to on a render request.
      */
     public static final String VIEW = "view";
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotesCalendarViewController.class);
     private CalendarService calendarService;
     private PortletConfig portletConfig = null;
     private PortletData portletData = null;
@@ -90,6 +93,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     @RenderMapping
     public String displayCalendarEvents(ModelMap model, RenderRequest request, RenderResponse response) {
         String userId = portletData.getUserId(request);
+        LOGGER.debug("Userid: {}", userId);
         String title = portletData.getPortletTitle(portletConfig, request);
         CalendarEvents events = null;
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
@@ -100,12 +104,12 @@ public class NotesCalendarViewController implements PortletConfigAware {
         events = calendarService.getCalendarEvents(userId, displayPeriod);
         List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
         portletData.setPortletTitle(response, title + " "
-                + getFormatedDateIntervallToTitle(displayPeriod, response.getLocale()));
+                + getFormatedDateIntervalToTitle(displayPeriod, response.getLocale()));
         model.put("calendarItems", calendarItems);
         return VIEW;
     }
 
-    private String getFormatedDateIntervallToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
+    private String getFormatedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern(TIME_FORMAT).withLocale(locale);
         StringBuilder title = new StringBuilder(TIME_FORMAT.length() * 2 + " - ".length());
 

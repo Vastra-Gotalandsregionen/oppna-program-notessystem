@@ -23,7 +23,6 @@ Generation time : 2010-05-11 14:04:57 CEST
   <modules>
     <module>composites/types</module>
     <module>composites/svc</module>
-    <module>composites/schema</module>
     <module>modules/portlet</module>
   </modules>
 </project>

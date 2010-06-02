@@ -75,10 +75,9 @@ public class CalendarEvents {
     }
 
     /**
-     * Groups calendar items in order of the start date of the calendar item.
+     * Groups and sorts calendar items by start date.
      * 
      * @return an unmodifiable list of list with calendar items
-     * @author Anders Asplund - Callista Enterprise
      */
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
         if (calendarItems == null || calendarItems.isEmpty()) {

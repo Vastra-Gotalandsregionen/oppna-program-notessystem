@@ -25,6 +25,7 @@ package se.vgregion.core.domain.calendar;
 import java.util.Locale;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang.WordUtils;
@@ -120,6 +121,7 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
         return title;
     }
 
+    @XmlTransient
     public void setTitle(String title) {
         this.title = title;
     }

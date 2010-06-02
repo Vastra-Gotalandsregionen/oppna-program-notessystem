@@ -16,17 +16,11 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   <context:annotation-config />
-  <context:component-scan base-package="se.vgregion.core.domain.infrastructure.webservice se.vgregion.services" />
 
-  <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
-
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="classpath:calendarService.properties" />
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="suffix" value=".jsp" />
+    <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
-
-  <bean id="calendarEventsRepository" class="se.vgregion.domain.infrastructure.webservice.RestCalendarEventsRepository">
-    <constructor-arg name="restTemplate" ref="restTemplate" />
-    <constructor-arg name="serviceEndpoint" value="${service.endpoint}" />
-  </bean>
-
 </beans>

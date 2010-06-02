@@ -20,6 +20,7 @@
 package se.vgregion.core.domain.calendar;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class CalendarItemPeriod {
     @XmlElement
@@ -47,18 +48,22 @@ public class CalendarItemPeriod {
         return endTime;
     }
 
+    @XmlTransient
     public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
+    @XmlTransient
     public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
+    @XmlTransient
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
+    @XmlTransient
     public void setEndTime(String endTime) {
         this.endTime = endTime;
     }

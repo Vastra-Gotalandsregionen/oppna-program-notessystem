@@ -26,6 +26,8 @@ import java.util.Map;
 
 import javax.portlet.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,6 +40,7 @@ public class PortletData {
      * Resource variable for the portlet title.
      */
     public static final String JAVAX_PORTLET_TITLE = "javax.portlet.title";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PortletData.class);
 
     /**
      * Returns the id of the logged in user.
@@ -82,6 +85,7 @@ public class PortletData {
      *            the new title of the portlet
      */
     public void setPortletTitle(RenderResponse response, String title) {
+        LOGGER.debug("Sets portlet title to {}", title);
         response.setTitle(title);
     }
 }
