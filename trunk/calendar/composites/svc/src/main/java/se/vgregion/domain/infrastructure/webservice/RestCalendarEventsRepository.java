@@ -45,6 +45,7 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestCalendarEventsRepository.class);
     private String serviceUrl;
     private RestOperations restTemplate;
+    private String serviceEndpoint;
 
     /**
      * Constructs a RestCalendarEventsRepository for a restfull reqest to the specified service endpoint.
@@ -55,9 +56,13 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
      *            the service endpoint
      */
     @Autowired
-    public RestCalendarEventsRepository(RestOperations restTemplate, String serviceEndpoint) {
+    public RestCalendarEventsRepository(RestOperations restTemplate) {
         this.restTemplate = restTemplate;
-        this.serviceUrl = serviceEndpoint + "userid={userid}&year={year}&month={month}&day={day}&period={period}";
+    }
+
+    public void setServiceEndpoint(String serviceEndpoint) {
+        this.serviceEndpoint = serviceEndpoint;
+        this.serviceUrl = serviceEndpoint + serviceEndpoint;
     }
 
     /*

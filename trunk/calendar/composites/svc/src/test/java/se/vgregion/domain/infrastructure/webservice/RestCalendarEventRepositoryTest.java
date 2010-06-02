@@ -57,8 +57,8 @@ public class RestCalendarEventRepositoryTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        repo = new RestCalendarEventsRepository(restTemplate,
-                "http://aida.vgregion.se/calendar.nsf/getinfo?openagent&");
+        repo = new RestCalendarEventsRepository(restTemplate);
+        repo.setServiceEndpoint("http://aida.vgregion.se/calendar.nsf/getinfo?openagent&");
     }
 
     @SuppressWarnings("unchecked")
