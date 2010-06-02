@@ -62,7 +62,7 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
 
     public void setServiceEndpoint(String serviceEndpoint) {
         this.serviceEndpoint = serviceEndpoint;
-        this.serviceUrl = serviceEndpoint + serviceEndpoint;
+        this.serviceUrl = serviceEndpoint + "userid={userid}&year={year}&month={month}&day={day}&period={period}";
     }
 
     /*
