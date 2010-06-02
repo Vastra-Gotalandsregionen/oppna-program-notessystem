@@ -17,13 +17,17 @@
 
   <context:annotation-config />
   <context:component-scan base-package="se.vgregion.core.domain.infrastructure.webservice se.vgregion.services" />
-  <import resource="classpath:typesContext.xml"/>
-  
+  <import resource="classpath:typesContext.xml" />
+
   <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
+
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:security.properties" />
+  </bean>
 
   <bean id="calendarEventsRepository" class="se.vgregion.domain.infrastructure.webservice.RestCalendarEventsRepository">
     <constructor-arg name="restTemplate" ref="restTemplate" />
-    <property name="serviceEndpoint" value="http://aida.vgregion.se/calendar.nsf/getinfo?openagent&amp;"/>
+    <property name="serviceEndpoint" value="${service.endpoint}" />
   </bean>
 
 </beans>
