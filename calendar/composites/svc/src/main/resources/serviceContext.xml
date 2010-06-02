@@ -21,13 +21,9 @@
   
   <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
 
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="classpath:calendarService.properties" />
-  </bean>
-
   <bean id="calendarEventsRepository" class="se.vgregion.domain.infrastructure.webservice.RestCalendarEventsRepository">
     <constructor-arg name="restTemplate" ref="restTemplate" />
-    <constructor-arg name="serviceEndpoint" value="${service.endpoint}" />
+    <property name="serviceEndpoint" value="http://aida.vgregion.se/calendar.nsf/getinfo?openagent&amp;"/>
   </bean>
 
 </beans>
