@@ -76,6 +76,7 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
     public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = CalendarEvents.EMPTY_CALENDAR_EVENTS;
         try {
+            System.out.println("ZSFSDF: " + serviceUrl);
             LOGGER.debug("Calling the following web service: {}", serviceUrl);
             LOGGER.debug("Paramters sent to web service: userid={}, year={}, month={}, day={}, period={}",
                     new Object[] { userId, period.getStartDate().getYear(),
