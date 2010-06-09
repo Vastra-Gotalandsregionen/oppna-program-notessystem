@@ -12,4 +12,4 @@ Portleten är utformad enligt [http://jcp.org/en/jsr/detail?id=286 JSR 286] med 
 
 Konvertering från xml till java objekt (aka. unmarshalling eller deserialization) görs mha [http://java.sun.com/developer/technicalArticles/WebServices/jaxb/ JAXB].
 
-Information om vart webservicen förväntas f.n ligga i security.properties som inte är incheckad i svn utan måste läggas in manuellt innan systemt byggs. Exempel på hur filen skall se ut hittas [http://code.google.com/p/oppna-program-notessystem/source/browse/trunk/calendar/modules/portlet/src/main/resources/security.properties.template security.properties.template].
+Information om vart webservicen förväntas ligga hittas f.n. i security.properties som inte är incheckad i svn utan måste läggas in manuellt innan systemt byggs. Exempel på hur filen skall se ut hittas [http://code.google.com/p/oppna-program-notessystem/source/browse/trunk/calendar/modules/portlet/src/main/resources/security.properties.template security.properties.template].
