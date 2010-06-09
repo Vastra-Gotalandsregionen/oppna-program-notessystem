@@ -4,7 +4,8 @@
 
 Notessystem är ansats till att samla portletar som integrerar mot Lotus Notes under ett "tak".
 
-I dagsläget finns endast en portlet som integrerar mot Noteskalendern vi ett REST-gränssnitt. I portleten visas de kommande sju dagarnas aktiviteter. Det finns även möjlighet att hoppa fram och tillbaka i tiden för att se framtida händelser och historik.
+I dagsläget finns det en portlet som integrerar mot notes via en REST-full webservice som konsoliderar infromation från både Noteskalendern och Regionkalendern. I portleten visas de kommande sju dagarnas aktiviteter från dessa kalendrar. Det finns även möjlighet att hoppa fram och tillbaka i tiden för att se framtida händelser och historik.
+
 
 = Teknik =
 
