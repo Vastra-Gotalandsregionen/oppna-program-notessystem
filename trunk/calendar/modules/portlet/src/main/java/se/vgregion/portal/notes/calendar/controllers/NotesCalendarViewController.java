@@ -19,13 +19,6 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.portlet.PortletConfig;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -39,11 +32,16 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.context.PortletConfigAware;
-
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarItem;
 import se.vgregion.services.calendar.CalendarService;
+
+import javax.portlet.PortletConfig;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @SessionAttributes("displayPeriod")
@@ -54,6 +52,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
      * The name of the view page to dispatch to on a render request.
      */
     public static final String VIEW = "view";
+    public static final String NO_CALENDAR_VIEW = "no_calendar_view";
     private static final Logger LOGGER = LoggerFactory.getLogger(NotesCalendarViewController.class);
     private CalendarService calendarService;
     private PortletConfig portletConfig = null;
@@ -61,9 +60,8 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     /**
      * Constructs a NotesCalendarViewController.
-     * 
-     * @param calendarService
-     *            a calendarService
+     *
+     * @param calendarService a calendarService
      */
     @Autowired
     public NotesCalendarViewController(CalendarService calendarService) {
@@ -81,13 +79,10 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     /**
      * Displays the calendar events for the logged in user.
-     * 
-     * @param model
-     *            the model
-     * @param request
-     *            the portletRequest
-     * @param response
-     *            the portletResponse
+     *
+     * @param model    the model
+     * @param request  the portletRequest
+     * @param response the portletResponse
      * @return the view to display
      */
     @RenderMapping
@@ -101,12 +96,17 @@ public class NotesCalendarViewController implements PortletConfigAware {
             displayPeriod = new CalendarEventsPeriod(new DateTime(), CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
             model.put("displayPeriod", displayPeriod);
         }
-        events = calendarService.getCalendarEvents(userId, displayPeriod);
-        List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
-        portletData.setPortletTitle(response, title + " "
-                + getFormatedDateIntervalToTitle(displayPeriod, response.getLocale()));
-        model.put("calendarItems", calendarItems);
-        return VIEW;
+        try {
+            events = calendarService.getCalendarEvents(userId, displayPeriod);
+            List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
+            portletData.setPortletTitle(response, title + " "
+                    + getFormatedDateIntervalToTitle(displayPeriod, response.getLocale()));
+            model.put("calendarItems", calendarItems);
+
+            return VIEW;
+        } catch (Exception ex) {
+            return NO_CALENDAR_VIEW;
+        }
     }
 
     private String getFormatedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
@@ -122,9 +122,8 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     /**
      * Action method to step one period ahead.
-     * 
-     * @param model
-     *            the model
+     *
+     * @param model the model
      */
     @ActionMapping(params = "navigate=next")
     public void nextWeek(ModelMap model) {
@@ -136,9 +135,8 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     /**
      * Action method to step one period back.
-     * 
-     * @param model
-     *            the model
+     *
+     * @param model the model
      */
     @ActionMapping(params = "navigate=previous")
     public void previousWeek(ModelMap model) {
