@@ -18,33 +18,30 @@
  */
 
 /**
- * 
+ *
  */
 package se.vgregion.core.domain.calendar.adapters;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import se.vgregion.core.domain.calendar.CalendarItemPeriod;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Adapter used by Jaxb when unmarshalling the calendar web service content. It handles the conversion of the
  * content in the period-tag and a Joda time {@link org.joda.time.Interval}.
- * 
+ *
  * @author Anders Asplund - Callista Enterprise
  * @see org.joda.time.Interval
- * 
  */
 public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
 
@@ -52,13 +49,11 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
 
     /**
      * The adpater only supports unmarshalling for now.
-     * 
-     * @param interval
-     *            the interval that should be converted to a {@link CalendarItemPeriod}
-     * @throws UnsupportedOperationException
-     *             The adpater only supports unmarshalling for now.
-     * @author Anders Asplund - Callista Enterprise
+     *
+     * @param interval the interval that should be converted to a {@link CalendarItemPeriod}
      * @return {@link CalendarItemPeriod}
+     * @throws UnsupportedOperationException The adpater only supports unmarshalling for now.
+     * @author Anders Asplund - Callista Enterprise
      */
     @Override
     public CalendarItemPeriod marshal(Interval interval) {
@@ -70,18 +65,16 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
      * 
      * @see javax.xml.bind.annotation.adapters.XmlAdapter#unmarshal(java.lang.Object)
      */
+
     /**
      * Jaxb uses this method to converts the period tag from the web service response to a Joda time
      * {@link org.joda.time.Interval}.
-     * 
-     * @param period
-     *            the {@link CalendarItemPeriod} that should be converted to an Interval.
-     * @throws VgrCalendarWebServiceException
-     *             if the web service response contains a valid start or end date.
-     * @throws ParseException
-     *             if unable to parse the date periods in the web service response.
-     * @author Anders Asplund - Callista Enterprise
+     *
+     * @param period the {@link CalendarItemPeriod} that should be converted to an Interval.
      * @return {@link Interval}
+     * @throws VgrCalendarWebServiceException if the web service response contains a valid start or end date.
+     * @throws ParseException                 if unable to parse the date periods in the web service response.
+     * @author Anders Asplund - Callista Enterprise
      */
     @Override
     public Interval unmarshal(CalendarItemPeriod period) throws VgrCalendarWebServiceException, ParseException {
@@ -98,14 +91,35 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
     }
 
     private Long parseStringDate(String dateStr, String timeStr) throws ParseException {
-        StringBuilder formatString = new StringBuilder("yyyy-MM-ddHH:mm:ss");
-        Calendar calendar = Calendar.getInstance(new Locale("sv", "SE"));
-        SimpleDateFormat sdf = new SimpleDateFormat(formatString.toString());
-        if (StringUtils.isBlank(timeStr)) {
-            timeStr = "00:00:00";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-ddHH:mm:ssZ");
+            if (StringUtils.isBlank(timeStr)) {
+                timeStr = "00:00:00";
+            }
+            timeStr = checkTimeZoneFormat(timeStr);
+            Date date = sdf.parse(dateStr + timeStr);
+            return date.getTime();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Date date = sdf.parse(dateStr + timeStr);
-        calendar.setTime(date);
-        return date.getTime() + calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET);
+
+    }
+
+    private String checkTimeZoneFormat(String timeStr) {
+        if (timeStr.length() == 14) {
+            String[] timeParts = timeStr.split(":");
+            String tmpTimeStr = "";
+            for (int i = 0; i < timeParts.length; i++) {
+                if (i == 2 || i == timeParts.length - 1) {
+                    tmpTimeStr += timeParts[i];
+                } else {
+                    tmpTimeStr += timeParts[i] + ":";
+                }
+            }
+            timeStr = tmpTimeStr;
+        } else if (timeStr.length() == 8) {
+            timeStr += "-0100";
+        }
+        return timeStr;
     }
 }
