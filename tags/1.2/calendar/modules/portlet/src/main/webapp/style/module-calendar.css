@@ -1,0 +1,52 @@
+/**
+ * Copyright 2010 Västra Götalandsregionen
+ *
+ *   This library is free software; you can redistribute it and/or modify
+ *   it under the terms of version 2.1 of the GNU Lesser General Public
+ *   License as published by the Free Software Foundation.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this library; if not, write to the
+ *   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ *   Boston, MA 02111-1307  USA
+ *
+ */
+
+@CHARSET "UTF-8";
+/*
+Calendar list - used in mini calendar portlet
+*/
+#module-calendar h3 strong {
+  color: #000;
+}
+
+#module-calendar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#module-calendar ul li {
+  list-style: none;
+}
+
+#module-calendar div div ul li {
+  padding: 2px 6px 2px 20px;
+}
+
+li.cal-private {
+  background: #edffed url("/vgr-calendar-portlet/images/date.png") no-repeat 1px 50%;
+}
+
+li.cal-work {
+  background: #ffefef url("/vgr-calendar-portlet/images/date.png") no-repeat 1px 50%;
+}
+
+#module-calendar h2 a {
+  background: url("/vgr-calendar-portlet/images/date.png") no-repeat 0 50%;
+}
