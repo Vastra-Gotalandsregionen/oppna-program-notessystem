@@ -26,6 +26,8 @@
 <liferay-portlet-app>
   <portlet>
     <portlet-name>NotesCalendar</portlet-name>
+    <render-weight>0</render-weight>
+    <ajaxable>true</ajaxable>
   </portlet>
 </liferay-portlet-app>
 
