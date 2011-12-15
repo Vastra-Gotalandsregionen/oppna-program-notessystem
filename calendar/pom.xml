@@ -11,12 +11,12 @@ Generation time : 2010-05-11 14:04:57 CEST
   <parent>
     <groupId>se.vgregion.oppna-program-notessystem</groupId>
     <artifactId>oppna-program-notessystem-system</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.2</version>
   </parent>
   <groupId>se.vgregion.oppna-program-notessystem</groupId>
   <artifactId>oppna-program-notessystem-calendar</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>1.2</version>
   <name>${project.artifactId}</name>
 
   <modules>
