@@ -40,13 +40,13 @@ Calendar list - used in mini calendar portlet
 }
 
 li.cal-private {
-  background: #edffed url(/vgr-theme/i/icons/date.png) no-repeat 1px 50%;
+  background: #edffed url("/vgr-calendar-portlet/images/date.png") no-repeat 1px 50%;
 }
 
 li.cal-work {
-  background: #ffefef url(/vgr-theme/i/icons/date.png) no-repeat 1px 50%;
+  background: #ffefef url("/vgr-calendar-portlet/images/date.png") no-repeat 1px 50%;
 }
 
 #module-calendar h2 a {
-  background: url(/vgr-theme/i/icons/date.png) no-repeat 0 50%;
+  background: url("/vgr-calendar-portlet/images/date.png") no-repeat 0 50%;
 }
