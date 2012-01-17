@@ -43,10 +43,6 @@ Generation time : 2010-05-11 14:04:57 CEST
       <artifactId>portlet-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.sun.portal</groupId>
-      <artifactId>portlet-container</artifactId>
-    </dependency>
-    <dependency>
       <groupId>se.vgregion.javg</groupId>
       <artifactId>javg-rt-support</artifactId>
       <version>${javg.version}</version>
