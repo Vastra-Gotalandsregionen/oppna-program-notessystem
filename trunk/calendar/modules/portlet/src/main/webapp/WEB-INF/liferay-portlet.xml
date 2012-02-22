@@ -28,6 +28,7 @@
     <portlet-name>NotesCalendar</portlet-name>
     <render-weight>0</render-weight>
     <ajaxable>true</ajaxable>
+    <header-portlet-javascript>/script/vgr-calendar-portlet.js</header-portlet-javascript>
   </portlet>
 </liferay-portlet-app>
 
