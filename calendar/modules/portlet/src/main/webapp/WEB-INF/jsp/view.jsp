@@ -27,15 +27,31 @@ Copyright 2010 Västra Götalandsregionen
 	<portlet:param name="navigate" value="previous"/>
 </portlet:actionURL>
 
-<div class="calendar-wrap">
+<div id="<portlet:namespace />calendarWrap" class="calendar-wrap">
 
 	<c:forEach items="${calendarItems}" var="eventDay">
-		<h4>${eventDay[0].dayOfWeek}<span class="date"> &ndash; ${eventDay[0].dayOfMonth} ${eventDay[0].monthOfYear}</span></h4>
-	  	<ul class="clearfix">
-			<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
-	    		<li class="cal-private">${event.startTime}&ndash;${event.endTime} ${event.title}<span class="calendar-type">${event.calendarType}</span></li>
-			</c:forEach>
-	  	</ul>
+		<div class="cal-day-wrap">
+			<h4 class="cal-date">${eventDay[0].dayOfWeek}<span class="date"> - ${eventDay[0].dayOfMonth} ${eventDay[0].monthOfYear}</span></h4>
+		  	<ul class="cal-item-list clearfix">
+				<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
+		    		<li class="cal-item">
+		    			<span class="cal-item-time">${event.startTime}-${event.endTime}</span>
+		    			<span class="cal-item-type">${event.calendarType}</span>
+						<span class="cal-item-title">${event.title}</span>
+	    			</li>
+				</c:forEach>
+		  	</ul>
+	  	</div>
 	</c:forEach>
-	<p class="pager"><a class="prev" href="${previous}">Föregående</a> <a class="next" href="${next}">Nästa</a></p>
+	<div class="pager clearfix"><a class="prev" href="${previous}">Föregående</a> <a class="next" href="${next}">Nästa</a></div>
 </div>
+
+<script type="text/javascript">
+
+	AUI().ready('vgr-calendar-portlet', function(A) {
+		var vgrCalendarPortlet = new A.VgrCalendarPortlet({
+			calendarWrapNode: '#<portlet:namespace />calendarWrap'
+		}).render();			
+	});
+
+</script>
