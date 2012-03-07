@@ -11,7 +11,7 @@ Generation time : 2010-05-11 14:04:57 CEST
   <parent>
     <groupId>se.vgregion.oppna-program-notessystem</groupId>
     <artifactId>oppna-program-notessystem-calendar</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4</version>
   </parent>
   <groupId>se.vgregion.oppna-program-notessystem</groupId>
   <artifactId>oppna-program-notessystem-calendar-module-portlet</artifactId>
