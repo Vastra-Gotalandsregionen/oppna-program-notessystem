@@ -12,6 +12,7 @@ Generation time : 2010-05-11 14:04:57 CEST
     <groupId>se.vgregion.oppna-program-notessystem</groupId>
     <artifactId>oppna-program-notessystem-calendar</artifactId>
     <version>1.5-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>se.vgregion.oppna-program-notessystem</groupId>
   <artifactId>oppna-program-notessystem-calendar-module-portlet</artifactId>
@@ -41,6 +42,10 @@ Generation time : 2010-05-11 14:04:57 CEST
     <dependency>
       <groupId>javax.portlet</groupId>
       <artifactId>portlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.liferay.portal</groupId>
+      <artifactId>util-taglib</artifactId>
     </dependency>
     <dependency>
       <groupId>se.vgregion.javg</groupId>

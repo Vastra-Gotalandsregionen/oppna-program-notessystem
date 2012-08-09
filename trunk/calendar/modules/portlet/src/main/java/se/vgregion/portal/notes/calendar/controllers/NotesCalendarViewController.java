@@ -26,7 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
@@ -35,13 +37,15 @@ import org.springframework.web.portlet.context.PortletConfigAware;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarItem;
+import se.vgregion.portal.calendar.util.EncodingUtil;
 import se.vgregion.services.calendar.CalendarService;
+import se.vgregion.services.calendar.CalendarServiceException;
 
-import javax.portlet.PortletConfig;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-import java.util.List;
-import java.util.Locale;
+import javax.portlet.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.Future;
 
 @Controller
 @SessionAttributes("displayPeriod")
@@ -90,14 +94,44 @@ public class NotesCalendarViewController implements PortletConfigAware {
         String userId = portletData.getUserId(request);
         LOGGER.debug("Userid: {}", userId);
         String title = portletData.getPortletTitle(portletConfig, request);
-        CalendarEvents events = null;
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
         if (displayPeriod == null) {
             displayPeriod = new CalendarEventsPeriod(new DateTime(), CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
             model.put("displayPeriod", displayPeriod);
         }
         try {
-            events = calendarService.getCalendarEvents(userId, displayPeriod);
+            Map<String, Future<CalendarEvents>> futureCalendarEvents = new HashMap<String, Future<CalendarEvents>>();
+            CalendarEvents events = new CalendarEvents();
+            events.setCalendarItems(new ArrayList<CalendarItem>());
+
+            futureCalendarEvents.put("iNotes", calendarService.getFutureCalendarEvents(userId, displayPeriod));
+
+            // Get from other sources
+            Map<String, String> externalSources = getExternalSources(request.getPreferences());
+            for (Map.Entry<String, String> externalSource : externalSources.entrySet()) {
+                futureCalendarEvents.put(externalSource.getKey(), calendarService.getFutureCalendarEventsFromIcalUrl(
+                        externalSource.getValue(), displayPeriod, externalSource.getKey()));
+
+            }
+
+            List<String> failedRetrievals = new ArrayList<String>();
+            for (Map.Entry<String, Future<CalendarEvents>> futureCalendarEvent : futureCalendarEvents.entrySet()) {
+                System.out.println("isDone(): " + futureCalendarEvent.getValue().isDone());
+                try {
+                    events.getCalendarItems().addAll(futureCalendarEvent.getValue().get().getCalendarItems());
+                } catch (Exception ex) {
+                    LOGGER.warn("Failed to get a calendar for user " + userId + ".", ex);
+                    failedRetrievals.add(futureCalendarEvent.getKey());
+                }
+            }
+
+            if (failedRetrievals.size() > 0) {
+                String errorMessage = "Följande hämtningar misslyckades: " +
+                        StringUtils.arrayToCommaDelimitedString(failedRetrievals.toArray()) + ". Du kan behöva gå" +
+                        " till \"Redigera externa källor\" och se över konfigurationen.";
+                model.addAttribute("errorMessage", errorMessage);
+            }
+
             List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
             portletData.setPortletTitle(response, title + " "
                     + getFormatedDateIntervalToTitle(displayPeriod, response.getLocale()));
@@ -105,8 +139,96 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
             return VIEW;
         } catch (Exception ex) {
+            LOGGER.error(ex.getMessage(), ex);
             return NO_CALENDAR_VIEW;
         }
+    }
+
+    @RenderMapping(params = "action=editExternalSources")
+    public String editExternalSources(RenderRequest request, RenderResponse response, Model model) throws ClassNotFoundException, IOException {
+        PortletPreferences preferences = request.getPreferences();
+
+        Map<String, String> externalSources = getExternalSources(preferences);
+
+        model.addAttribute("externalSources", externalSources);
+
+        return "editExternalSources";
+    }
+
+    @RenderMapping(params = "error=true")
+    public String showErrorMessage(RenderRequest request, RenderResponse response, Model model) {
+        return "errorMessage";
+    }
+
+    private Map<String, String> decodeExternalSources(String externalSourcesEncoded) throws IOException, ClassNotFoundException {
+        Map<String, String> externalSources;
+        try {
+            externalSources = EncodingUtil.decodeExternalSources(externalSourcesEncoded);
+        } catch (RuntimeException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+            externalSources = new HashMap<String, String>();
+        }
+        return externalSources;
+    }
+
+    @ActionMapping(params = "action=editExternalSource")
+    public void editExternalSource(ActionRequest request, ActionResponse response, Model model) throws IOException, ClassNotFoundException, ReadOnlyException, ValidatorException { //todo handle better
+        String externalSourceKey = request.getParameter("externalSourceKey");
+        String externalSourceUrl = request.getParameter("externalSourceUrl");
+
+        String action = request.getParameter("submitType");
+
+        if (!"Radera".equals(action)) {
+            try {
+                calendarService.validateAsValidIcalUrl(externalSourceUrl);
+            } catch (CalendarServiceException e) {
+                LOGGER.info("The provided URL could not be parsed.", e);
+                model.addAttribute("errorMessage", "URL:en \"" + externalSourceUrl + "\" gick inte att läsa.");
+                response.setRenderParameter("action", "editExternalSources");
+                return;
+            }
+        }
+
+        PortletPreferences preferences = request.getPreferences();
+
+        Map<String, String> externalSources = getExternalSources(preferences);
+
+        if ("Uppdatera".equals(action)) {
+            String oldExternalSourceKey = request.getParameter("oldExternalSourceKey");
+            if (!externalSourceKey.equals(oldExternalSourceKey)) {
+                externalSources.remove(oldExternalSourceKey);
+            }
+            externalSources.put(externalSourceKey, externalSourceUrl);
+        } else if ("Radera".equals(action)) {
+            String oldExternalSourceKey = request.getParameter("oldExternalSourceKey");
+            externalSources.remove(oldExternalSourceKey);
+        } else {
+            // Add
+            externalSources.put(externalSourceKey, externalSourceUrl);
+        }
+
+        // Encode
+        String externalSourcesEncoded = EncodingUtil.encodeToString((Serializable) externalSources);
+
+        preferences.setValue("externalSourcesEncoded", externalSourcesEncoded);
+
+        preferences.store();
+
+        response.setRenderParameter("action", "editExternalSources");
+
+    }
+
+    private Map<String, String> getExternalSources(PortletPreferences preferences) throws IOException, ClassNotFoundException {
+        String externalSourcesEncoded = preferences.getValue("externalSourcesEncoded", null);
+
+        Map<String, String> externalSources;
+        if (externalSourcesEncoded != null) {
+            // Decode
+            externalSources = decodeExternalSources(externalSourcesEncoded);
+        } else {
+            externalSources = new HashMap<String, String>();
+        }
+        return externalSources;
     }
 
     private String getFormatedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {

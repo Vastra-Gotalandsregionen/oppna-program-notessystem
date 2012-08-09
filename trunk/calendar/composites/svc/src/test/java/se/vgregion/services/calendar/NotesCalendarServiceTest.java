@@ -24,7 +24,6 @@ package se.vgregion.services.calendar;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class NotesCalendarServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        notesCalendarService = new CalendarServiceImp(calendarEventRepository);
+        notesCalendarService = new CalendarServiceImpl(calendarEventRepository);
     }
 
     @Test
