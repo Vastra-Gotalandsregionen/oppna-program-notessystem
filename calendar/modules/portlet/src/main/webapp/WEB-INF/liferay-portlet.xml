@@ -26,6 +26,8 @@
 <liferay-portlet-app>
   <portlet>
     <portlet-name>NotesCalendar</portlet-name>
+    <preferences-owned-by-group>false</preferences-owned-by-group>
+    <action-url-redirect>true</action-url-redirect>
     <render-weight>0</render-weight>
     <ajaxable>true</ajaxable>
     <header-portlet-javascript>/script/vgr-calendar-portlet.js</header-portlet-javascript>

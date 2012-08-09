@@ -1,4 +1,5 @@
 <%@ taglib prefix="portlet" uri="http://java.sun.com/portlet" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
 
     Copyright 2010 Västra Götalandsregionen
@@ -31,4 +32,6 @@
     <a href="${editExternalSources}">Redigera externa källor</a>
 </p>
 
-<p>Det finns ingen tillg&auml;nglig kalender.</p>
+<c:if test="${not empty errorMessage}">
+    <span class="portlet-msg-error">${errorMessage}</span>
+</c:if>

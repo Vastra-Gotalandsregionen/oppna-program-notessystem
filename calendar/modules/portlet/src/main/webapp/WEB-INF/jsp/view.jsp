@@ -18,7 +18,7 @@ Copyright 2010 Västra Götalandsregionen
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet_2_0"%>
+<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
 
 <portlet:actionURL escapeXml="false" var="next">
 	<portlet:param name="navigate" value="next"/>
@@ -26,8 +26,17 @@ Copyright 2010 Västra Götalandsregionen
 <portlet:actionURL escapeXml="false" var="previous">
 	<portlet:param name="navigate" value="previous"/>
 </portlet:actionURL>
+<portlet:renderURL var="editExternalSources">
+    <portlet:param name="action" value="editExternalSources"/>
+</portlet:renderURL>
 
 <div id="<portlet:namespace />calendarWrap" class="calendar-wrap">
+
+    <c:if test="${not empty errorMessage}">
+        <span class="portlet-msg-error">${errorMessage}</span>
+    </c:if>
+
+    <a href="${editExternalSources}">Redigera externa källor</a>
 
 	<c:forEach items="${calendarItems}" var="eventDay">
 		<div class="cal-day-wrap">
@@ -35,7 +44,28 @@ Copyright 2010 Västra Götalandsregionen
 		  	<ul class="cal-item-list clearfix">
 				<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
 		    		<li class="cal-item">
-		    			<span class="cal-item-time">${event.startTime}-${event.endTime}</span>
+                        <c:choose>
+                            <c:when test="${event.wholeDays}">
+                                <span class="cal-item-time">
+                                    <c:choose>
+                                        <c:when test="${event.interval.endMillis - event.interval.startMillis >= 1000 * 60 * 60 * 24}">
+                                            Heldagar t.o.m. ${event.endDayOfWeek} ${event.endDayOfMonth}/${event.endMonthOfYearAsNumber}
+                                        </c:when>
+                                        <c:otherwise>
+                                            Heldag
+                                        </c:otherwise>
+                                    </c:choose>
+                                </span>
+                            </c:when>
+                            <c:otherwise>
+                                <span class="cal-item-time">
+                                    ${event.startTime}-${event.endTime}
+                                    <c:if test="${event.interval.endMillis - event.interval.startMillis >= 1000 * 60 * 60 * 24}">
+                                        ${event.endDayOfWeek} ${event.endDayOfMonth}/${event.endMonthOfYearAsNumber}
+                                    </c:if>
+                                </span>
+                            </c:otherwise>
+                        </c:choose>
 		    			<span class="cal-item-type">${event.calendarType}</span>
 						<span class="cal-item-title">${event.title}</span>
 	    			</li>

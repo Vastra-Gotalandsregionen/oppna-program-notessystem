@@ -25,6 +25,8 @@ package se.vgregion.services.calendar;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 
+import java.util.concurrent.Future;
+
 /**
  * @author Anders Asplund - Callista Enterprise
  * 
@@ -41,4 +43,11 @@ public interface CalendarService {
      */
     CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period);
 
+    Future<CalendarEvents> getFutureCalendarEvents(String userId, CalendarEventsPeriod period);
+
+    CalendarEvents getCalendarEventsFromIcalUrl(String url, CalendarEventsPeriod period, String type) throws CalendarServiceException;
+
+    Future<CalendarEvents> getFutureCalendarEventsFromIcalUrl(String url, CalendarEventsPeriod period, String type) throws CalendarServiceException;
+
+    void validateAsValidIcalUrl(String iCalUrl) throws CalendarServiceException;
 }

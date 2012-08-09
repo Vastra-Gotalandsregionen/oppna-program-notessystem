@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 import java.util.List;
 
 import javax.portlet.PortletConfig;
+import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -36,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.ui.ModelMap;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
@@ -71,6 +73,8 @@ public class NotesCalendarViewControllerTest {
         MockitoAnnotations.initMocks(this);
         notesCalendarViewController = new NotesCalendarViewController(calendarService);
         notesCalendarViewController.setPortletData(portletData);
+        PortletPreferences portletPreferences = mock(PortletPreferences.class);
+        given(renderRequest.getPreferences()).willReturn(portletPreferences);
     }
 
     @Test
@@ -97,9 +101,11 @@ public class NotesCalendarViewControllerTest {
         given(portletData.getPortletTitle(any(PortletConfig.class), any(RenderRequest.class))).willReturn("");
         given(portletData.getUserId(any(RenderRequest.class))).willReturn("");
         given(model.get("displayPeriod")).willReturn(displayPeriod);
-        given(calendarService.getCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
-                calendarEvents);
+        given(calendarService.getFutureCalendarEvents(anyString(), any(CalendarEventsPeriod.class))).willReturn(
+                new AsyncResult<CalendarEvents>(calendarEvents));
         given(calendarEvents.getCalendarItemsGroupedByStartDate()).willReturn(calendarItems);
+        given(calendarService.getFutureCalendarEventsFromIcalUrl(anyString(), any(CalendarEventsPeriod.class), anyString()))
+                .willReturn(new AsyncResult<CalendarEvents>(calendarEvents));
 
         // When
         notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);

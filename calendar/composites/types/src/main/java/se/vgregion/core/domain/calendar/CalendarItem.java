@@ -17,9 +17,6 @@
  *
  */
 
-/**
- * 
- */
 package se.vgregion.core.domain.calendar;
 
 import java.util.Locale;
@@ -39,7 +36,6 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
  * @author Anders Asplund - Callista Enterprise
- * 
  */
 public class CalendarItem extends AbstractValueObject<CalendarItem> implements Comparable<CalendarItem> {
 
@@ -52,6 +48,9 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
     @XmlJavaTypeAdapter(IntervalAdapter.class)
     @XmlElement(name = "period")
     private Interval interval = null;
+
+    private Boolean wholeDays = null;
+
     private static final Locale DEFAULT_LOCALE = new Locale("sv", "SE");
 
     public String getDayOfWeek() {
@@ -60,13 +59,17 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
 
     /**
      * Capitalized and localized string of the day of week.
-     * 
-     * @param locale
-     *            to use on the returned string
+     *
+     * @param locale to use on the returned string
      * @return Capitalized and localized string of the day of week
      */
     public String getDayOfWeek(Locale locale) {
         String dayOfWeek = interval.getStart().dayOfWeek().getAsText(locale);
+        return WordUtils.capitalize(dayOfWeek);
+    }
+
+    public String getEndDayOfWeek() {
+        String dayOfWeek = interval.getEnd().dayOfWeek().getAsText(DEFAULT_LOCALE);
         return WordUtils.capitalize(dayOfWeek);
     }
 
@@ -76,13 +79,17 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
 
     /**
      * Capitalized and localized string of the day of month.
-     * 
-     * @param locale
-     *            to use on the returned string
+     *
+     * @param locale to use on the returned string
      * @return Capitalized and localized string of the day of month
      */
     public String getDayOfMonth(Locale locale) {
         return interval.getStart().dayOfMonth().getAsText(locale);
+    }
+
+    public String getEndDayOfMonth() {
+        String dayOfMonth = interval.getEnd().dayOfMonth().getAsText(DEFAULT_LOCALE);
+        return WordUtils.capitalize(dayOfMonth);
     }
 
     public String getMonthOfYear() {
@@ -91,14 +98,22 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
 
     /**
      * Capitalized and localized string of the month of year.
-     * 
-     * @param locale
-     *            to use on the returned string
+     *
+     * @param locale to use on the returned string
      * @return Capitalized and localized string of the month of year
      */
     public String getMonthOfYear(Locale locale) {
         String monthOfYear = interval.getStart().monthOfYear().getAsText(locale);
         return WordUtils.capitalize(monthOfYear);
+    }
+
+    public String getEndMonthOfYear() {
+        String monthOfYear = interval.getEnd().monthOfYear().getAsText(DEFAULT_LOCALE);
+        return WordUtils.capitalize(monthOfYear);
+    }
+
+    public int getEndMonthOfYearAsNumber() {
+        return interval.getEnd().monthOfYear().get();
     }
 
     public String getStartTime() {
@@ -110,10 +125,14 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
     }
 
     public String getCalendarType() {
-        return WordUtils.capitalize(calendarType.toLowerCase());
+        if (calendarType != null) {
+            return WordUtils.capitalize(calendarType.toLowerCase());
+        }
+        return null;
     }
 
-    void setCalendarType(String calendarType) {
+    @XmlTransient
+    public void setCalendarType(String calendarType) {
         this.calendarType = calendarType;
     }
 
@@ -130,8 +149,18 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
         return interval;
     }
 
-    void setInterval(Interval interval) {
+    @XmlTransient
+    public void setInterval(Interval interval) {
         this.interval = interval;
+    }
+
+    public Boolean getWholeDays() {
+        return wholeDays;
+    }
+
+    @XmlTransient
+    public void setWholeDays(Boolean wholeDays) {
+        this.wholeDays = wholeDays;
     }
 
     @Override
