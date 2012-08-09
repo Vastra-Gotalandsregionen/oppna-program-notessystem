@@ -18,7 +18,7 @@
  */
 
 /**
- * 
+ *
  */
 package se.vgregion.domain.infrastructure.webservice;
 
@@ -36,9 +36,8 @@ import se.vgregion.core.domain.calendar.CalendarEventsRepository;
  * Implementation of {@link CalendarEventsRepository} which is used for restfull requests against service endpoint.
  * The service url is specified with the following pattern:
  * http://<host>?userid=<userid>&year=<year>&month=<month>&day=<day>&period=<period>
- * 
+ *
  * @author Anders Asplund - Callista Enterprise
- * 
  */
 public class RestCalendarEventsRepository implements CalendarEventsRepository {
 
@@ -49,17 +48,19 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
 
     /**
      * Constructs a RestCalendarEventsRepository for a restfull reqest to the specified service endpoint.
-     * 
-     * @param restTemplate
-     *            a restTemplate to use for making a request
-     * @param serviceEndpoint
-     *            the service endpoint
+     *
+     * @param restTemplate a restTemplate to use for making a request
      */
     @Autowired
     public RestCalendarEventsRepository(RestOperations restTemplate) {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Sets the service endpoint.
+     *
+     * @param serviceEndpoint the service endpoint
+     */
     public void setServiceEndpoint(String serviceEndpoint) {
         this.serviceEndpoint = serviceEndpoint;
         this.serviceUrl = serviceEndpoint + "userid={userid}&year={year}&month={month}&day={day}&period={period}";
@@ -76,18 +77,17 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
     public CalendarEvents findCalendarEventsByCalendarPeriod(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = CalendarEvents.EMPTY_CALENDAR_EVENTS;
         try {
-            System.out.println("ZSFSDF: " + serviceUrl);
             LOGGER.debug("Calling the following web service: {}", serviceUrl);
             LOGGER.debug("Paramters sent to web service: userid={}, year={}, month={}, day={}, period={}",
-                    new Object[] { userId, period.getStartDate().getYear(),
+                    new Object[]{userId, period.getStartDate().getYear(),
                             period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
-                            period.getDays().getDays() });
+                            period.getDays().getDays()});
             events = restTemplate.getForObject(serviceUrl, CalendarEvents.class, userId, period.getStartDate()
                     .getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
                     period.getDays().getDays());
         } catch (RestClientException e) {
             LOGGER.error("Unable to retreive information from web service: {}. CalendarEventPeriod={}",
-                    new Object[] { serviceUrl, period });
+                    new Object[]{serviceUrl, period});
             LOGGER.error("Web service exception", e);
         }
         return events;

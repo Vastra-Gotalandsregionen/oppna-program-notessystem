@@ -35,6 +35,8 @@ import se.vgregion.core.domain.calendar.adapters.IntervalAdapter;
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
+ * Class representing a calendar item like e.g. a meeting event.
+ *
  * @author Anders Asplund - Callista Enterprise
  */
 public class CalendarItem extends AbstractValueObject<CalendarItem> implements Comparable<CalendarItem> {
@@ -68,11 +70,21 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
         return WordUtils.capitalize(dayOfWeek);
     }
 
+    /**
+     * Capitalized string of the end day of week with sv_SE locale.
+     *
+     * @return Capitalized string of the day of week
+     */
     public String getEndDayOfWeek() {
         String dayOfWeek = interval.getEnd().dayOfWeek().getAsText(DEFAULT_LOCALE);
         return WordUtils.capitalize(dayOfWeek);
     }
 
+    /**
+     * Capitalized string of the day of month with sv_SE locale.
+     *
+     * @return Capitalized and localized string of the day of month
+     */
     public String getDayOfMonth() {
         return getDayOfMonth(DEFAULT_LOCALE);
     }
@@ -87,11 +99,21 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
         return interval.getStart().dayOfMonth().getAsText(locale);
     }
 
+    /**
+     * Capitalized and localized string of the day of month with sv_SE locale.
+     *
+     * @return Capitalized and localized string of the day of month
+     */
     public String getEndDayOfMonth() {
         String dayOfMonth = interval.getEnd().dayOfMonth().getAsText(DEFAULT_LOCALE);
         return WordUtils.capitalize(dayOfMonth);
     }
 
+    /**
+     * Capitalized string of the month of year with sv_SE locale.
+     *
+     * @return Capitalized and localized string of the month of year
+     */
     public String getMonthOfYear() {
         return getMonthOfYear(DEFAULT_LOCALE);
     }
@@ -107,6 +129,11 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
         return WordUtils.capitalize(monthOfYear);
     }
 
+    /**
+     * Capitalized string of the end month of year with sv_SE locale.
+     *
+     * @return Capitalized and localized string of the month of year
+     */
     public String getEndMonthOfYear() {
         String monthOfYear = interval.getEnd().monthOfYear().getAsText(DEFAULT_LOCALE);
         return WordUtils.capitalize(monthOfYear);
@@ -124,6 +151,11 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
         return DateTimeFormat.forPattern("HH.mm").print(interval.getEnd());
     }
 
+    /**
+     * Get the type of the calendar item.
+     *
+     * @return the type of the calendar item
+     */
     public String getCalendarType() {
         if (calendarType != null) {
             return WordUtils.capitalize(calendarType.toLowerCase());

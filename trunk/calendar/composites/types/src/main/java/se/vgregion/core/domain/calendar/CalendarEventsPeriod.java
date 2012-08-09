@@ -26,6 +26,8 @@ import org.joda.time.Days;
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
 /**
+ * Class representing a period of days.
+ *
  * @author Anders Asplund - Callista Enterprise
  * 
  */
