@@ -32,9 +32,7 @@ import se.vgregion.core.domain.calendar.CalendarItemPeriod;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Adapter used by Jaxb when unmarshalling the calendar web service content. It handles the conversion of the
@@ -106,7 +104,8 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
     }
 
     private String checkTimeZoneFormat(String timeStr) {
-        if (timeStr.length() == 14) {
+        final int fourteen = 14;
+        if (timeStr.length() == fourteen) {
             String[] timeParts = timeStr.split(":");
             String tmpTimeStr = "";
             for (int i = 0; i < timeParts.length; i++) {
@@ -117,8 +116,11 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
                 }
             }
             timeStr = tmpTimeStr;
-        } else if (timeStr.length() == 8) {
-            timeStr += "-0100";
+        } else {
+            final int eight = 8;
+            if (timeStr.length() == eight) {
+                timeStr += "-0100";
+            }
         }
         return timeStr;
     }

@@ -28,7 +28,11 @@
     <portlet:param name="action" value="editExternalSources"/>
 </portlet:renderURL>
 
+<portlet:renderURL var="viewCalendars">
+</portlet:renderURL>
+
 <p>
+    <a href="${viewCalendars}" style="margin-right: 20px">Tillbaka till kalender</a>
     <a href="${editExternalSources}">Redigera externa källor</a>
 </p>
 

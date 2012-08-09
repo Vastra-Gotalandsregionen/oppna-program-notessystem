@@ -1,7 +1,10 @@
 package se.vgregion.portal.calendar.util;
 
 import org.junit.Test;
-import se.vgregion.core.domain.calendar.ExternalSource;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,16 +15,17 @@ public class EncodingUtilTest {
 
     @Test
     public void testEncodeAndDecode() throws Exception {
-        ExternalSource source = new ExternalSource("key", "url");
+        Map<String, String> map = new HashMap<String, String>();
 
-        String s = EncodingUtil.encodeToString(source);
+        map.put("key", "url");
+
+        String s = EncodingUtil.encodeToString((Serializable) map);
 
         System.out.println("Encoded: " + s);
 
-        ExternalSource e = EncodingUtil.decodeExternalSources(s);
+        Map<String, String> e = EncodingUtil.decodeToObject(s);
 
-        assertEquals(source, e);
-
+        assertEquals(map, e);
     }
 
 }

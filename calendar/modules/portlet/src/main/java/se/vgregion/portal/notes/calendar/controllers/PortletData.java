@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
+ * Helper class for performing things related to the portlet specification.
+ *
  * @author Anders Asplund - Callista Enterprise
  * 
  */

@@ -29,8 +29,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.context.PortletConfigAware;
@@ -101,22 +103,24 @@ public class NotesCalendarViewController implements PortletConfigAware {
         }
         try {
             Map<String, Future<CalendarEvents>> futureCalendarEvents = new HashMap<String, Future<CalendarEvents>>();
+
+            // Initialize CalendarEvents
             CalendarEvents events = new CalendarEvents();
             events.setCalendarItems(new ArrayList<CalendarItem>());
 
+            // Retrieve asynchronously
             futureCalendarEvents.put("iNotes", calendarService.getFutureCalendarEvents(userId, displayPeriod));
 
-            // Get from other sources
+            // Get from other sources, asynchronously.
             Map<String, String> externalSources = getExternalSources(request.getPreferences());
             for (Map.Entry<String, String> externalSource : externalSources.entrySet()) {
                 futureCalendarEvents.put(externalSource.getKey(), calendarService.getFutureCalendarEventsFromIcalUrl(
                         externalSource.getValue(), displayPeriod, externalSource.getKey()));
-
             }
 
+            // Now that we have a list of Future objects which all are processed concurrently we start to "get()" them.
             List<String> failedRetrievals = new ArrayList<String>();
             for (Map.Entry<String, Future<CalendarEvents>> futureCalendarEvent : futureCalendarEvents.entrySet()) {
-                System.out.println("isDone(): " + futureCalendarEvent.getValue().isDone());
                 try {
                     events.getCalendarItems().addAll(futureCalendarEvent.getValue().get().getCalendarItems());
                 } catch (Exception ex) {
@@ -126,15 +130,15 @@ public class NotesCalendarViewController implements PortletConfigAware {
             }
 
             if (failedRetrievals.size() > 0) {
-                String errorMessage = "Följande hämtningar misslyckades: " +
-                        StringUtils.arrayToCommaDelimitedString(failedRetrievals.toArray()) + ". Du kan behöva gå" +
-                        " till \"Redigera externa källor\" och se över konfigurationen.";
+                String errorMessage = "Följande hämtningar misslyckades: "
+                        + StringUtils.arrayToCommaDelimitedString(failedRetrievals.toArray()) + ". Du kan behöva gå"
+                        + " till \"Redigera externa källor\" och se över konfigurationen.";
                 model.addAttribute("errorMessage", errorMessage);
             }
 
             List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
             portletData.setPortletTitle(response, title + " "
-                    + getFormatedDateIntervalToTitle(displayPeriod, response.getLocale()));
+                    + getFormattedDateIntervalToTitle(displayPeriod, response.getLocale()));
             model.put("calendarItems", calendarItems);
 
             return VIEW;
@@ -144,8 +148,19 @@ public class NotesCalendarViewController implements PortletConfigAware {
         }
     }
 
+    /**
+     * Displays the editExternalSources view.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param model    the model
+     * @return the view to display
+     * @throws ClassNotFoundException ClassNotFoundException
+     * @throws IOException            IOException
+     */
     @RenderMapping(params = "action=editExternalSources")
-    public String editExternalSources(RenderRequest request, RenderResponse response, Model model) throws ClassNotFoundException, IOException {
+    public String editExternalSources(RenderRequest request, RenderResponse response, Model model)
+            throws ClassNotFoundException, IOException {
         PortletPreferences preferences = request.getPreferences();
 
         Map<String, String> externalSources = getExternalSources(preferences);
@@ -155,15 +170,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
         return "editExternalSources";
     }
 
-    @RenderMapping(params = "error=true")
-    public String showErrorMessage(RenderRequest request, RenderResponse response, Model model) {
-        return "errorMessage";
-    }
-
-    private Map<String, String> decodeExternalSources(String externalSourcesEncoded) throws IOException, ClassNotFoundException {
+    private Map<String, String> decodeExternalSources(String externalSourcesEncoded)
+            throws IOException, ClassNotFoundException {
         Map<String, String> externalSources;
         try {
-            externalSources = EncodingUtil.decodeExternalSources(externalSourcesEncoded);
+            externalSources = EncodingUtil.decodeToObject(externalSourcesEncoded);
         } catch (RuntimeException ex) {
             LOGGER.error(ex.getMessage(), ex);
             externalSources = new HashMap<String, String>();
@@ -171,8 +182,20 @@ public class NotesCalendarViewController implements PortletConfigAware {
         return externalSources;
     }
 
+    /**
+     * Action to either add, update or remove an external calendar source.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param model    the model
+     * @throws IOException            IOException
+     * @throws ClassNotFoundException ClassNotFoundException
+     * @throws ReadOnlyException      ReadOnlyException
+     * @throws ValidatorException     ValidatorException
+     */
     @ActionMapping(params = "action=editExternalSource")
-    public void editExternalSource(ActionRequest request, ActionResponse response, Model model) throws IOException, ClassNotFoundException, ReadOnlyException, ValidatorException { //todo handle better
+    public void editExternalSource(ActionRequest request, ActionResponse response, Model model)
+            throws IOException, ClassNotFoundException, ReadOnlyException, ValidatorException {
         String externalSourceKey = request.getParameter("externalSourceKey");
         String externalSourceUrl = request.getParameter("externalSourceUrl");
 
@@ -218,30 +241,6 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     }
 
-    private Map<String, String> getExternalSources(PortletPreferences preferences) throws IOException, ClassNotFoundException {
-        String externalSourcesEncoded = preferences.getValue("externalSourcesEncoded", null);
-
-        Map<String, String> externalSources;
-        if (externalSourcesEncoded != null) {
-            // Decode
-            externalSources = decodeExternalSources(externalSourcesEncoded);
-        } else {
-            externalSources = new HashMap<String, String>();
-        }
-        return externalSources;
-    }
-
-    private String getFormatedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern(TIME_FORMAT).withLocale(locale);
-        StringBuilder title = new StringBuilder(TIME_FORMAT.length() * 2 + " - ".length());
-
-        title.append(formatter.print(displayPeriod.getStartDate()));
-        title.append(" - ");
-        title.append(formatter.print(displayPeriod.getEndDate()));
-
-        return title.toString();
-    }
-
     /**
      * Action method to step one period ahead.
      *
@@ -266,6 +265,48 @@ public class NotesCalendarViewController implements PortletConfigAware {
         if (displayPeriod != null) {
             model.put("displayPeriod", displayPeriod.previous());
         }
+    }
+
+    /**
+     * Exception handler method.
+     *
+     * @param exception the thrown exception
+     * @return a {@link ModelAndView}
+     */
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleException(Exception exception) {
+        final int maxNumber = 1000000;
+        int randomNumber = new Random().nextInt(maxNumber);
+        LOGGER.error(randomNumber + ": " + exception.getMessage(), exception);
+        String errorMessage = "Tekniskt fel. Vid kontakt med systemansvarig uppge nummer " + randomNumber + ". "
+                + "Med hjälp av numret kan teknisk personal lokalisera felet.";
+        ModelAndView mav = new ModelAndView("errorMessage", "errorMessage", errorMessage);
+        return mav;
+    }
+
+    private Map<String, String> getExternalSources(PortletPreferences preferences)
+            throws IOException, ClassNotFoundException {
+        String externalSourcesEncoded = preferences.getValue("externalSourcesEncoded", null);
+
+        Map<String, String> externalSources;
+        if (externalSourcesEncoded != null) {
+            // Decode
+            externalSources = decodeExternalSources(externalSourcesEncoded);
+        } else {
+            externalSources = new HashMap<String, String>();
+        }
+        return externalSources;
+    }
+
+    private String getFormattedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(TIME_FORMAT).withLocale(locale);
+        StringBuilder title = new StringBuilder(TIME_FORMAT.length() * 2 + " - ".length());
+
+        title.append(formatter.print(displayPeriod.getStartDate()));
+        title.append(" - ");
+        title.append(formatter.print(displayPeriod.getEndDate()));
+
+        return title.toString();
     }
 
 }

@@ -53,7 +53,7 @@ public class CalendarServiceImpl implements CalendarService {
     private CalendarEventsRepository calendarEventsRepository;
 
     /**
-     * Constructs a CalendarServiceImpl
+     * Constructs a CalendarServiceImpl.
      *
      * @param eventsRepository an eventsRepository
      */
@@ -81,7 +81,8 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public CalendarEvents getCalendarEventsFromIcalUrl(String url, CalendarEventsPeriod period, String type) throws CalendarServiceException {
+    public CalendarEvents getCalendarEventsFromIcalUrl(String url, CalendarEventsPeriod period, String type)
+            throws CalendarServiceException {
         CalendarEvents calendarEvents = new CalendarEvents();
         calendarEvents.setCalendarItems(new ArrayList<CalendarItem>());
 
@@ -141,7 +142,8 @@ public class CalendarServiceImpl implements CalendarService {
 
     @Override
     @Async
-    public Future<CalendarEvents> getFutureCalendarEventsFromIcalUrl(String url, CalendarEventsPeriod period, String type) throws CalendarServiceException {
+    public Future<CalendarEvents> getFutureCalendarEventsFromIcalUrl(String url, CalendarEventsPeriod period,
+                                                                     String type) throws CalendarServiceException {
         return new AsyncResult<CalendarEvents>(getCalendarEventsFromIcalUrl(url, period, type));
     }
 

@@ -34,13 +34,15 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * 
  * @param <T>
  */
-@SuppressWarnings( { "unchecked", "serial" })
+@SuppressWarnings({"unchecked", "serial" })
 public abstract class AbstractValueObject<T extends ValueObject> implements ValueObject<T> {
 
     private transient int cachedHashCode = 0;
-    private static final String[] EXCLUDED_FIELDS = { "cachedHashCode" };
+    private static final String[] EXCLUDED_FIELDS = {"cachedHashCode"};
 
     /**
+     * Compares two objects.
+     *
      * @param other
      *            The other value object.
      * @return True if all non-transient fields are equal.
@@ -51,6 +53,8 @@ public abstract class AbstractValueObject<T extends ValueObject> implements Valu
     }
 
     /**
+     * Calculates the hash code.
+     *
      * @return Hash code built from all non-transient fields.
      */
     @Override
@@ -74,6 +78,8 @@ public abstract class AbstractValueObject<T extends ValueObject> implements Valu
     }
 
     /**
+     * Evaluates whether two objects are equal.
+     *
      * @param other
      *            other object
      * @return True if other object has the same value as this value object.
