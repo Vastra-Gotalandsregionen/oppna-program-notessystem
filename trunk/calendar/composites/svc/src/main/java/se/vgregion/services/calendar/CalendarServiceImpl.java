@@ -147,7 +147,7 @@ public class CalendarServiceImpl implements CalendarService {
         return new AsyncResult<CalendarEvents>(getCalendarEventsFromIcalUrl(url, period, type));
     }
 
-    private Calendar parseIcalUrl(String url) throws IOException, ParserException {
+    Calendar parseIcalUrl(String url) throws IOException, ParserException {
         BufferedInputStream bis = null;
         InputStream in = null;
         try {

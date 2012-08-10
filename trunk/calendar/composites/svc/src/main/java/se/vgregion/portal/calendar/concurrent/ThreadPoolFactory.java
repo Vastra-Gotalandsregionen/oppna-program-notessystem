@@ -11,9 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public final class ThreadPoolFactory {
 
-    private ThreadPoolFactory() {
-
-    }
+    private ThreadPoolFactory() {}
 
     /**
      * Creates an {@link ExecutorService} like {@link java.util.concurrent.Executors#newCachedThreadPool()} with the
@@ -23,8 +21,9 @@ public final class ThreadPoolFactory {
      * @return the {@link ExecutorService}
      */
     public static ExecutorService newCachedThreadPool(int maximumPoolSize) {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        ((ThreadPoolExecutor) executorService).setMaximumPoolSize(maximumPoolSize);
+        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        executorService.setMaximumPoolSize(maximumPoolSize);
+        executorService.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
         return executorService;
     }
