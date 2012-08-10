@@ -19,31 +19,32 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
-import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-
-import javax.portlet.PortletConfig;
-import javax.portlet.PortletPreferences;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.portlet.MockPortletPreferences;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-
+import org.springframework.web.portlet.ModelAndView;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarItem;
+import se.vgregion.portal.calendar.util.EncodingUtil;
 import se.vgregion.services.calendar.CalendarService;
+
+import javax.portlet.*;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.BDDMockito.*;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -147,4 +148,139 @@ public class NotesCalendarViewControllerTest {
         assertEquals(CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH, Days.daysBetween(displayPeriod2.getStartDate(),
                 displayPeriod1.getStartDate()));
     }
+
+    @Test
+    public void testEditExternalSources() throws Exception {
+
+        // Given
+        Map<String, String> externalSources = new HashMap<String, String>();
+        externalSources.put("my calendar", "http://example.com/asdf.ics");
+
+        String externalSourcesEncoded = EncodingUtil.encodeToString((Serializable) externalSources);
+
+        PortletPreferences preferences = mock(PortletPreferences.class);
+        given(preferences.getValue("externalSourcesEncoded", null)).willReturn(externalSourcesEncoded);
+
+        RenderRequest request = mock(RenderRequest.class);
+        given(request.getPreferences()).willReturn(preferences);
+
+        RenderResponse response = mock(RenderResponse.class);
+        Model model = mock(Model.class);
+
+        // When
+        notesCalendarViewController.editExternalSources(request, response, model);
+
+        // Then
+        verify(model).addAttribute(eq("externalSources"), eq(externalSources));
+    }
+
+    @Test
+    public void testEditExternalSource_RemoveExternalSource() throws Exception {
+        
+        // Given
+        Map<String, String> externalSources = new HashMap<String, String>();
+        externalSources.put("my calendar", "http://example.com/asdf.ics");
+
+        String externalSourcesEncoded = EncodingUtil.encodeToString((Serializable) externalSources);
+
+        PortletPreferences preferences = new MockPortletPreferences();
+        preferences.setValue("externalSourcesEncoded", externalSourcesEncoded);
+
+        ActionRequest request = mock(ActionRequest.class);
+        given(request.getPreferences()).willReturn(preferences);
+
+        ActionResponse response = mock(ActionResponse.class);
+        Model model = mock(Model.class);
+
+        given(request.getParameter("submitType")).willReturn("Radera");
+        given(request.getParameter("oldExternalSourceKey")).willReturn("my calendar");
+
+        // When
+        notesCalendarViewController.editExternalSource(request, response, model);
+
+        // Then
+        String externalSourcesEncodedNew = preferences.getValue("externalSourcesEncoded", null);
+        Map<String, String> externalSourcesNew = EncodingUtil.decodeToObject(externalSourcesEncodedNew);
+
+        assertEquals(0, externalSourcesNew.size());
+    }
+
+    @Test
+    public void testEditExternalSource_UpdateExternalSource() throws Exception {
+
+        // Given
+        Map<String, String> externalSources = new HashMap<String, String>();
+        externalSources.put("my calendar", "http://example.com/asdf.ics");
+
+        String externalSourcesEncoded = EncodingUtil.encodeToString((Serializable) externalSources);
+
+        PortletPreferences preferences = new MockPortletPreferences();
+        preferences.setValue("externalSourcesEncoded", externalSourcesEncoded);
+
+        ActionRequest request = mock(ActionRequest.class);
+        given(request.getPreferences()).willReturn(preferences);
+
+        ActionResponse response = mock(ActionResponse.class);
+        Model model = mock(Model.class);
+
+        given(request.getParameter("submitType")).willReturn("Uppdatera");
+        given(request.getParameter("oldExternalSourceKey")).willReturn("my calendar");
+        given(request.getParameter("externalSourceKey")).willReturn("my calendar2");
+        given(request.getParameter("externalSourceUrl")).willReturn("http://example.com/asdf2.ics");
+
+        // When
+        notesCalendarViewController.editExternalSource(request, response, model);
+
+        // Then
+        String externalSourcesEncodedNew = preferences.getValue("externalSourcesEncoded", null);
+        Map<String, String> externalSourcesNew = EncodingUtil.decodeToObject(externalSourcesEncodedNew);
+
+        assertEquals(1, externalSourcesNew.size());
+        assertEquals("http://example.com/asdf2.ics", externalSourcesNew.get("my calendar2"));
+    }
+
+    @Test
+    public void testEditExternalSource_AddExternalSource() throws Exception {
+
+        // Given
+        Map<String, String> externalSources = new HashMap<String, String>();
+        externalSources.put("my calendar", "http://example.com/asdf.ics");
+
+        String externalSourcesEncoded = EncodingUtil.encodeToString((Serializable) externalSources);
+
+        PortletPreferences preferences = new MockPortletPreferences();
+        preferences.setValue("externalSourcesEncoded", externalSourcesEncoded);
+
+        ActionRequest request = mock(ActionRequest.class);
+        given(request.getPreferences()).willReturn(preferences);
+
+        ActionResponse response = mock(ActionResponse.class);
+        Model model = mock(Model.class);
+
+        given(request.getParameter("externalSourceKey")).willReturn("my calendar2");
+        given(request.getParameter("externalSourceUrl")).willReturn("http://example.com/asdf2.ics");
+
+        // When
+        notesCalendarViewController.editExternalSource(request, response, model);
+
+        // Then
+        String externalSourcesEncodedNew = preferences.getValue("externalSourcesEncoded", null);
+        Map<String, String> externalSourcesNew = EncodingUtil.decodeToObject(externalSourcesEncodedNew);
+
+        assertEquals(2, externalSourcesNew.size());
+        assertEquals("http://example.com/asdf.ics", externalSourcesNew.get("my calendar"));
+        assertEquals("http://example.com/asdf2.ics", externalSourcesNew.get("my calendar2"));
+    }
+
+    @Test
+    public void testHandleException() {
+        Exception exception = new Exception("Very strange exception");
+
+        ModelAndView modelAndView = notesCalendarViewController.handleException(exception);
+
+        assertEquals("errorMessage", modelAndView.getViewName());
+        assertNotNull(modelAndView.getModel().get("errorMessage"));
+
+    }
+
 }
