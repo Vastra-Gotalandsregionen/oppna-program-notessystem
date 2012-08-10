@@ -158,7 +158,7 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
      */
     public String getCalendarType() {
         if (calendarType != null) {
-            return WordUtils.capitalize(calendarType.toLowerCase());
+            return WordUtils.capitalize(calendarType.toLowerCase(Locale.getDefault()));
         }
         return null;
     }
