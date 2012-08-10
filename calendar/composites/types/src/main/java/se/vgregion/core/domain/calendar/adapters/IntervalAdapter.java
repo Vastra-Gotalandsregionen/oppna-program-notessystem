@@ -107,15 +107,15 @@ public class IntervalAdapter extends XmlAdapter<CalendarItemPeriod, Interval> {
         final int fourteen = 14;
         if (timeStr.length() == fourteen) {
             String[] timeParts = timeStr.split(":");
-            String tmpTimeStr = "";
+            StringBuilder tmpTimeStr = new StringBuilder();
             for (int i = 0; i < timeParts.length; i++) {
                 if (i == 2 || i == timeParts.length - 1) {
-                    tmpTimeStr += timeParts[i];
+                    tmpTimeStr.append(timeParts[i]);
                 } else {
-                    tmpTimeStr += timeParts[i] + ":";
+                    tmpTimeStr.append(timeParts[i] + ":");
                 }
             }
-            timeStr = tmpTimeStr;
+            timeStr = tmpTimeStr.toString();
         } else {
             final int eight = 8;
             if (timeStr.length() == eight) {

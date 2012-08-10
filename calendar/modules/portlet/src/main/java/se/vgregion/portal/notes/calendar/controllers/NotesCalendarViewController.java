@@ -142,6 +142,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
             model.put("calendarItems", calendarItems);
 
             return VIEW;
+        } catch (RuntimeException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+            return NO_CALENDAR_VIEW;
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
             return NO_CALENDAR_VIEW;
