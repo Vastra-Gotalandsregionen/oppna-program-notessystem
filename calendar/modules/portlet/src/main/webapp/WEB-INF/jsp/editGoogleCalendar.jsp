@@ -33,6 +33,10 @@
         padding: 5px;
     }
 
+    .calendar-list-entry .checkbox-div {
+        margin: auto;
+    }
+
     .calendar-list-entry span {
         float: left;
     }
@@ -46,6 +50,10 @@
     <portlet:param name="action" value="addGoogleCalendar"/>
 </portlet:actionURL>
 
+<portlet:actionURL var="saveGoogleCalendar">
+    <portlet:param name="action" value="saveGoogleCalendar"/>
+</portlet:actionURL>
+
 <portlet:renderURL var="viewCalendars">
 </portlet:renderURL>
 
@@ -54,26 +62,43 @@
     <a href="${editExternalSources}">Redigera externa källor</a>
 </p>
 
-<c:forEach items="${calendarListEntries}" var="entry">
-    <fieldset class="calendar-list-entry">
-        <legend><c:out value="${entry.id}"/></legend>
-        <div>
-            <span style="width:70%">
-                <p>
-                    <strong>Sammanfattning</strong><br/>
-                    ${entry.summary}
-                </p>
-                <p>
-                    <strong>Beskrivning</strong><br/>
-                    ${entry.description}
-                </p>
-            </span>
-            <span style="width:30%">
-                kryssruta
-            </span>
-        </div>
-    </fieldset>
-</c:forEach>
+<form action="${saveGoogleCalendar}" method="post">
+    <c:forEach items="${calendarListEntries}" var="entry">
+        <fieldset class="calendar-list-entry">
+            <legend><c:out value="${entry.id}"/></legend>
+            <div>
+                <table>
+                    <col width="400"/>
+                    <col width="100"/>
+                    <tr>
+                        <td>
+                            <p>
+                                <strong>Sammanfattning</strong><br/>
+                                    ${entry.summary}
+                            </p>
+                            <p>
+                                <strong>Beskrivning</strong><br/>
+                                    ${entry.description}
+                            </p>
+                        </td>
+                        <td>
+                            <div class="checkbox-div">
+                                <c:set var="checkedText" value=""/>
+                                <c:forEach items="${selectedCalendars}" var="selectedCalendar">
+                                    <c:if test="${entry.id eq selectedCalendar}">
+                                        <c:set var="checkedText" value="checked=\"checked\""/>
+                                    </c:if>
+                                </c:forEach>
+                                <input type="checkbox" name="selectedCalendars" ${checkedText} value="${entry.id}">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </fieldset>
+    </c:forEach>
+    <input type="submit" value="Spara">
+</form>
 
 <c:if test="${empty calendarListEntries}">
     <p><a href="${addGoogleCalendar}">Lägg till Google-kalender</a></p>

@@ -38,6 +38,10 @@ Copyright 2010 Västra Götalandsregionen
         padding: 0px 4px 4px 4px;
     }
 
+    .edit-external-sources fieldset {
+        margin: 20px 0px;
+    }
+
 </style>
 
 <portlet:renderURL var="backToView">
@@ -55,37 +59,47 @@ Copyright 2010 Västra Götalandsregionen
 
     <a href="${backToView}">Tillbaka</a>
 
-    <p><a href="${editGoogleCalendar}">Google</a></p>
-
     <c:if test="${not empty errorMessage}">
         <span class="portlet-msg-error">${errorMessage}</span>
     </c:if>
 
     <fieldset>
-        <legend>Befintliga kalendrar</legend>
-        <c:forEach var="externalSource" items="${externalSources}">
-            <div class="existing-source">
-                <form action="${editExternalSource}" method="post">
-                    <input type="hidden" value="${externalSource.key}" name="oldExternalSourceKey"/>
+        <legend>Google-konto</legend>
+        <c:if test="${not empty googleEmail}">
+            Du har anslutit ditt Google-konto med e-post <strong>${googleEmail}</strong>. <br/>
+            <a href="${editGoogleCalendar}">Inställningar för Google-koppling</a>
+        </c:if>
+        <a href="${editGoogleCalendar}">Inställningar för Google-koppling</a>
 
-                    <div class="input-field">
-                        <label for="calendarTypeInput${externalSource.key}">Namn:</label>
-                        <input id="calendarTypeInput${externalSource.key}" type="text" value="${externalSource.key}"
-                               name="externalSourceKey"/>
-                    </div>
-                    <div class="input-field">
-                        <label for="calendarUrlInput${externalSource.key}">ICal-URL:</label>
-                        <input class="wide" id="calendarUrlInput${externalSource.key}" type="text"
-                               value="${externalSource.value}" name="externalSourceUrl"/>
-                    </div>
-                    <div class="input-field">
-                        <input type="submit" name="submitType" value="Radera">
-                        <input type="submit" name="submitType" value="Uppdatera">
-                    </div>
-                </form>
-            </div>
-        </c:forEach>
     </fieldset>
+
+    <c:if test="${not empty externalSources}">
+        <fieldset>
+            <legend>Befintliga kalendrar</legend>
+            <c:forEach var="externalSource" items="${externalSources}">
+                <div class="existing-source">
+                    <form action="${editExternalSource}" method="post">
+                        <input type="hidden" value="${externalSource.key}" name="oldExternalSourceKey"/>
+
+                        <div class="input-field">
+                            <label for="calendarTypeInput${externalSource.key}">Namn:</label>
+                            <input id="calendarTypeInput${externalSource.key}" type="text" value="${externalSource.key}"
+                                   name="externalSourceKey"/>
+                        </div>
+                        <div class="input-field">
+                            <label for="calendarUrlInput${externalSource.key}">ICal-URL:</label>
+                            <input class="wide" id="calendarUrlInput${externalSource.key}" type="text"
+                                   value="${externalSource.value}" name="externalSourceUrl"/>
+                        </div>
+                        <div class="input-field">
+                            <input type="submit" name="submitType" value="Radera">
+                            <input type="submit" name="submitType" value="Uppdatera">
+                        </div>
+                    </form>
+                </div>
+            </c:forEach>
+        </fieldset>
+    </c:if>
 
     <fieldset>
         <legend>Lägg till extern källa:</legend>
