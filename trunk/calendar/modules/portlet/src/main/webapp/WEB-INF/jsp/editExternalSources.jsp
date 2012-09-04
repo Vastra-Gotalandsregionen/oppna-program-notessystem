@@ -42,6 +42,11 @@ Copyright 2010 Västra Götalandsregionen
 
 <portlet:renderURL var="backToView">
 </portlet:renderURL>
+
+<portlet:renderURL var="editGoogleCalendar">
+    <portlet:param name="action" value="editGoogleCalendar"/>
+</portlet:renderURL>
+
 <portlet:actionURL var="editExternalSource">
     <portlet:param name="action" value="editExternalSource"/>
 </portlet:actionURL>
@@ -49,6 +54,8 @@ Copyright 2010 Västra Götalandsregionen
 <div class="edit-external-sources">
 
     <a href="${backToView}">Tillbaka</a>
+
+    <p><a href="${editGoogleCalendar}">Google</a></p>
 
     <c:if test="${not empty errorMessage}">
         <span class="portlet-msg-error">${errorMessage}</span>

@@ -1,1 +1,6 @@
 service.endpoint=
+
+# Google api settings
+clientId=
+clientSecret=
+apiKey=

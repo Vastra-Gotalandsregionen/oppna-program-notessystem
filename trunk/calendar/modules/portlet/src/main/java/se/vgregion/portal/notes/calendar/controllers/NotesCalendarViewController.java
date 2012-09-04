@@ -19,6 +19,9 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.CalendarList;
+import com.google.api.services.calendar.model.CalendarListEntry;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -42,6 +45,7 @@ import se.vgregion.core.domain.calendar.CalendarItem;
 import se.vgregion.portal.calendar.util.EncodingUtil;
 import se.vgregion.services.calendar.CalendarService;
 import se.vgregion.services.calendar.CalendarServiceException;
+import se.vgregion.services.calendar.google.GoogleCalendarService;
 
 import javax.portlet.*;
 import java.io.IOException;
@@ -54,6 +58,7 @@ import java.util.concurrent.Future;
 @RequestMapping("VIEW")
 public class NotesCalendarViewController implements PortletConfigAware {
     private static final String TIME_FORMAT = "dd MMMM";
+
     /**
      * The name of the view page to dispatch to on a render request.
      */
@@ -63,6 +68,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     private CalendarService calendarService;
     private PortletConfig portletConfig = null;
     private PortletData portletData = null;
+    private GoogleCalendarService googleCalendarService;
 
     /**
      * Constructs a NotesCalendarViewController.
@@ -70,8 +76,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
      * @param calendarService a calendarService
      */
     @Autowired
-    public NotesCalendarViewController(CalendarService calendarService) {
+    public NotesCalendarViewController(CalendarService calendarService, GoogleCalendarService googleCalendarService) {
         this.calendarService = calendarService;
+        this.googleCalendarService = googleCalendarService;
     }
 
     public void setPortletConfig(PortletConfig portletConfig) {
@@ -172,6 +179,77 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
         return "editExternalSources";
     }
+
+    @RenderMapping(params = "action=editGoogleCalendar")
+    public String editGoogleCalendar(RenderRequest request, RenderResponse response, Model model) {
+
+        String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
+
+        Calendar calendar = googleCalendarService.getCalendar(userId);
+
+        if (calendar != null) {
+            try {
+                CalendarList calendarList = calendar.calendarList().list().execute();
+
+                List<CalendarListEntry> calendarListEntries = calendarList.getItems();
+
+                for (CalendarListEntry entry : calendarListEntries) {
+                }
+
+                model.addAttribute("calendarListEntries", calendarListEntries);
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+
+        return "editGoogleCalendar";
+    }
+
+    @ActionMapping(params = "action=addGoogleCalendar")
+    public void addGoogleCalendar(ActionRequest request, ActionResponse response, Model model) throws IOException {
+
+        String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
+
+//        Calendar calendar = googleCalendarService.getCalendar(userId);
+
+        if (!googleCalendarService.isAuthorized(userId)) {
+            response.sendRedirect(googleCalendarService.getRedirectUrl());
+        }
+
+        response.setRenderParameter("action", "editGoogleCalendar");
+    }
+
+    @RenderMapping(params = "action=googleCallback")
+    public String googleCallback(RenderRequest request, RenderResponse response, Model model) throws IOException {
+
+        String authorizationCode = request.getParameter("code");
+
+        String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
+
+        googleCalendarService.authorize(authorizationCode, userId);
+
+        Calendar calendar = googleCalendarService.getCalendar(userId);
+
+        Calendar.CalendarList.List list = calendar.calendarList().list();
+
+        for (Map.Entry<String, Object> calendarEntry : list.entrySet()) {
+            System.out.println(calendarEntry.getKey());
+        }
+
+        return VIEW;
+    }
+
+    private String lookupP3PInfo(PortletRequest req, PortletRequest.P3PUserInfos p3pInfo) {
+        Map<String, String> userInfo = (Map<String, String>) req.getAttribute(PortletRequest.USER_INFO);
+        String info;
+        if (userInfo != null) {
+            info = userInfo.get(p3pInfo.toString());
+        } else {
+            return null;
+        }
+        return info;
+    }
+
 
     private Map<String, String> decodeExternalSources(String externalSourcesEncoded)
             throws IOException, ClassNotFoundException {

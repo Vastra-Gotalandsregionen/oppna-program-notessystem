@@ -35,6 +35,7 @@ import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarItem;
 import se.vgregion.portal.calendar.util.EncodingUtil;
 import se.vgregion.services.calendar.CalendarService;
+import se.vgregion.services.calendar.google.GoogleCalendarService;
 
 import javax.portlet.*;
 import java.io.Serializable;
@@ -72,7 +73,8 @@ public class NotesCalendarViewControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        notesCalendarViewController = new NotesCalendarViewController(calendarService);
+        GoogleCalendarService googleCalendarService = mock(GoogleCalendarService.class);
+        notesCalendarViewController = new NotesCalendarViewController(calendarService, googleCalendarService);
         notesCalendarViewController.setPortletData(portletData);
         PortletPreferences portletPreferences = mock(PortletPreferences.class);
         given(renderRequest.getPreferences()).willReturn(portletPreferences);
