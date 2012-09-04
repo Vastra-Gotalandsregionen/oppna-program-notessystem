@@ -26,6 +26,9 @@
 <liferay-portlet-app>
   <portlet>
     <portlet-name>NotesCalendar</portlet-name>
+    <friendly-url-mapper-class>com.liferay.portal.kernel.portlet.DefaultFriendlyURLMapper</friendly-url-mapper-class>
+    <friendly-url-mapping>oauth2callback</friendly-url-mapping>
+    <friendly-url-routes>notes-oauth2-friendly-url-routes.xml</friendly-url-routes>
     <preferences-owned-by-group>false</preferences-owned-by-group>
     <action-url-redirect>true</action-url-redirect>
     <render-weight>0</render-weight>

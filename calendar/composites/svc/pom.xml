@@ -15,6 +15,16 @@
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
+  <repositories>
+    <repository>
+      <id>googleapis</id>
+      <url>http://mavenrepo.google-api-java-client.googlecode.com/hg/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -41,6 +51,12 @@
       <groupId>org.mnode.ical4j</groupId>
       <artifactId>ical4j</artifactId>
       <version>1.0.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-calendar</artifactId>
+      <version>v3-rev9-1.7.2-beta</version>
     </dependency>
 
     <dependency>
