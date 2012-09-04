@@ -19,9 +19,11 @@
 
 package se.vgregion.portal.notes.calendar.controllers;
 
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
+import com.google.api.services.oauth2.model.Userinfo;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -118,6 +120,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
             // Retrieve asynchronously
             futureCalendarEvents.put("iNotes", calendarService.getFutureCalendarEvents(userId, displayPeriod));
 
+            // Get from Google
+            futureCalendarEvents.put("Google", googleCalendarService.getFutureCalendarEvents(userId, displayPeriod));
+
             // Get from other sources, asynchronously.
             Map<String, String> externalSources = getExternalSources(request.getPreferences());
             for (Map.Entry<String, String> externalSource : externalSources.entrySet()) {
@@ -129,7 +134,10 @@ public class NotesCalendarViewController implements PortletConfigAware {
             List<String> failedRetrievals = new ArrayList<String>();
             for (Map.Entry<String, Future<CalendarEvents>> futureCalendarEvent : futureCalendarEvents.entrySet()) {
                 try {
-                    events.getCalendarItems().addAll(futureCalendarEvent.getValue().get().getCalendarItems());
+                    List<CalendarItem> calendarItems = futureCalendarEvent.getValue().get().getCalendarItems();
+                    if (calendarItems != null) {
+                        events.getCalendarItems().addAll(calendarItems);
+                    }
                 } catch (Exception ex) {
                     LOGGER.warn("Failed to get a calendar for user " + userId + ".", ex);
                     failedRetrievals.add(futureCalendarEvent.getKey());
@@ -173,6 +181,13 @@ public class NotesCalendarViewController implements PortletConfigAware {
             throws ClassNotFoundException, IOException {
         PortletPreferences preferences = request.getPreferences();
 
+        String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
+        Userinfo userinfo = googleCalendarService.getUserinfo(userId);
+
+        if (userinfo != null) {
+            model.addAttribute("googleEmail", userinfo.getEmail());
+        }
+
         Map<String, String> externalSources = getExternalSources(preferences);
 
         model.addAttribute("externalSources", externalSources);
@@ -202,12 +217,17 @@ public class NotesCalendarViewController implements PortletConfigAware {
             }
         }
 
+        String selectedCalendarsString = request.getPreferences().getValue("selectedCalendars", null);
+
+        String[] selectedCalendars = stringToArray(selectedCalendarsString);
+
+        model.addAttribute("selectedCalendars", selectedCalendars);
+
         return "editGoogleCalendar";
     }
 
     @ActionMapping(params = "action=addGoogleCalendar")
     public void addGoogleCalendar(ActionRequest request, ActionResponse response, Model model) throws IOException {
-
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
 //        Calendar calendar = googleCalendarService.getCalendar(userId);
@@ -226,17 +246,46 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
-        googleCalendarService.authorize(authorizationCode, userId);
-
-        Calendar calendar = googleCalendarService.getCalendar(userId);
-
-        Calendar.CalendarList.List list = calendar.calendarList().list();
-
-        for (Map.Entry<String, Object> calendarEntry : list.entrySet()) {
-            System.out.println(calendarEntry.getKey());
+        try {
+            googleCalendarService.authorize(authorizationCode, userId);
+        } catch (TokenResponseException e) {
+            LOGGER.warn(e.getMessage());
         }
 
-        return VIEW;
+
+        return editGoogleCalendar(request, response, model);
+    }
+
+    @ActionMapping(params = "action=saveGoogleCalendar")
+    public void saveGoogleCalendar(ActionRequest request, ActionResponse response) throws ReadOnlyException, ValidatorException, IOException {
+        String[] selectedCalendarsArray = request.getParameterValues("selectedCalendars");
+        String selectedCalendars = arrayToString(selectedCalendarsArray);
+        PortletPreferences preferences = request.getPreferences();
+        preferences.setValue("selectedCalendars", selectedCalendars);
+        preferences.store();
+
+        System.out.println(selectedCalendars);
+        response.setRenderParameter("action", "editGoogleCalendar");
+    }
+
+    String arrayToString(String[] array) {
+        if (array == null || array.length == 0) {
+            return "";
+        }
+        final String separator = "==SEPARATOR==";
+        StringBuilder sb = new StringBuilder();
+        for (String s : array) {
+            sb.append(separator + s);
+        }
+        sb.delete(0, separator.length());
+        return sb.toString();
+    }
+
+    String[] stringToArray(String string) {
+        if (string == null) {
+            return null;
+        }
+        return string.split("==SEPARATOR==");
     }
 
     private String lookupP3PInfo(PortletRequest req, PortletRequest.P3PUserInfos p3pInfo) {

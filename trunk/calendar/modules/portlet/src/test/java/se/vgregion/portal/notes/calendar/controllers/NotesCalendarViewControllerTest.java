@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.*;
@@ -283,6 +284,23 @@ public class NotesCalendarViewControllerTest {
         assertEquals("errorMessage", modelAndView.getViewName());
         assertNotNull(modelAndView.getModel().get("errorMessage"));
 
+    }
+
+    @Test
+    public void testArrayToString() {
+        String[] array = new String[]{"ett", "två", "tre"};
+        String s = notesCalendarViewController.arrayToString(array);
+
+        assertEquals("ett==SEPARATOR==två==SEPARATOR==tre", s);
+    }
+
+    @Test
+    public void testStringToArray() {
+        String string = "ett==SEPARATOR==två==SEPARATOR==tre";
+        String[] array = new String[]{"ett", "två", "tre"};
+        String[] result = notesCalendarViewController.stringToArray(string);
+
+        assertArrayEquals(array, result);
     }
 
 }

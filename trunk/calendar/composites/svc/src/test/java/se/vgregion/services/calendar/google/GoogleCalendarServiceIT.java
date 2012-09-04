@@ -5,8 +5,16 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.oauth2.model.Userinfo;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,10 +26,18 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Patrik Bergström
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath*:serviceContext.xml", "classpath:applicationContext-test.xml"})
 public class GoogleCalendarServiceIT {
 
-    private CredentialStore credentialStore = FilePersistentCredentialStore.createSerializableCredentialStore();
-    private GoogleCalendarService googleCalendarService = new GoogleCalendarService(credentialStore);
+    @Autowired
+    private GoogleCalendarService googleCalendarService;
+
+    @Test
+    public void testGetUserinfo() throws Exception {
+        Userinfo userinfo = googleCalendarService.getUserinfo("myUser");
+        assertNotNull(userinfo);
+    }
 
     @Test
     public void testGetCalendar() throws Exception {
@@ -69,7 +85,12 @@ public class GoogleCalendarServiceIT {
     }
 
     public static void main(String[] args) throws Exception {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:serviceContext.xml",
+                "classpath:applicationContext-test.xml");
+
         GoogleCalendarServiceIT t = new GoogleCalendarServiceIT();
+
+        ReflectionTestUtils.setField(t, "googleCalendarService", ctx.getBean(GoogleCalendarService.class));
 
         boolean authorized = t.getService().isAuthorized("myUser");
         System.out.println(authorized);
@@ -96,14 +117,14 @@ public class GoogleCalendarServiceIT {
                 System.out.println();
             }
 
-//            Calendar.Calendars.Get Calendars = calendar.calendars().get("myUser");
-
             assertNotNull(calendar);
             List<Event> events = t.getService().getCalendarEvents("myUser");
             for (Event event : events) {
                 System.out.println(event.getStart().getDateTime() + " - " + event.getSummary() + " - " + event.getICalUID());
             }
         }
+
+        Userinfo myUser = t.getService().getUserinfo("myUser");
 
 
     }

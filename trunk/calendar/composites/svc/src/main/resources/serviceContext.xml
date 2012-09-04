@@ -18,17 +18,13 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
   <context:annotation-config />
-  <context:component-scan base-package="se.vgregion.core.domain.infrastructure.webservice se.vgregion.services" />
+  <context:component-scan base-package="se.vgregion.domain.infrastructure.webservice,se.vgregion.services" />
   <import resource="classpath:typesContext.xml" />
 
   <bean class="se.vgregion.services.calendar.google.FilePersistentCredentialStore"
         factory-method="createSerializableCredentialStore"/>
 
   <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
-
-  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="classpath:security.properties" />
-  </bean>
 
   <bean id="calendarEventsRepository" class="se.vgregion.domain.infrastructure.webservice.RestCalendarEventsRepository">
     <constructor-arg name="restTemplate" ref="restTemplate" />
