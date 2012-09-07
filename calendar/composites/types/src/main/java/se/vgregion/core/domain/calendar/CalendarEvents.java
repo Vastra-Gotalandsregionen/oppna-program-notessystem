@@ -18,7 +18,7 @@
  */
 
 /**
- * 
+ *
  */
 package se.vgregion.core.domain.calendar;
 
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Wraps a calendar web service response.
- * 
+ *
  * @author Anders Asplund - Callista Enterprise
  */
 @XmlRootElement(name = "calendarItems")
@@ -76,7 +76,7 @@ public class CalendarEvents {
 
     /**
      * Groups and sorts calendar items by start date.
-     * 
+     *
      * @return an unmodifiable list of list with calendar items
      */
     public List<List<CalendarItem>> getCalendarItemsGroupedByStartDate() {
@@ -102,15 +102,17 @@ public class CalendarEvents {
 
     /**
      * Filters out all calendar items with a valid interval.
-     * 
+     *
      * @return a copy of this calendarevents with the calendar items filtered
      */
     public CalendarEvents filterOutCalendarItemsWithValidInterval() {
         List<CalendarItem> filteredItems = new ArrayList<CalendarItem>();
         CalendarEvents events = new CalendarEvents();
-        for (CalendarItem item : calendarItems) {
-            if (item.getInterval() != null) {
-                filteredItems.add(item);
+        if (calendarItems != null) {
+            for (CalendarItem item : calendarItems) {
+                if (item.getInterval() != null) {
+                    filteredItems.add(item);
+                }
             }
         }
         events.setCalendarItems(filteredItems);

@@ -1,6 +1,5 @@
 package se.vgregion.services.calendar.google;
 
-import com.google.api.client.auth.oauth2.CredentialStore;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
@@ -34,24 +33,26 @@ public class GoogleCalendarServiceIT {
     private GoogleCalendarService googleCalendarService;
 
     @Test
+    @Ignore
     public void testGetUserinfo() throws Exception {
         Userinfo userinfo = googleCalendarService.getUserinfo("myUser");
         assertNotNull(userinfo);
     }
 
     @Test
+    @Ignore
     public void testGetCalendar() throws Exception {
-
+        Calendar calendar = googleCalendarService.getCalendar("myUser");
+        assertNotNull(calendar);
     }
 
     @Test
+    @Ignore
     public void testGetCalendarEvents() throws Exception {
-
-    }
-
-    @Test
-    public void testGetRedirectUrl() throws Exception {
-
+        Calendar calendar = googleCalendarService.getCalendar("myUser");
+        CalendarList calendarList = calendar.calendarList().list().execute();
+        List<CalendarListEntry> allItems = calendarList.getItems();
+        googleCalendarService.getCalendarEvents(allItems, "myUser");
     }
 
     @Test
@@ -118,7 +119,7 @@ public class GoogleCalendarServiceIT {
             }
 
             assertNotNull(calendar);
-            List<Event> events = t.getService().getCalendarEvents("myUser");
+            List<Event> events = t.getService().getCalendarEvents(calendarList.getItems(), "myUser");
             for (Event event : events) {
                 System.out.println(event.getStart().getDateTime() + " - " + event.getSummary() + " - " + event.getICalUID());
             }

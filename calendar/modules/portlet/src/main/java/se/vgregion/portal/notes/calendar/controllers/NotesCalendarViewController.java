@@ -120,8 +120,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
             // Retrieve asynchronously
             futureCalendarEvents.put("iNotes", calendarService.getFutureCalendarEvents(userId, displayPeriod));
 
-            // Get from Google
-            futureCalendarEvents.put("Google", googleCalendarService.getFutureCalendarEvents(userId, displayPeriod));
+            // Get from Google, asynchronously
+            String selectedCalendars = request.getPreferences().getValue("selectedCalendars", "");
+            List<String> selectedCalendarsList = Arrays.asList(stringToArray(selectedCalendars));
+            futureCalendarEvents.put("Google", googleCalendarService.getFutureCalendarEvents(userId, displayPeriod,
+                    selectedCalendarsList));
 
             // Get from other sources, asynchronously.
             Map<String, String> externalSources = getExternalSources(request.getPreferences());
@@ -152,8 +155,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
             }
 
             List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
-            portletData.setPortletTitle(response, title + " "
-                    + getFormattedDateIntervalToTitle(displayPeriod, response.getLocale()));
+            model.put("displayPeriodText", getFormattedDateIntervalToTitle(displayPeriod, response.getLocale()));
             model.put("calendarItems", calendarItems);
 
             return VIEW;
@@ -208,10 +210,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
                 List<CalendarListEntry> calendarListEntries = calendarList.getItems();
 
-                for (CalendarListEntry entry : calendarListEntries) {
-                }
-
                 model.addAttribute("calendarListEntries", calendarListEntries);
+
+                Userinfo userinfo = googleCalendarService.getUserinfo(userId);
+
+                model.addAttribute("googleEmail", userinfo.getEmail());
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -230,13 +233,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
     public void addGoogleCalendar(ActionRequest request, ActionResponse response, Model model) throws IOException {
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
-//        Calendar calendar = googleCalendarService.getCalendar(userId);
-
         if (!googleCalendarService.isAuthorized(userId)) {
             response.sendRedirect(googleCalendarService.getRedirectUrl());
+        } else {
+            response.setRenderParameter("action", "editGoogleCalendar");
         }
-
-        response.setRenderParameter("action", "editGoogleCalendar");
     }
 
     @RenderMapping(params = "action=googleCallback")
@@ -264,7 +265,6 @@ public class NotesCalendarViewController implements PortletConfigAware {
         preferences.setValue("selectedCalendars", selectedCalendars);
         preferences.store();
 
-        System.out.println(selectedCalendars);
         response.setRenderParameter("action", "editGoogleCalendar");
     }
 
@@ -283,7 +283,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     String[] stringToArray(String string) {
         if (string == null) {
-            return null;
+            return new String[0];
         }
         return string.split("==SEPARATOR==");
     }
@@ -376,12 +376,13 @@ public class NotesCalendarViewController implements PortletConfigAware {
      *
      * @param model the model
      */
-    @ActionMapping(params = "navigate=next")
-    public void nextWeek(ModelMap model) {
+    @RenderMapping(params = "navigate=next")
+    public String nextWeek(ModelMap model, RenderRequest request, RenderResponse response) {
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
         if (displayPeriod != null) {
             model.put("displayPeriod", displayPeriod.next());
         }
+        return displayCalendarEvents(model, request, response);
     }
 
     /**
@@ -389,12 +390,13 @@ public class NotesCalendarViewController implements PortletConfigAware {
      *
      * @param model the model
      */
-    @ActionMapping(params = "navigate=previous")
-    public void previousWeek(ModelMap model) {
+    @RenderMapping(params = "navigate=previous")
+    public String previousWeek(ModelMap model, RenderRequest request, RenderResponse response) {
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
         if (displayPeriod != null) {
             model.put("displayPeriod", displayPeriod.previous());
         }
+        return displayCalendarEvents(model, request, response);
     }
 
     /**

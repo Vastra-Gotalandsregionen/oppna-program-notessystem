@@ -28,6 +28,9 @@ public class FilePersistentCredentialStore extends AbstractPersistentCredentialS
     public static FilePersistentCredentialStore createSerializableCredentialStore(File fileStore) {
         try {
             if (!fileStore.exists()) {
+                if (!fileStore.getParentFile().exists()) {
+                    fileStore.getParentFile().mkdirs();
+                }
                 fileStore.createNewFile();
                 FilePersistentCredentialStore credentialStore = new FilePersistentCredentialStore(fileStore);
                 credentialStore.persist();
@@ -62,7 +65,7 @@ public class FilePersistentCredentialStore extends AbstractPersistentCredentialS
             bis = new BufferedInputStream(fis);
             ois = new ObjectInputStream(bis);
 
-            FilePersistentCredentialStore filePersistentCredentialStore = null;
+            FilePersistentCredentialStore filePersistentCredentialStore;
 
             try {
                 filePersistentCredentialStore = (FilePersistentCredentialStore) ois.readObject();
