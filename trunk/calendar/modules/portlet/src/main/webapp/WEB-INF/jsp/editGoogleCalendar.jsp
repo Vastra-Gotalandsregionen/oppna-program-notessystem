@@ -59,8 +59,14 @@
 
 <p>
     <a href="${viewCalendars}" style="margin-right: 20px">Tillbaka till kalender</a>
-    <a href="${editExternalSources}">Redigera externa källor</a>
+    <a href="${editExternalSources}">Tillbaka till Redigera externa källor</a>
 </p>
+
+<c:if test="${not empty googleEmail}">
+    <div>
+        Visar kalendrar kopplade till Google-kontot med e-post <strong>${googleEmail}</strong>. Välj de kalendrar du vill använda.
+    </div>
+</c:if>
 
 <form action="${saveGoogleCalendar}" method="post">
     <c:forEach items="${calendarListEntries}" var="entry">
@@ -97,7 +103,9 @@
             </div>
         </fieldset>
     </c:forEach>
-    <input type="submit" value="Spara">
+    <c:if test="${not empty calendarListEntries}">
+        <input type="submit" value="Spara">
+    </c:if>
 </form>
 
 <c:if test="${empty calendarListEntries}">

@@ -51,9 +51,11 @@ public class GoogleCalendarService {
     private String clientId;
     @Value("${clientSecret}")
     private String clientSecret;
-
     @Value("${apiKey}")
     private String apiKey;
+    @Value("${googleCallbackUrl}")
+    private String googleCallbackUrl;
+
     private GoogleAuthorizationCodeFlow authorizationCodeFlow;
     private CredentialStore credentialStore;
 
@@ -84,7 +86,8 @@ public class GoogleCalendarService {
             if (credential != null) {
                 System.out.println("refreshToken: " + credential.getRefreshToken());
 
-                if ((credential.getExpiresInSeconds() == null || credential.getExpiresInSeconds() < 0) && credential.getRefreshToken() != null) {
+                if ((credential.getExpiresInSeconds() == null || credential.getExpiresInSeconds() < 0)
+                        && credential.getRefreshToken() != null) {
                     credential.refreshToken();
                 }
                 Calendar.Builder calendarBuilder = new Calendar.Builder(authorizationCodeFlow.getTransport(),
@@ -123,8 +126,10 @@ public class GoogleCalendarService {
     }
 
     @Async
-    public Future<CalendarEvents> getFutureCalendarEvents(String userId, CalendarEventsPeriod period) {
-        List<Event> googleCalendarEvents = getCalendarEvents(userId);
+    public Future<CalendarEvents> getFutureCalendarEvents(String userId, CalendarEventsPeriod period,
+                                                          List<String> selectedCalendarsList) {
+
+        List<Event> googleCalendarEvents = getCalendarEvents(userId, selectedCalendarsList);
 
         CalendarEvents calendarEvents = new CalendarEvents();
         List<CalendarItem> calendarItems = new ArrayList<CalendarItem>();
@@ -144,7 +149,7 @@ public class GoogleCalendarService {
             if (wholeDay) {
                 try {
                     eventInterval = new Interval(DATE_FORMAT.parse(gEvent.getStart().getDate()).getTime(),
-                            DATE_FORMAT.parse(gEvent.getEnd().getDate()).getTime());
+                            DATE_FORMAT.parse(gEvent.getEnd().getDate()).getTime() - 1); // Subtract a millisecond so we don't start the next day
                 } catch (ParseException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -167,41 +172,53 @@ public class GoogleCalendarService {
         return new AsyncResult<CalendarEvents>(calendarEvents);
     }
 
-    public List<Event> getCalendarEvents(String userId) {
+    public List<Event> getCalendarEvents(String userId, List<String> calendarIds) {
         Calendar calendar = getCalendar(userId);
 
         try {
-            CalendarList calendarList = calendar.calendarList().list().execute();
+            if (calendar != null && calendar.calendarList() != null && calendar.calendarList().list() != null) {
+                CalendarList calendarList = calendar.calendarList().list().execute();
 
-            List<CalendarListEntry> calendarListEntries = calendarList.getItems();
+                List<CalendarListEntry> calendarListEntries = calendarList.getItems();
 
-            List<Event> allEvents = new ArrayList<Event>();
+                List<Event> allEvents = new ArrayList<Event>();
 
-            for (CalendarListEntry entry : calendarListEntries) {
-                String description = entry.getDescription();
-                Events events = calendar.events().list(entry.getId()).execute();
-                if (events != null) {
-                    List<Event> items = events.getItems();
-                    if (items != null) {
-                        allEvents.addAll(items);
+                for (CalendarListEntry entry : calendarListEntries) {
+                    if (!calendarIds.contains(entry.getId())) {
+                        continue;
+                    }
+
+                    Events events = calendar.events().list(entry.getId()).execute();
+                    if (events != null) {
+                        List<Event> items = events.getItems();
+                        if (items != null) {
+                            allEvents.addAll(items);
+                        }
                     }
                 }
-            }
 
-            return allEvents;
+                return allEvents;
+            }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
-        return null;
+        return new ArrayList<Event>();
+    }
+
+    public List<Event> getCalendarEvents(List<CalendarListEntry> calendarListEntries, String userId) {
+        List<String> strings = new ArrayList<String>();
+        for (CalendarListEntry entry : calendarListEntries) {
+            strings.add(entry.getId());
+        }
+        return getCalendarEvents(userId, strings);
     }
 
     public String getRedirectUrl() {
         GoogleAuthorizationCodeRequestUrl googleAuthorizationCodeRequestUrl = authorizationCodeFlow
                 .newAuthorizationUrl();
 
-        googleAuthorizationCodeRequestUrl.setRedirectUri(
-                "https://localhost:8443/sv/group/vgregion/test2/-/oauth2callback/auth");
+        googleAuthorizationCodeRequestUrl.setRedirectUri(googleCallbackUrl);
 
         String authUrl = googleAuthorizationCodeRequestUrl.build();
 
@@ -213,8 +230,7 @@ public class GoogleCalendarService {
         GoogleAuthorizationCodeTokenRequest googleAuthorizationCodeTokenRequest = authorizationCodeFlow
                 .newTokenRequest(authorizationCode);
 
-        googleAuthorizationCodeTokenRequest.setRedirectUri(
-                "https://localhost:8443/sv/group/vgregion/test2/-/oauth2callback/auth");
+        googleAuthorizationCodeTokenRequest.setRedirectUri(googleCallbackUrl);
 
         GoogleTokenResponse googleTokenResponse = googleAuthorizationCodeTokenRequest.execute();
 

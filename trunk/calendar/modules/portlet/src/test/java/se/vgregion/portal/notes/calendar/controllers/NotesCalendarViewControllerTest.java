@@ -114,8 +114,8 @@ public class NotesCalendarViewControllerTest {
         // When
         notesCalendarViewController.displayCalendarEvents(model, renderRequest, renderResponse);
 
-        // Then
-        verify(model, times(1)).put(anyString(), any(CalendarEventsPeriod.class));
+        // Then we should put CalendarEventsPeriod zero times in the model since we use the existing CalendarEventsPeriod.
+        verify(model, times(0)).put(anyString(), isA(CalendarEventsPeriod.class));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class NotesCalendarViewControllerTest {
         aModel.put("displayPeriod", displayPeriod1);
 
         // When
-        notesCalendarViewController.nextWeek(aModel);
+        notesCalendarViewController.nextWeek(aModel, renderRequest, renderResponse);
 
         // Then
         CalendarEventsPeriod displayPeriod2 = (CalendarEventsPeriod) aModel.get("displayPeriod");
@@ -144,7 +144,7 @@ public class NotesCalendarViewControllerTest {
         aModel.put("displayPeriod", displayPeriod1);
 
         // When
-        notesCalendarViewController.previousWeek(aModel);
+        notesCalendarViewController.previousWeek(aModel, renderRequest, renderResponse);
 
         // Then
         CalendarEventsPeriod displayPeriod2 = (CalendarEventsPeriod) aModel.get("displayPeriod");

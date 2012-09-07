@@ -57,7 +57,7 @@ Copyright 2010 Västra Götalandsregionen
 
 <div class="edit-external-sources">
 
-    <a href="${backToView}">Tillbaka</a>
+    <a href="${backToView}">Tillbaka till kalender</a>
 
     <c:if test="${not empty errorMessage}">
         <span class="portlet-msg-error">${errorMessage}</span>
@@ -66,8 +66,9 @@ Copyright 2010 Västra Götalandsregionen
     <fieldset>
         <legend>Google-konto</legend>
         <c:if test="${not empty googleEmail}">
-            Du har anslutit ditt Google-konto med e-post <strong>${googleEmail}</strong>. <br/>
-            <a href="${editGoogleCalendar}">Inställningar för Google-koppling</a>
+            <div>
+                Du har anslutit ditt Google-konto med e-post <strong>${googleEmail}</strong>.
+            </div>
         </c:if>
         <a href="${editGoogleCalendar}">Inställningar för Google-koppling</a>
 
