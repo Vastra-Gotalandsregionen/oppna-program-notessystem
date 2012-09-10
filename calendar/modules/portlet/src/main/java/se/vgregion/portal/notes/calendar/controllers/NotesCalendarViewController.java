@@ -58,6 +58,7 @@ import java.util.concurrent.Future;
 @Controller
 @SessionAttributes("displayPeriod")
 @RequestMapping("VIEW")
+@SuppressWarnings("unchecked")
 public class NotesCalendarViewController implements PortletConfigAware {
     private static final String TIME_FORMAT = "dd MMMM";
 
@@ -71,6 +72,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     private PortletConfig portletConfig = null;
     private PortletData portletData = null;
     private GoogleCalendarService googleCalendarService;
+    private Random random = new Random();
 
     /**
      * Constructs a NotesCalendarViewController.
@@ -104,7 +106,6 @@ public class NotesCalendarViewController implements PortletConfigAware {
     public String displayCalendarEvents(ModelMap model, RenderRequest request, RenderResponse response) {
         String userId = portletData.getUserId(request);
         LOGGER.debug("Userid: {}", userId);
-        String title = portletData.getPortletTitle(portletConfig, request);
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
         if (displayPeriod == null) {
             displayPeriod = new CalendarEventsPeriod(new DateTime(), CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
@@ -157,6 +158,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
             List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
             model.put("displayPeriodText", getFormattedDateIntervalToTitle(displayPeriod, response.getLocale()));
             model.put("calendarItems", calendarItems);
+            model.put("randomNumber", random.nextInt());
 
             return VIEW;
         } catch (RuntimeException ex) {

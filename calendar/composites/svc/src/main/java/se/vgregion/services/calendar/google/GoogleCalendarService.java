@@ -234,7 +234,7 @@ public class GoogleCalendarService {
 
         GoogleTokenResponse googleTokenResponse = googleAuthorizationCodeTokenRequest.execute();
 
-        Credential credential = authorizationCodeFlow.createAndStoreCredential(googleTokenResponse, userId);
+        authorizationCodeFlow.createAndStoreCredential(googleTokenResponse, userId);
     }
 
     public boolean isAuthorized(String userId) {
