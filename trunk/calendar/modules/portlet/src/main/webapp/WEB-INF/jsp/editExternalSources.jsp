@@ -51,6 +51,10 @@ Copyright 2010 Västra Götalandsregionen
     <portlet:param name="action" value="editGoogleCalendar"/>
 </portlet:renderURL>
 
+<portlet:actionURL var="removeGoogleCalendar">
+    <portlet:param name="action" value="removeGoogleCalendar"/>
+</portlet:actionURL>
+
 <portlet:actionURL var="editExternalSource">
     <portlet:param name="action" value="editExternalSource"/>
 </portlet:actionURL>
@@ -64,13 +68,19 @@ Copyright 2010 Västra Götalandsregionen
     </c:if>
 
     <fieldset>
-        <legend>Google-konto</legend>
+        <legend>Google-kalender</legend>
+
         <c:if test="${not empty googleEmail}">
             <div>
                 Du har anslutit ditt Google-konto med e-post <strong>${googleEmail}</strong>.
             </div>
+            <form action="${removeGoogleCalendar}" method="post">
+                <input type="submit" value="Koppla från konto" />
+            </form>
         </c:if>
-        <a href="${editGoogleCalendar}">Inställningar för Google-koppling</a>
+
+        <a href="${editGoogleCalendar}">Inställningar för Google-kalender</a>
+
 
     </fieldset>
 

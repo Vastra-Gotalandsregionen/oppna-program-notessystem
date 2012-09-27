@@ -48,6 +48,7 @@ import se.vgregion.portal.calendar.util.EncodingUtil;
 import se.vgregion.services.calendar.CalendarService;
 import se.vgregion.services.calendar.CalendarServiceException;
 import se.vgregion.services.calendar.google.GoogleCalendarService;
+import se.vgregion.services.calendar.google.GoogleCalendarServiceException;
 
 import javax.portlet.*;
 import java.io.IOException;
@@ -61,6 +62,7 @@ import java.util.concurrent.Future;
 @SuppressWarnings("unchecked")
 public class NotesCalendarViewController implements PortletConfigAware {
     private static final String TIME_FORMAT = "dd MMMM";
+    private static final String SELECTED_GOOGLE_CALENDARS = "selectedGoogleCalendars";
 
     /**
      * The name of the view page to dispatch to on a render request.
@@ -122,7 +124,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
             futureCalendarEvents.put("iNotes", calendarService.getFutureCalendarEvents(userId, displayPeriod));
 
             // Get from Google, asynchronously
-            String selectedCalendars = request.getPreferences().getValue("selectedCalendars", "");
+            String selectedCalendars = request.getPreferences().getValue(this.SELECTED_GOOGLE_CALENDARS, "");
             List<String> selectedCalendarsList = Arrays.asList(stringToArray(selectedCalendars));
             futureCalendarEvents.put("Google", googleCalendarService.getFutureCalendarEvents(userId, displayPeriod,
                     selectedCalendarsList));
@@ -143,7 +145,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
                         events.getCalendarItems().addAll(calendarItems);
                     }
                 } catch (Exception ex) {
-                    LOGGER.warn("Failed to get a calendar for user " + userId + ".", ex);
+                    LOGGER.warn("Failed to get a calendar for user " + userId + ". " + ex.getMessage());
                     failedRetrievals.add(futureCalendarEvent.getKey());
                 }
             }
@@ -222,11 +224,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
             }
         }
 
-        String selectedCalendarsString = request.getPreferences().getValue("selectedCalendars", null);
+        String selectedCalendarsString = request.getPreferences().getValue(SELECTED_GOOGLE_CALENDARS, null);
 
         String[] selectedCalendars = stringToArray(selectedCalendarsString);
 
-        model.addAttribute("selectedCalendars", selectedCalendars);
+        model.addAttribute(this.SELECTED_GOOGLE_CALENDARS, selectedCalendars);
 
         return "editGoogleCalendar";
     }
@@ -261,13 +263,23 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
     @ActionMapping(params = "action=saveGoogleCalendar")
     public void saveGoogleCalendar(ActionRequest request, ActionResponse response) throws ReadOnlyException, ValidatorException, IOException {
-        String[] selectedCalendarsArray = request.getParameterValues("selectedCalendars");
+        String[] selectedCalendarsArray = request.getParameterValues(SELECTED_GOOGLE_CALENDARS);
         String selectedCalendars = arrayToString(selectedCalendarsArray);
         PortletPreferences preferences = request.getPreferences();
-        preferences.setValue("selectedCalendars", selectedCalendars);
+        preferences.setValue(this.SELECTED_GOOGLE_CALENDARS, selectedCalendars);
         preferences.store();
 
-        response.setRenderParameter("action", "editGoogleCalendar");
+        response.setRenderParameter("action", "editExternalSources");
+    }
+
+    @ActionMapping(params = "action=removeGoogleCalendar")
+    public void removeGoogleCalendar(ActionRequest request, ActionResponse response, Model model)
+            throws GoogleCalendarServiceException {
+        String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
+
+        googleCalendarService.resetAuthorization(userId);
+
+        response.setRenderParameter("action", "editExternalSources");
     }
 
     String arrayToString(String[] array) {
