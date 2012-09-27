@@ -2,6 +2,7 @@ package se.vgregion.services.calendar.google;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.CredentialStore;
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
@@ -9,7 +10,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.services.GoogleKeyInitializer;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
@@ -58,6 +61,7 @@ public class GoogleCalendarService {
 
     private GoogleAuthorizationCodeFlow authorizationCodeFlow;
     private CredentialStore credentialStore;
+    private final HttpTransport httpTransport = new NetHttpTransport();
 
     public GoogleCalendarService() {
 
@@ -71,7 +75,7 @@ public class GoogleCalendarService {
     @PostConstruct
     public void setup() {
         this.authorizationCodeFlow = new GoogleAuthorizationCodeFlow.Builder(
-                new NetHttpTransport(), new JacksonFactory(), clientId, clientSecret,
+                httpTransport, new JacksonFactory(), clientId, clientSecret,
                 new ArrayList<String>(Arrays.asList(CalendarScopes.CALENDAR_READONLY,
                         "https://www.googleapis.com/auth/userinfo.profile",
                         "https://www.googleapis.com/auth/userinfo.email"))).setAccessType("offline")
@@ -84,8 +88,6 @@ public class GoogleCalendarService {
             Credential credential = authorizationCodeFlow.loadCredential(userId);
 
             if (credential != null) {
-                System.out.println("refreshToken: " + credential.getRefreshToken());
-
                 if ((credential.getExpiresInSeconds() == null || credential.getExpiresInSeconds() < 0)
                         && credential.getRefreshToken() != null) {
                     credential.refreshToken();
@@ -95,6 +97,13 @@ public class GoogleCalendarService {
                 calendarBuilder.setJsonHttpRequestInitializer(new GoogleKeyInitializer(apiKey));
 
                 calendar = calendarBuilder.build();
+            }
+        } catch (TokenResponseException e) {
+            try {
+                // Something wrong with authorization
+                resetAuthorization(userId);
+            } catch (GoogleCalendarServiceException e1) {
+                LOGGER.error(e1.getMessage(), e1);
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
@@ -110,7 +119,7 @@ public class GoogleCalendarService {
                 String accessToken = credential.getAccessToken();
                 String userinfoUrl = "https://www.googleapis.com/userinfo/v2/me?key=" + apiKey + "&access_token="
                         + accessToken;
-                HttpResponse httpResponse = authorizationCodeFlow.getTransport().createRequestFactory().buildGetRequest(
+                HttpResponse httpResponse = httpTransport.createRequestFactory().buildGetRequest(
                         new GenericUrl(userinfoUrl)).execute();
 
                 Userinfo userinfo = (Userinfo) authorizationCodeFlow.getJsonFactory().createJsonParser(httpResponse
@@ -257,5 +266,26 @@ public class GoogleCalendarService {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    public void resetAuthorization(String userId) throws GoogleCalendarServiceException {
+        try {
+            if (isAuthorized(userId)) {
+                Credential credential = authorizationCodeFlow.loadCredential(userId);
+                String accessToken = credential.getAccessToken();
+                HttpRequest httpRequest = httpTransport.createRequestFactory().buildGetRequest(new GenericUrl(
+                        "https://accounts.google.com/o/oauth2/revoke?token=" + accessToken));
+                HttpResponse execute = httpRequest.execute();
+                int statusCode = execute.getStatusCode();
+                if (statusCode != 200) {
+                    throw new GoogleCalendarServiceException("Failed to revoke access token. Status code = "
+                            + statusCode);
+                }
+                credentialStore.delete(userId, credential);
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
     }
 }

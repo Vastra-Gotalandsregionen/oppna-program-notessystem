@@ -90,12 +90,12 @@
                         <td>
                             <div class="checkbox-div">
                                 <c:set var="checkedText" value=""/>
-                                <c:forEach items="${selectedCalendars}" var="selectedCalendar">
+                                <c:forEach items="${selectedGoogleCalendars}" var="selectedCalendar">
                                     <c:if test="${entry.id eq selectedCalendar}">
                                         <c:set var="checkedText" value="checked=\"checked\""/>
                                     </c:if>
                                 </c:forEach>
-                                <input type="checkbox" name="selectedCalendars" ${checkedText} value="${entry.id}">
+                                <input type="checkbox" name="selectedGoogleCalendars" ${checkedText} value="${entry.id}">
                             </div>
                         </td>
                     </tr>
