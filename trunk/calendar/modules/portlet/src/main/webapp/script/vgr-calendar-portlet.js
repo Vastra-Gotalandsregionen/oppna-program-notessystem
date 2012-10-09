@@ -103,19 +103,18 @@ AUI().add('vgr-calendar-portlet',function(A) {
 						
 						var calendarWrapNode = instance.get(CALENDAR_WRAP_NODE);
 						var calendarWrapNodeId = calendarWrapNode.getAttribute('id');
-
-                        var contentNode = tempNode.one('#' + calendarWrapNodeId);
-                        if (contentNode) {
-                            var content = contentNode.html();
-
-                            tempNode.remove();
-
-                            calendarWrapNode.html(content);
-
-                        }
-
-                        calendarWrapNode.loadingmask.hide();
-                    }
+						
+						var calendarWrapTempNode = tempNode.one('#' + calendarWrapNodeId);
+						
+						if(calendarWrapTempNode) {
+							var content = calendarWrapTempNode.html();
+							tempNode.remove();
+							
+							calendarWrapNode.html(content);
+						}
+						
+						calendarWrapNode.loadingmask.hide();
+					}
 					
 					
 				}
