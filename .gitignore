@@ -1,0 +1,13 @@
+.DS_Store
+
+.classpath
+.project
+.settings
+
+rebel.xml
+
+target/*
+
+calendar/composites/svc/target/*
+calendar/composites/types/target/*
+calendar/modules/portlet/target/*
