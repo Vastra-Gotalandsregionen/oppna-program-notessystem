@@ -24,10 +24,7 @@
   <bean class="se.vgregion.services.calendar.google.FilePersistentCredentialStore"
         factory-method="createSerializableCredentialStore"/>
 
-  <bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
-
   <bean id="calendarEventsRepository" class="se.vgregion.domain.infrastructure.webservice.RestCalendarEventsRepository">
-    <constructor-arg name="restTemplate" ref="restTemplate" />
     <property name="serviceEndpoint" value="${service.endpoint}" />
   </bean>
 

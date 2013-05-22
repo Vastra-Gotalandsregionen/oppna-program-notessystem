@@ -32,11 +32,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestOperations;
 
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
+
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
 
 /**
  * @author Anders Asplund - Callista Enterprise
@@ -44,10 +45,6 @@ import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
  */
 public class RestCalendarEventRepositoryTest {
 
-    private RestCalendarEventsRepository repo;
-
-    @Mock
-    private RestOperations restTemplate;
     @Mock
     private CalendarEventsPeriod period;
 
@@ -57,8 +54,6 @@ public class RestCalendarEventRepositoryTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        repo = new RestCalendarEventsRepository(restTemplate);
-        repo.setServiceEndpoint("http://aida.vgregion.se/calendar.nsf/getinfo?openagent&");
     }
 
     @SuppressWarnings("unchecked")
@@ -68,8 +63,13 @@ public class RestCalendarEventRepositoryTest {
         given(period.getStartDate()).willReturn(new DateTime());
         given(period.getDays()).willReturn(Days.SEVEN);
 
-        given(restTemplate.getForObject(anyString(), any(Class.class), anyVararg())).willThrow(
-                new RestClientException(""));
+        RestCalendarEventsRepository repo = new RestCalendarEventsRepository() {
+            @Override
+            protected CalendarEvents getCalendarEventsFromUrl(String requestUrl) throws IOException, JAXBException {
+                throw new IOException("Test exception.");
+            }
+        };
+        repo.setServiceEndpoint("http://aida.vgregion.se/calendar.nsf/getinfo?openagent&");
 
         // When
         CalendarEvents events = repo.findCalendarEventsByCalendarPeriod("", period);
@@ -83,11 +83,17 @@ public class RestCalendarEventRepositoryTest {
     @Test
     public void shouldReturnCalendarEvents() throws Exception {
         // Given
+        RestCalendarEventsRepository repo = new RestCalendarEventsRepository() {
+            @Override
+            protected CalendarEvents getCalendarEventsFromUrl(String requestUrl) throws IOException, JAXBException {
+                return new CalendarEvents();
+            }
+        };
+
+        repo.setServiceEndpoint("http://aida.vgregion.se/calendar.nsf/getinfo?openagent&");
+
         given(period.getStartDate()).willReturn(new DateTime());
         given(period.getDays()).willReturn(Days.SEVEN);
-
-        given(restTemplate.getForObject(anyString(), any(Class.class), anyVararg())).willReturn(
-                new CalendarEvents());
 
         // When
         CalendarEvents foundEvents = repo.findCalendarEventsByCalendarPeriod("", period);

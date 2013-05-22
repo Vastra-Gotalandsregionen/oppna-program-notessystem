@@ -145,7 +145,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
                         events.getCalendarItems().addAll(calendarItems);
                     }
                 } catch (Exception ex) {
-                    LOGGER.warn("Failed to get a calendar for user " + userId + ". " + ex.getMessage());
+                    LOGGER.warn("Failed to get a calendar for user " + userId + ". " + ex.getMessage(), ex);
                     failedRetrievals.add(futureCalendarEvent.getKey());
                 }
             }
