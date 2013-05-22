@@ -22,15 +22,20 @@
  */
 package se.vgregion.domain.infrastructure.webservice;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestOperations;
-
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarEventsRepository;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Implementation of {@link CalendarEventsRepository} which is used for restfull requests against service endpoint.
@@ -43,17 +48,12 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestCalendarEventsRepository.class);
     private String serviceUrl;
-    private RestOperations restTemplate;
-    private String serviceEndpoint;
 
     /**
      * Constructs a RestCalendarEventsRepository for a restfull reqest to the specified service endpoint.
      *
-     * @param restTemplate a restTemplate to use for making a request
      */
-    @Autowired
-    public RestCalendarEventsRepository(RestOperations restTemplate) {
-        this.restTemplate = restTemplate;
+    public RestCalendarEventsRepository() {
     }
 
     /**
@@ -62,8 +62,7 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
      * @param serviceEndpoint the service endpoint
      */
     public void setServiceEndpoint(String serviceEndpoint) {
-        this.serviceEndpoint = serviceEndpoint;
-        this.serviceUrl = serviceEndpoint + "userid={userid}&year={year}&month={month}&day={day}&period={period}";
+        this.serviceUrl = serviceEndpoint + "userid=%s&year=%s&month=%s&day=%s&period=%s";
     }
 
     /*
@@ -82,15 +81,83 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
                     new Object[]{userId, period.getStartDate().getYear(),
                             period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
                             period.getDays().getDays()});
-            events = restTemplate.getForObject(serviceUrl, CalendarEvents.class, userId, period.getStartDate()
+
+            String requestUrl = String.format(serviceUrl, userId, period.getStartDate()
                     .getYear(), period.getStartDate().getMonthOfYear(), period.getStartDate().getDayOfMonth(),
                     period.getDays().getDays());
+
+            events = getCalendarEventsFromUrl(requestUrl);
+
         } catch (RestClientException e) {
             LOGGER.error("Unable to retreive information from web service: {}. CalendarEventPeriod={}",
                     new Object[]{serviceUrl, period});
             LOGGER.error("Web service exception", e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            LOGGER.error("Unable to retreive information from web service: {}. CalendarEventPeriod={}",
+                    new Object[]{serviceUrl, period});
+            LOGGER.error("Web service exception", e);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
         }
         return events;
+    }
+
+    protected CalendarEvents getCalendarEventsFromUrl(String requestUrl) throws IOException, JAXBException {
+        InputStream inputStream = null;
+        BufferedInputStream bis = null;
+        try {
+
+            URL url = new URL(requestUrl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            inputStream = urlConnection.getInputStream();
+            bis = new BufferedInputStream(inputStream);
+
+            return extractCalendarEvents(bis);
+        } finally {
+            closeClosables(bis, inputStream);
+        }
+    }
+
+    private static void closeClosables(Closeable... closables) {
+        for (Closeable closeable : closables) {
+            if (closeable != null) {
+                try {
+                    closeable.close();
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    // This method uses either UTF-8 or ISO-8859-1 to decode depending on which method results in the most Swedish
+    // characters.
+    private CalendarEvents extractCalendarEvents(InputStream bis) throws IOException, JAXBException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buf = new byte[4096];
+        int n;
+        while ((n = bis.read(buf)) != -1) {
+            baos.write(buf, 0, n);
+        }
+
+        String inUtf8 = new String(baos.toByteArray(), "UTF-8");
+        String inIso8859 = new String(baos.toByteArray(), "ISO-8859-1");
+        int numberSwedishCharactersFromUtf8 = StringUtils.countMatches(inUtf8, "å")
+                + StringUtils.countMatches(inUtf8, "ä") + StringUtils.countMatches(inUtf8, "ö");
+        int numberSwedishCharactersFromIso8859 = StringUtils.countMatches(inIso8859, "å")
+                + StringUtils.countMatches(inIso8859, "ä") + StringUtils.countMatches(inIso8859, "ö");
+
+        String toUse;
+        if (numberSwedishCharactersFromIso8859 > numberSwedishCharactersFromUtf8) {
+            toUse = inIso8859;
+        } else {
+            toUse = inUtf8;
+        }
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(CalendarEvents.class);
+        return (CalendarEvents) jaxbContext.createUnmarshaller().unmarshal(new StringReader(toUse));
     }
 
 }

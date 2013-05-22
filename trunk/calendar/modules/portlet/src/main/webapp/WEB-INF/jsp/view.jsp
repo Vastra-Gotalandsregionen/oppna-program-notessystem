@@ -80,9 +80,9 @@ Copyright 2010 Västra Götalandsregionen
 	  	</div>
 	</c:forEach>
 	
-	<div class="rp-link-wrap rp-link-wrap-right">
+	<%--<div class="rp-link-wrap rp-link-wrap-right">
 		<a class="rp-link" href="${editExternalSources}">Lägg till kalender</a>
-	</div>	
+	</div>	--%><%--temporarily (?) removed--%>
 	
 </div>
 
