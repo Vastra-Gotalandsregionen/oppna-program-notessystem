@@ -42,6 +42,7 @@ import org.mortbay.jetty.handler.HandlerList;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarEventsRepository;
+import se.vgregion.exchange.service.EwsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -64,10 +65,13 @@ public class NotesCalendarServiceTest {
     @Mock
     private CalendarEvents calendarEvents;
 
+    @Mock
+    private EwsService ewsService;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        notesCalendarService = new CalendarServiceImpl(calendarEventRepository);
+        notesCalendarService = new CalendarServiceImpl(calendarEventRepository, ewsService);
     }
 
     @Test
@@ -78,7 +82,7 @@ public class NotesCalendarServiceTest {
                         any(CalendarEventsPeriod.class))).willReturn(calendarEvents);
         given(calendarEvents.filterOutCalendarItemsWithValidInterval()).willReturn(calendarEvents);
         // When
-        CalendarEvents listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1, null);
+        CalendarEvents listOfEvents = notesCalendarService.getCalendarEvents(USER_ID_1, new CalendarEventsPeriod(new DateTime(), Days.SEVEN));
 
         // Then
         assertNotNull(listOfEvents);
@@ -88,7 +92,7 @@ public class NotesCalendarServiceTest {
     public void testGetCalendarEventsFromIcalUrl() throws CalendarServiceException {
 
         //Given - Override parseIcalUrl method
-        CalendarServiceImpl service = new CalendarServiceImpl(null) {
+        CalendarServiceImpl service = new CalendarServiceImpl(null, null) {
             Calendar parseIcalUrl(String url) {
                 Component component1 = new VEvent(new net.fortuna.ical4j.model.DateTime(new Date().getTime()),
                         new net.fortuna.ical4j.model.DateTime(new Date().getTime() + 1000 * 60 * 60 * 24),
@@ -142,7 +146,7 @@ public class NotesCalendarServiceTest {
 
         server.start();
 
-        CalendarServiceImpl service = new CalendarServiceImpl(null);
+        CalendarServiceImpl service = new CalendarServiceImpl(null, null);
 
         service.parseIcalUrl("http://localhost:8484/");
 
