@@ -19,9 +19,12 @@
 
 package se.vgregion.services.calendar;
 
+import com.microsoft.schemas.exchange.services._2006.types.CalendarItemType;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.*;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Date;
 import net.fortuna.ical4j.model.component.VEvent;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
@@ -34,6 +37,7 @@ import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarEventsRepository;
 import se.vgregion.core.domain.calendar.CalendarItem;
+import se.vgregion.exchange.service.EwsService;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -41,8 +45,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.TimeZone;
 import java.util.concurrent.Future;
 
@@ -51,6 +54,7 @@ public class CalendarServiceImpl implements CalendarService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CalendarServiceImpl.class);
     private CalendarEventsRepository calendarEventsRepository;
+    private EwsService ewsService;
 
     /**
      * Constructs a CalendarServiceImpl.
@@ -58,8 +62,9 @@ public class CalendarServiceImpl implements CalendarService {
      * @param eventsRepository an eventsRepository
      */
     @Autowired
-    public CalendarServiceImpl(CalendarEventsRepository eventsRepository) {
+    public CalendarServiceImpl(CalendarEventsRepository eventsRepository, EwsService ewsService) {
         this.calendarEventsRepository = eventsRepository;
+        this.ewsService = ewsService;
     }
 
     /*
@@ -71,6 +76,11 @@ public class CalendarServiceImpl implements CalendarService {
     @Override
     public CalendarEvents getCalendarEvents(String userId, CalendarEventsPeriod period) {
         CalendarEvents events = calendarEventsRepository.findCalendarEventsByCalendarPeriod(userId, period);
+
+        CalendarEvents ewsCalendarEvents = getEwsCalendarEvents(userId, period);
+
+        events.getCalendarItems().addAll(ewsCalendarEvents.getCalendarItems());
+
         return events.filterOutCalendarItemsWithValidInterval();
     }
 
@@ -178,5 +188,42 @@ public class CalendarServiceImpl implements CalendarService {
             throw new CalendarServiceException(ex);
         }
     }
+
+    private CalendarEvents getEwsCalendarEvents(String userId, CalendarEventsPeriod period) {
+        java.util.Date startDate = period.getStartDate().toGregorianCalendar().getTime();
+        java.util.Date endDate = period.getEndDate().toGregorianCalendar().getTime();
+        List<CalendarItemType> ewsCalendarItems = ewsService.fetchCalendarEvents(userId, startDate, endDate);
+
+        CalendarEvents calendarEvents = new CalendarEvents();
+        calendarEvents.setCalendarItems(new ArrayList<CalendarItem>());
+
+        for (CalendarItemType calendarItemType : ewsCalendarItems) {
+            CalendarItem item = new CalendarItem();
+            item.setCalendarType("Outlook");
+            String location = calendarItemType.getLocation();
+            location = location == null ? "" : location;
+            item.setTitle(calendarItemType.getSubject() + " - <b>" + location + "</b>");
+
+            long start = calendarItemType.getStart().toGregorianCalendar().getTimeInMillis();
+            long end = calendarItemType.getEnd().toGregorianCalendar().getTimeInMillis();
+
+            item.setWholeDays(calendarItemType.isIsAllDayEvent());
+
+            if (item.getWholeDays()) {
+                // Subtract a millisecond so we don't regard the event as taking place on the next day. Now we
+                // end the event one millisecond before the day turns.
+                end -= 1;
+                end = Math.max(start, end); // If startTime equals endTime we avoid end being less than start
+            }
+
+            Interval interval = new Interval(start, end);
+            item.setInterval(interval);
+
+            calendarEvents.getCalendarItems().add(item);
+        }
+
+        return calendarEvents;
+    }
+
 
 }

@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @SessionAttributes("displayPeriod")
@@ -121,13 +122,13 @@ public class NotesCalendarViewController implements PortletConfigAware {
             events.setCalendarItems(new ArrayList<CalendarItem>());
 
             // Retrieve asynchronously
-            futureCalendarEvents.put("iNotes", calendarService.getFutureCalendarEvents(userId, displayPeriod));
+            futureCalendarEvents.put("VGR", calendarService.getFutureCalendarEvents(userId, displayPeriod));
 
             // Get from Google, asynchronously
-            String selectedCalendars = request.getPreferences().getValue(this.SELECTED_GOOGLE_CALENDARS, "");
-            List<String> selectedCalendarsList = Arrays.asList(stringToArray(selectedCalendars));
-            futureCalendarEvents.put("Google", googleCalendarService.getFutureCalendarEvents(userId, displayPeriod,
-                    selectedCalendarsList));
+//            String selectedCalendars = request.getPreferences().getValue(this.SELECTED_GOOGLE_CALENDARS, "");
+//            List<String> selectedCalendarsList = Arrays.asList(stringToArray(selectedCalendars));
+//            futureCalendarEvents.put("Google", googleCalendarService.getFutureCalendarEvents(userId, displayPeriod,
+//                    selectedCalendarsList));
 
             // Get from other sources, asynchronously.
             Map<String, String> externalSources = getExternalSources(request.getPreferences());
@@ -140,7 +141,8 @@ public class NotesCalendarViewController implements PortletConfigAware {
             List<String> failedRetrievals = new ArrayList<String>();
             for (Map.Entry<String, Future<CalendarEvents>> futureCalendarEvent : futureCalendarEvents.entrySet()) {
                 try {
-                    List<CalendarItem> calendarItems = futureCalendarEvent.getValue().get().getCalendarItems();
+                    Future<CalendarEvents> value = futureCalendarEvent.getValue();
+                    List<CalendarItem> calendarItems = value.get(15, TimeUnit.SECONDS).getCalendarItems();
                     if (calendarItems != null) {
                         events.getCalendarItems().addAll(calendarItems);
                     }

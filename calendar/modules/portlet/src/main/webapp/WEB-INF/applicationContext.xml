@@ -20,6 +20,8 @@
       <list>
         <value>classpath:security.properties</value>
         <value>classpath:application.properties</value>
+        <value>file:${user.home}/.rp/ews.properties</value>
+        <value>file:${user.home}/.rp/AD.properties</value>
       </list>
     </property>
     <property name="ignoreResourceNotFound" value="false"/>
