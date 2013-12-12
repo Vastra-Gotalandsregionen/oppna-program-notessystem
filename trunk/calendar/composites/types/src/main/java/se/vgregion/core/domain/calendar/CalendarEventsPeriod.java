@@ -33,7 +33,7 @@ import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
  */
 public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeriod> {
 
-    private static final long serialVersionUID = -7922598817193391527L;
+    private static final long serialVersionUID = -8922598818193391527L;
     private DateTime startDate;
     private Days days;
 
@@ -66,7 +66,7 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
      * @return the last day of the period.
      */
     public DateTime getEndDate() {
-        return startDate.plus(days.minus(Days.ONE));
+        return startDate.plus(days.toStandardDuration().getMillis() - 1);
     }
 
     public Days getDays() {
@@ -93,6 +93,10 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
      */
     public CalendarEventsPeriod previous() {
         return new CalendarEventsPeriod(startDate.minusDays(days.getDays()), days);
+    }
+
+    public Integer getWeekOfIntervalStart() {
+        return startDate.getWeekOfWeekyear();
     }
 
     @Override

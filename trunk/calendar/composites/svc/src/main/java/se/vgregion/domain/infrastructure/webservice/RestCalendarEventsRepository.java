@@ -29,6 +29,7 @@ import org.springframework.web.client.RestClientException;
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarEventsRepository;
+import se.vgregion.core.domain.calendar.CalendarItem;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -36,6 +37,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Implementation of {@link CalendarEventsRepository} which is used for restfull requests against service endpoint.
@@ -114,7 +116,19 @@ public class RestCalendarEventsRepository implements CalendarEventsRepository {
             inputStream = urlConnection.getInputStream();
             bis = new BufferedInputStream(inputStream);
 
-            return extractCalendarEvents(bis);
+            CalendarEvents calendarEvents = extractCalendarEvents(bis);
+
+            if (calendarEvents != null && calendarEvents.getCalendarItems() != null) {
+                List<CalendarItem> calendarItems = calendarEvents.getCalendarItems();
+                for (CalendarItem item : calendarItems) {
+                    String calendarType = item.getCalendarType();
+                    if (calendarType != null) {
+                        item.setCalendarType(item.getCalendarType().replace("Noteskalender", "Notes"));
+                    }
+                }
+            }
+
+            return calendarEvents;
         } finally {
             closeClosables(bis, inputStream);
         }

@@ -25,6 +25,7 @@ import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.oauth2.model.Userinfo;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
@@ -111,7 +112,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
         LOGGER.debug("Userid: {}", userId);
         CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
         if (displayPeriod == null) {
-            displayPeriod = new CalendarEventsPeriod(new DateTime(), CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
+            DateTime startDate = new DateTime().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0)
+                    .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+            displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
             model.put("displayPeriod", displayPeriod);
         }
         try {
