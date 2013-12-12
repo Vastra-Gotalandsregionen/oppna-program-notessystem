@@ -200,9 +200,9 @@ public class CalendarServiceImpl implements CalendarService {
         for (CalendarItemType calendarItemType : ewsCalendarItems) {
             CalendarItem item = new CalendarItem();
             item.setCalendarType("Outlook");
-            String location = calendarItemType.getLocation();
-            location = location == null ? "" : location;
-            item.setTitle(calendarItemType.getSubject() + " - <b>" + location + "</b>");
+            String locationText = calendarItemType.getLocation();
+            locationText = locationText == null || "".equals(locationText) ? "" : " - <b>" + locationText + "</b>";
+            item.setTitle(calendarItemType.getSubject() + locationText);
 
             long start = calendarItemType.getStart().toGregorianCalendar().getTimeInMillis();
             long end = calendarItemType.getEnd().toGregorianCalendar().getTimeInMillis();

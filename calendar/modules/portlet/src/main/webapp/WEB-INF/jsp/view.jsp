@@ -41,7 +41,7 @@ Copyright 2010 Västra Götalandsregionen
 	<div class="pager clearfix cal-pager">
 		<a class="prev" href="${previous}">Föregående</a>
 		<a class="next" href="${next}">Nästa</a>
-		<span class="cal-display-interval">${displayPeriodText}</span>
+		<span class="cal-display-interval">Vecka ${displayPeriod.weekOfIntervalStart}: ${displayPeriodText}</span>
 	</div>    
 
 	<c:forEach items="${calendarItems}" var="eventDay">

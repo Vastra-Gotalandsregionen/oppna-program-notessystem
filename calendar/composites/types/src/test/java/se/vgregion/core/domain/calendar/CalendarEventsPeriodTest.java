@@ -44,7 +44,7 @@ public class CalendarEventsPeriodTest {
      */
     @Before
     public void setUp() throws Exception {
-        dateTime = new DateTime(2010, 5, 1, 12, 0, 0, 0);
+        dateTime = new DateTime(2010, 5, 1, 0, 0, 0, 0);
         days = Days.SEVEN;
         eventsPeriod = new CalendarEventsPeriod(dateTime, days);
     }
@@ -57,6 +57,11 @@ public class CalendarEventsPeriodTest {
         CalendarEventsPeriod nextPeriod = eventsPeriod.next();
         assertEquals(8, nextPeriod.getStartDate().dayOfMonth().get());
         assertEquals(5, nextPeriod.getStartDate().monthOfYear().get());
+        assertEquals(14, nextPeriod.getEndDate().dayOfMonth().get());
+        assertEquals(23, nextPeriod.getEndDate().hourOfDay().get());
+        assertEquals(59, nextPeriod.getEndDate().minuteOfHour().get());
+        assertEquals(59, nextPeriod.getEndDate().secondOfMinute().get());
+        assertEquals(999, nextPeriod.getEndDate().millisOfSecond().get());
     }
 
     /**
