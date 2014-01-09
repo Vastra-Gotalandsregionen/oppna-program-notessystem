@@ -35,7 +35,7 @@
     <dependency>
       <groupId>se.vgregion.ews-services</groupId>
       <artifactId>ews-services-core-bc-composite-svc</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
     </dependency>
 
     <dependency>

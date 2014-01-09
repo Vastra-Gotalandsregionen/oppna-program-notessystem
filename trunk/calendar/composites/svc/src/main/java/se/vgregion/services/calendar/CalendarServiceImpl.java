@@ -197,29 +197,31 @@ public class CalendarServiceImpl implements CalendarService {
         CalendarEvents calendarEvents = new CalendarEvents();
         calendarEvents.setCalendarItems(new ArrayList<CalendarItem>());
 
-        for (CalendarItemType calendarItemType : ewsCalendarItems) {
-            CalendarItem item = new CalendarItem();
-            item.setCalendarType("Outlook");
-            String locationText = calendarItemType.getLocation();
-            locationText = locationText == null || "".equals(locationText) ? "" : " - <b>" + locationText + "</b>";
-            item.setTitle(calendarItemType.getSubject() + locationText);
+        if (ewsCalendarItems != null) {
+            for (CalendarItemType calendarItemType : ewsCalendarItems) {
+                CalendarItem item = new CalendarItem();
+                item.setCalendarType("Outlook");
+                String locationText = calendarItemType.getLocation();
+                locationText = locationText == null || "".equals(locationText) ? "" : " - <b>" + locationText + "</b>";
+                item.setTitle(calendarItemType.getSubject() + locationText);
 
-            long start = calendarItemType.getStart().toGregorianCalendar().getTimeInMillis();
-            long end = calendarItemType.getEnd().toGregorianCalendar().getTimeInMillis();
+                long start = calendarItemType.getStart().toGregorianCalendar().getTimeInMillis();
+                long end = calendarItemType.getEnd().toGregorianCalendar().getTimeInMillis();
 
-            item.setWholeDays(calendarItemType.isIsAllDayEvent());
+                item.setWholeDays(calendarItemType.isIsAllDayEvent());
 
-            if (item.getWholeDays()) {
-                // Subtract a millisecond so we don't regard the event as taking place on the next day. Now we
-                // end the event one millisecond before the day turns.
-                end -= 1;
-                end = Math.max(start, end); // If startTime equals endTime we avoid end being less than start
+                if (item.getWholeDays()) {
+                    // Subtract a millisecond so we don't regard the event as taking place on the next day. Now we
+                    // end the event one millisecond before the day turns.
+                    end -= 1;
+                    end = Math.max(start, end); // If startTime equals endTime we avoid end being less than start
+                }
+
+                Interval interval = new Interval(start, end);
+                item.setInterval(interval);
+
+                calendarEvents.getCalendarItems().add(item);
             }
-
-            Interval interval = new Interval(start, end);
-            item.setInterval(interval);
-
-            calendarEvents.getCalendarItems().add(item);
         }
 
         return calendarEvents;
