@@ -145,12 +145,19 @@ public class NotesCalendarViewController implements PortletConfigAware {
             for (Map.Entry<String, Future<CalendarEvents>> futureCalendarEvent : futureCalendarEvents.entrySet()) {
                 try {
                     Future<CalendarEvents> value = futureCalendarEvent.getValue();
-                    List<CalendarItem> calendarItems = value.get(15, TimeUnit.SECONDS).getCalendarItems();
-                    if (calendarItems != null) {
-                        events.getCalendarItems().addAll(calendarItems);
+                    CalendarEvents calendarEvents = value.get(15, TimeUnit.SECONDS);
+                    if (calendarEvents != null) {
+                        List<CalendarItem> calendarItems = calendarEvents.getCalendarItems();
+                        if (calendarItems != null) {
+                            events.getCalendarItems().addAll(calendarItems);
+                        }
                     }
                 } catch (Exception ex) {
-                    LOGGER.warn("Failed to get a calendar for user " + userId + ". " + ex.getMessage(), ex);
+                    if (userId.equals("lifra1")) {
+                        LOGGER.warn("Failed to get a calendar for user " + userId + ". " + ex.getMessage());
+                    } else {
+                        LOGGER.warn("Failed to get a calendar for user " + userId + ". " + ex.getMessage(), ex);
+                    }
                     failedRetrievals.add(futureCalendarEvent.getKey());
                 }
             }
