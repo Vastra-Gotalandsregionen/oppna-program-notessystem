@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+  <!--
+    This is the Service-composite Maven POM. Template version: 1.4 Generation time : 2010-05-11 14:04:57 CEST
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>se.vgregion.oppna-program-notessystem</groupId>
+    <artifactId>oppna-program-notessystem-calendar</artifactId>
+    <version>1.7</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <groupId>se.vgregion.oppna-program-notessystem</groupId>
+  <artifactId>oppna-program-notessystem-calendar-composite-svc</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+
+  <repositories>
+    <repository>
+      <id>googleapis</id>
+      <url>http://mavenrepo.google-api-java-client.googlecode.com/hg/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>oppna-program-notessystem-calendar-composite-types</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>se.vgregion.ews-services</groupId>
+      <artifactId>ews-services-core-bc-composite-svc</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.ldap</groupId>
+      <artifactId>spring-ldap-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mnode.ical4j</groupId>
+      <artifactId>ical4j</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-calendar</artifactId>
+      <version>v3-rev9-1.7.2-beta</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-oauth2</artifactId>
+      <version>v2-rev9-1.7.2-beta</version>
+    </dependency>
+
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>6.1.26</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+
+  </dependencies>
+</project>
