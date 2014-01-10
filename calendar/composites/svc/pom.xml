@@ -7,7 +7,7 @@
   <parent>
     <groupId>se.vgregion.oppna-program-notessystem</groupId>
     <artifactId>oppna-program-notessystem-calendar</artifactId>
-    <version>1.7</version>
+    <version>1.8-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>se.vgregion.oppna-program-notessystem</groupId>
