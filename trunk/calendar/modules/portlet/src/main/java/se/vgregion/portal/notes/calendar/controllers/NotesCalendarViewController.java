@@ -77,6 +77,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     private PortletData portletData = null;
     private GoogleCalendarService googleCalendarService;
     private Random random = new Random();
+    private Locale locale = new Locale("sv", "SE");
 
     /**
      * Constructs a NotesCalendarViewController.
@@ -170,7 +171,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
             }
 
             List<List<CalendarItem>> calendarItems = events.getCalendarItemsGroupedByStartDate();
-            model.put("displayPeriodText", getFormattedDateIntervalToTitle(displayPeriod, response.getLocale()));
+            model.put("displayPeriodText", getFormattedDateIntervalToTitle(displayPeriod, locale));
             model.put("calendarItems", calendarItems);
             model.put("randomNumber", random.nextInt());
 
