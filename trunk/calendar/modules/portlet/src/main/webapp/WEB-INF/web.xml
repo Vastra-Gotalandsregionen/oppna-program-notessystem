@@ -28,6 +28,7 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
+  <!--
   <servlet>
     <servlet-name>NotesCalendar</servlet-name>
     <servlet-class>com.liferay.portal.kernel.servlet.PortletServlet</servlet-class>
@@ -37,14 +38,17 @@
     </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
+  -->
 
   <servlet-mapping>
     <servlet-name>view</servlet-name>
     <url-pattern>/WEB-INF/servlet/view</url-pattern>
   </servlet-mapping>
 
+  <!--
   <servlet-mapping>
     <servlet-name>NotesCalendar</servlet-name>
     <url-pattern>/NotesCalendar/*</url-pattern>
   </servlet-mapping>
+  -->
 </web-app>
