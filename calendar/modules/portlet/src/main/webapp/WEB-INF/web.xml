@@ -16,9 +16,6 @@
   <display-name>oppna-program-notessystem-calendar-module-portlet</display-name>
   <description>Vgr Calendar Portlet</description>
   <listener>
-    <listener-class>com.liferay.portal.kernel.servlet.PortletContextListener</listener-class>
-  </listener>
-  <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
 
