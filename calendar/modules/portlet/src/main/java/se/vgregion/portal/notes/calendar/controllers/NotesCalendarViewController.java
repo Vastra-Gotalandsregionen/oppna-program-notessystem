@@ -165,8 +165,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
             if (failedRetrievals.size() > 0) {
                 String errorMessage = "Följande hämtningar misslyckades: "
-                        + StringUtils.arrayToCommaDelimitedString(failedRetrievals.toArray()) + ". Du kan behöva gå"
-                        + " till \"Redigera externa källor\" och se över konfigurationen.";
+                        + StringUtils.arrayToCommaDelimitedString(failedRetrievals.toArray()) + ".";
                 model.addAttribute("errorMessage", errorMessage);
             }
 
