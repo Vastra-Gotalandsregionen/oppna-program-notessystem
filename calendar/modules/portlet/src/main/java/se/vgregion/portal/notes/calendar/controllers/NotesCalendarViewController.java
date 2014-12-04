@@ -23,9 +23,10 @@ import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
-import com.google.api.services.oauth2.model.Userinfo;
+//import com.google.api.services.oauth2.model.Userinfo;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
@@ -65,6 +66,8 @@ import java.util.concurrent.TimeUnit;
 public class NotesCalendarViewController implements PortletConfigAware {
     private static final String TIME_FORMAT = "dd MMMM";
     private static final String SELECTED_GOOGLE_CALENDARS = "selectedGoogleCalendars";
+
+    protected String displayPeriodKey = "displayPeriod";
 
     /**
      * The name of the view page to dispatch to on a render request.
@@ -109,14 +112,20 @@ public class NotesCalendarViewController implements PortletConfigAware {
      */
     @RenderMapping
     public String displayCalendarEvents(ModelMap model, RenderRequest request, RenderResponse response) {
+
+        // It would seem that Joda Times DateTimeZone does not use Sun:s TimeZone.getDefault (user.timezone) as its
+        // often claims but defaults to timezone UTC. So therefor we do this:
+        DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        // ... getting the value set in the java_opt - setting it as default for JT.
+
         String userId = portletData.getUserId(request);
         LOGGER.debug("Userid: {}", userId);
-        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
+        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get(displayPeriodKey);
         if (displayPeriod == null) {
             DateTime startDate = new DateTime().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0)
                     .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
             displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.DEFAULT_PERIOD_LENGTH);
-            model.put("displayPeriod", displayPeriod);
+            model.put(displayPeriodKey, displayPeriod);
         }
         try {
             Map<String, Future<CalendarEvents>> futureCalendarEvents = new HashMap<String, Future<CalendarEvents>>();
@@ -199,12 +208,12 @@ public class NotesCalendarViewController implements PortletConfigAware {
             throws ClassNotFoundException, IOException {
         PortletPreferences preferences = request.getPreferences();
 
-        String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
+        /*String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
         Userinfo userinfo = googleCalendarService.getUserinfo(userId);
 
         if (userinfo != null) {
             model.addAttribute("googleEmail", userinfo.getEmail());
-        }
+        }*/
 
         Map<String, String> externalSources = getExternalSources(preferences);
 
@@ -218,6 +227,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
+/*
         Calendar calendar = googleCalendarService.getCalendar(userId);
 
         if (calendar != null) {
@@ -235,6 +245,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
                 LOGGER.error(e.getMessage(), e);
             }
         }
+*/
 
         String selectedCalendarsString = request.getPreferences().getValue(SELECTED_GOOGLE_CALENDARS, null);
 
@@ -249,11 +260,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
     public void addGoogleCalendar(ActionRequest request, ActionResponse response, Model model) throws IOException {
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
-        if (!googleCalendarService.isAuthorized(userId)) {
+/*        if (!googleCalendarService.isAuthorized(userId)) {
             response.sendRedirect(googleCalendarService.getRedirectUrl());
         } else {
             response.setRenderParameter("action", "editGoogleCalendar");
-        }
+        }*/
     }
 
     @RenderMapping(params = "action=googleCallback")
@@ -263,11 +274,11 @@ public class NotesCalendarViewController implements PortletConfigAware {
 
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
-        try {
+/*        try {
             googleCalendarService.authorize(authorizationCode, userId);
         } catch (TokenResponseException e) {
             LOGGER.warn(e.getMessage());
-        }
+        }*/
 
 
         return editGoogleCalendar(request, response, model);
@@ -289,7 +300,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
             throws GoogleCalendarServiceException {
         String userId = lookupP3PInfo(request, PortletRequest.P3PUserInfos.USER_LOGIN_ID);
 
-        googleCalendarService.resetAuthorization(userId);
+        //googleCalendarService.resetAuthorization(userId);
 
         response.setRenderParameter("action", "editExternalSources");
     }
@@ -314,7 +325,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
         return string.split("==SEPARATOR==");
     }
 
-    private String lookupP3PInfo(PortletRequest req, PortletRequest.P3PUserInfos p3pInfo) {
+    protected String lookupP3PInfo(PortletRequest req, PortletRequest.P3PUserInfos p3pInfo) {
         Map<String, String> userInfo = (Map<String, String>) req.getAttribute(PortletRequest.USER_INFO);
         String info;
         if (userInfo != null) {
@@ -326,7 +337,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     }
 
 
-    private Map<String, String> decodeExternalSources(String externalSourcesEncoded)
+    protected Map<String, String> decodeExternalSources(String externalSourcesEncoded)
             throws IOException, ClassNotFoundException {
         Map<String, String> externalSources;
         try {
@@ -404,9 +415,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
      */
     @RenderMapping(params = "navigate=next")
     public String nextWeek(ModelMap model, RenderRequest request, RenderResponse response) {
-        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
+        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get(displayPeriodKey);
         if (displayPeriod != null) {
-            model.put("displayPeriod", displayPeriod.next());
+            model.put(displayPeriodKey, displayPeriod.next());
         }
         return displayCalendarEvents(model, request, response);
     }
@@ -418,9 +429,9 @@ public class NotesCalendarViewController implements PortletConfigAware {
      */
     @RenderMapping(params = "navigate=previous")
     public String previousWeek(ModelMap model, RenderRequest request, RenderResponse response) {
-        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
+        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get(displayPeriodKey);
         if (displayPeriod != null) {
-            model.put("displayPeriod", displayPeriod.previous());
+            model.put(displayPeriodKey, displayPeriod.previous());
         }
         return displayCalendarEvents(model, request, response);
     }
@@ -442,7 +453,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
         return mav;
     }
 
-    private Map<String, String> getExternalSources(PortletPreferences preferences)
+    protected Map<String, String> getExternalSources(PortletPreferences preferences)
             throws IOException, ClassNotFoundException {
         String externalSourcesEncoded = preferences.getValue("externalSourcesEncoded", null);
 
@@ -456,7 +467,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
         return externalSources;
     }
 
-    private String getFormattedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
+    protected String getFormattedDateIntervalToTitle(CalendarEventsPeriod displayPeriod, Locale locale) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern(TIME_FORMAT).withLocale(locale);
         StringBuilder title = new StringBuilder(TIME_FORMAT.length() * 2 + " - ".length());
 
