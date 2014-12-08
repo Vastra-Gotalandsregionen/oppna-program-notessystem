@@ -20,9 +20,15 @@
       <id>googleapis</id>
       <url>http://mavenrepo.google-api-java-client.googlecode.com/hg/</url>
       <snapshots>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
       </snapshots>
     </repository>
+
+    <repository>
+      <id>google-api-services</id>
+      <url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
+    </repository>
+
   </repositories>
 
   <dependencies>
@@ -67,14 +73,22 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
-      <version>v3-rev9-1.7.2-beta</version>
+      <version>v3-rev105-1.19.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-oauth2</artifactId>
-      <version>v2-rev9-1.7.2-beta</version>
+      <version>v2-rev81-1.19.0</version>
     </dependency>
+
+
+    <dependency>
+      <groupId>com.google.api.client</groupId>
+      <artifactId>google-api-client-json</artifactId>
+      <version>1.2.3-alpha</version>
+    </dependency>
+
 
     <dependency>
       <groupId>cglib</groupId>

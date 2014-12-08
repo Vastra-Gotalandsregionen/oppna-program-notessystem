@@ -1,4 +1,5 @@
 package se.vgregion.services.calendar.google;
+/*
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.CredentialStore;
@@ -14,14 +15,14 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
-import com.google.api.services.calendar.Calendar;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
-import com.google.api.services.oauth2.model.Userinfo;
+import com.google.api.services.oauth2.Oauth2;
 import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +30,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+*/
 import org.springframework.stereotype.Service;
+/*
 import se.vgregion.core.domain.calendar.CalendarEvents;
 import se.vgregion.core.domain.calendar.CalendarEventsPeriod;
 import se.vgregion.core.domain.calendar.CalendarItem;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.Future;
+*/
 
 /**
  * @author Patrik Bergström
@@ -47,6 +54,7 @@ import java.util.concurrent.Future;
 @Service
 public class GoogleCalendarService {
 
+/*
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleCalendarService.class);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -74,8 +82,18 @@ public class GoogleCalendarService {
 
     @PostConstruct
     public void setup() {
-        this.authorizationCodeFlow = new GoogleAuthorizationCodeFlow.Builder(
+        */
+/*this.authorizationCodeFlow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, new JacksonFactory(), clientId, clientSecret,
+                new ArrayList<String>(Arrays.asList(CalendarScopes.CALENDAR_READONLY,
+                        "https://www.googleapis.com/auth/userinfo.profile",
+                        "https://www.googleapis.com/auth/userinfo.email"))).setAccessType("offline")
+                .setCredentialStore(credentialStore).build();
+                *//*
+
+        JsonFactory jacksonFactory = new JacksonFactory();
+        this.authorizationCodeFlow = new GoogleAuthorizationCodeFlow.Builder(
+                httpTransport, jacksonFactory, clientId, clientSecret,
                 new ArrayList<String>(Arrays.asList(CalendarScopes.CALENDAR_READONLY,
                         "https://www.googleapis.com/auth/userinfo.profile",
                         "https://www.googleapis.com/auth/userinfo.email"))).setAccessType("offline")
@@ -94,7 +112,7 @@ public class GoogleCalendarService {
                 }
                 Calendar.Builder calendarBuilder = new Calendar.Builder(authorizationCodeFlow.getTransport(),
                         authorizationCodeFlow.getJsonFactory(), credential);
-                calendarBuilder.setJsonHttpRequestInitializer(new GoogleKeyInitializer(apiKey));
+                //calendarBuilder.setJsonHttpRequestInitializer(new GoogleKeyInitializer(apiKey));
 
                 calendar = calendarBuilder.build();
             }
@@ -112,7 +130,7 @@ public class GoogleCalendarService {
         return calendar;
     }
 
-    public Userinfo getUserinfo(String userId) {
+    public Oauth2.Userinfo getUserinfo(String userId) {
         try {
             Credential credential = authorizationCodeFlow.loadCredential(userId);
             if (credential != null) {
@@ -122,8 +140,8 @@ public class GoogleCalendarService {
                 HttpResponse httpResponse = httpTransport.createRequestFactory().buildGetRequest(
                         new GenericUrl(userinfoUrl)).execute();
 
-                Userinfo userinfo = (Userinfo) authorizationCodeFlow.getJsonFactory().createJsonParser(httpResponse
-                        .getContent()).parse(Userinfo.class, true, null);
+                Oauth2.Userinfo userinfo = (Oauth2.Userinfo) authorizationCodeFlow.getJsonFactory().createJsonParser(httpResponse
+                        .getContent()).parse(Oauth2.Userinfo.class, true, null);
 
                 return userinfo;
             }
@@ -288,4 +306,5 @@ public class GoogleCalendarService {
         }
 
     }
+*/
 }

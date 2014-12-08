@@ -31,6 +31,24 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http:
     </portlet-info>
   </portlet>
 
+  <portlet>
+    <portlet-name>MyDayCalendar</portlet-name>
+    <display-name>Min Dag</display-name>
+    <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>view</portlet-mode>
+    </supports>
+    <supported-locale>sv</supported-locale>
+    <resource-bundle>se.vgregion.portal.notessystem.calendar</resource-bundle>
+    <portlet-info>
+      <title>Min Dag</title>
+      <short-title>Min Dag</short-title>
+      <keywords>notes kalender calendar agenda</keywords>
+    </portlet-info>
+  </portlet>
+
   <!-- Used to get remote user. See more info in JSR-286 Section 21.1. -->
   <user-attribute>
     <description>User Login Id</description>

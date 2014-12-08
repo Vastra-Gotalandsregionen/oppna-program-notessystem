@@ -72,7 +72,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     /**
      * The name of the view page to dispatch to on a render request.
      */
-    public static final String VIEW = "view";
+    protected static final String VIEW = "view";
     public static final String NO_CALENDAR_VIEW = "no_calendar_view";
     private static final Logger LOGGER = LoggerFactory.getLogger(NotesCalendarViewController.class);
     private CalendarService calendarService;
@@ -182,7 +182,6 @@ public class NotesCalendarViewController implements PortletConfigAware {
             model.put("displayPeriodText", getFormattedDateIntervalToTitle(displayPeriod, locale));
             model.put("calendarItems", calendarItems);
             model.put("randomNumber", random.nextInt());
-
             return VIEW;
         } catch (RuntimeException ex) {
             LOGGER.error(ex.getMessage(), ex);
