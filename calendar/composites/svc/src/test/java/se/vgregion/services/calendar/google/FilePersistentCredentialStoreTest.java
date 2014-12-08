@@ -2,6 +2,7 @@ package se.vgregion.services.calendar.google;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class FilePersistentCredentialStoreTest {
 
     @Test
+    @Ignore
     public void testWriteToFile() throws IOException {
         File file = new File("/tmp/store.dat");
 

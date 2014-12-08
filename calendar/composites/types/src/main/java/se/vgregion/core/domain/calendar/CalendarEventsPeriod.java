@@ -41,6 +41,7 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
      * Default period is set to seven days.
      */
     public static final Days DEFAULT_PERIOD_LENGTH = Days.SEVEN;
+    public static final Days ONE_DAY_PERIOD_LENGTH = Days.ONE;
 
     /**
      * Constructs a new CalendarEventPeriod.
