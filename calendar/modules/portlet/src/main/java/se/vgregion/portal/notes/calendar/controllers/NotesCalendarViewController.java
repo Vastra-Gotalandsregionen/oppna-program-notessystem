@@ -77,7 +77,7 @@ public class NotesCalendarViewController implements PortletConfigAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotesCalendarViewController.class);
     private CalendarService calendarService;
     private PortletConfig portletConfig = null;
-    private PortletData portletData = null;
+    protected PortletData portletData = null;
     private GoogleCalendarService googleCalendarService;
     private Random random = new Random();
     private Locale locale = new Locale("sv", "SE");

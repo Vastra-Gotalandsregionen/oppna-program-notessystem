@@ -101,17 +101,27 @@ public class MyDayCalendarViewController extends NotesCalendarViewController imp
     @RenderMapping
     @Override
     public String displayCalendarEvents(ModelMap model, RenderRequest request, RenderResponse response) {
-        CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
-        if (displayPeriod == null) {
-            DateTime startDate = new DateTime().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0)
-                    .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-            displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.ONE_DAY_PERIOD_LENGTH);
-            model.put("displayPeriod", displayPeriod);
+        String userId = portletData.getUserId(request);
+        boolean loggedId = userId != null && !"".equals(userId);
+        String result = null;
+        if (loggedId) {
+            CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
+            if (displayPeriod == null) {
+                DateTime startDate = new DateTime().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0)
+                        .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+                displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.ONE_DAY_PERIOD_LENGTH);
+                model.put("displayPeriod", displayPeriod);
+            }
+            result = super.displayCalendarEvents(model, request, response);
+        } else {
+            return VIEW;
         }
-        String result = super.displayCalendarEvents(model, request, response);
+
+        model.put("signedIn", loggedId);
         if ("view".equals(result)) {
             return VIEW;
         }
+
         return result;
     }
 
