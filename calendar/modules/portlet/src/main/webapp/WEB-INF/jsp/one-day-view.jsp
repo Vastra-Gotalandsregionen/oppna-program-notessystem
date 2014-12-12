@@ -45,8 +45,8 @@ Boston, MA 02111-1307 USA
 				<c:when test="${signedIn}">
 
 					<div class="pager clearfix cal-pager">
-						<a class="prev" href="${previous}">F&ouml;reg&aring;ende dag</a>
-						<a class="next" href="${next}">N&auml;sta dag</a>
+						<a class="prev" href="${previous}">Tidigare</a>
+						<a class="next" href="${next}">Senare</a>
 					</div>
 
 					<c:forEach items="${calendarItems}" var="eventDay">
