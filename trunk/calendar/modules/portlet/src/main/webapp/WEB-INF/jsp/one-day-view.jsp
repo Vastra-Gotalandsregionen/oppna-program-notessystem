@@ -19,6 +19,7 @@ Boston, MA 02111-1307 USA
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <portlet:renderURL escapeXml="false" var="next">
 	<portlet:param name="navigate" value="next"/>
@@ -52,7 +53,7 @@ Boston, MA 02111-1307 USA
 					<c:forEach items="${calendarItems}" var="eventDay">
 						<div class="calendar-items">
 							<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
-								
+
 									<div class="calendar-item">
 											<div class="entry-time">
 												<div class="entry-time-inner">
