@@ -45,7 +45,6 @@
     <render-weight>0</render-weight>
     <ajaxable>true</ajaxable>
     <header-portlet-javascript>/script/vgr-calendar-portlet.js</header-portlet-javascript>
+    <css-class-wrapper>vgr-calendar-my-day-portlet</css-class-wrapper>
   </portlet>
 </liferay-portlet-app>
-
-
