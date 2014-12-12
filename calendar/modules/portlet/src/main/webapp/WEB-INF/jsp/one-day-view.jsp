@@ -50,21 +50,22 @@ Boston, MA 02111-1307 USA
 					</div>
 
 					<c:forEach items="${calendarItems}" var="eventDay">
-						<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
-
-							<div class="calendar-items">
-								<div class="calendar-item">
-										<div class="entry-time">
-											<div class="entry-time-inner">
-												<div>${event.startTime}</div>
-												<div>-</div>
-												<div>${event.endTime}</div>
+						<div class="calendar-items">
+							<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
+								
+									<div class="calendar-item">
+											<div class="entry-time">
+												<div class="entry-time-inner">
+													<div>${event.startTime}</div>
+													<div>-</div>
+													<div>${event.endTime}</div>
+												</div>
 											</div>
-										</div>
-										<div class="entry-content">${event.title}</div>
-								</div>
-							</div>
-						</c:forEach>
+											<div class="entry-content">${event.title}</div>
+									</div>
+
+							</c:forEach>
+						</div>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
