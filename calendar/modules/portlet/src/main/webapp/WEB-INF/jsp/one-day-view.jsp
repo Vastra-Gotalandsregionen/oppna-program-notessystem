@@ -38,32 +38,30 @@ Boston, MA 02111-1307 USA
 		<span class="portlet-msg-error">${errorMessage}</span>
 	</c:if>
 
-	<c:if test="${signedIn}">
-		<div class="pager clearfix cal-pager">
-			<a class="prev" href="${previous}">Föregående dag</a>
-			<a class="next" href="${next}">Nästa dag</a>
-		</div>
-	</c:if>
-
-	<div class="blogs-listing content-box">
+	<div class="calendar-listing content-box">
 		<h2>Min dag</h2>
 		<div class="content-box-bd">
 			<c:choose>
 				<c:when test="${signedIn}">
+
+					<div class="pager clearfix cal-pager">
+						<a class="prev" href="${previous}">F&ouml;reg&aring;ende dag</a>
+						<a class="next" href="${next}">N&auml;sta dag</a>
+					</div>
+
 					<c:forEach items="${calendarItems}" var="eventDay">
 						<c:forEach items="${eventDay}" var="event" varStatus="eventStatus">
-							<div class="news-items">
-								<div class="entry-item">
-									<a href="https://ans.vgregion.se/c/blogs/find_entry?p_l_id=108278&amp;noSuchEntryRedirect=https%3A%2F%2Fans.vgregion.se%2Fhem%2F-%2Fasset_publisher%2FnFyiZOCBBjS3%2Fblog%2Fhej-dagboken%3F_101_INSTANCE_nFyiZOCBBjS3_redirect%3D%252F&amp;entryId=108807">
-										<div class="entry-date">
-											<div class="entry-date-inner">
-												<div class="entry-date-month">${event.startTime}</div>
-												<div class="entry-date-day">-</div>
-												<div class="entry-date-day">${event.endTime}</div>
+
+							<div class="calendar-items">
+								<div class="calendar-item">
+										<div class="entry-time">
+											<div class="entry-time-inner">
+												<div>${event.startTime}</div>
+												<div>-</div>
+												<div>${event.endTime}</div>
 											</div>
 										</div>
 										<div class="entry-content">${event.title}</div>
-									</a>
 								</div>
 							</div>
 						</c:forEach>
