@@ -130,6 +130,15 @@ public class CalendarItem extends AbstractValueObject<CalendarItem> implements C
     }
 
     /**
+    * Month of year as integer
+    *
+    * @return Month of year as integer
+    */
+    public int getMonthOfYearAsNumber() {
+      return interval.getStart().monthOfYear().get();
+    }
+
+    /**
      * Capitalized string of the end month of year with sv_SE locale.
      *
      * @return Capitalized and localized string of the month of year
