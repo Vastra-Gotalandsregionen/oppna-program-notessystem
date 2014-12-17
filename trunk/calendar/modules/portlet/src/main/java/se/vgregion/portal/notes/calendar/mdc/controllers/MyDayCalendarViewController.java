@@ -107,7 +107,10 @@ public class MyDayCalendarViewController extends NotesCalendarViewController imp
         if (loggedId) {
             CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
             if (displayPeriod == null) {
-                DateTime startDate = new DateTime().withDayOfWeek(DateTimeConstants.MONDAY).withHourOfDay(0)
+                Calendar c = Calendar.getInstance();
+                c.setTime(new Date());
+                int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                DateTime startDate = new DateTime().withDayOfWeek(dayOfWeek).withHourOfDay(0)
                         .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
                 displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.ONE_DAY_PERIOD_LENGTH);
                 model.put("displayPeriod", displayPeriod);
