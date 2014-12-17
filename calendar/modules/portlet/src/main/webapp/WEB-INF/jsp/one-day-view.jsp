@@ -40,15 +40,7 @@ Boston, MA 02111-1307 USA
 	</c:if>
 
 	<div class="calendar-listing content-box">
-		<h2>
-			Min dag
-
-			<c:if test="${fn:length(calendarItems) > 0}">
-				<c:if test="${fn:length(calendarItems[0]) > 0}">
-					- ${calendarItems[0][0].dayOfMonth} / ${calendarItems[0][0].monthOfYearAsNumber}
-				</c:if>
-			</c:if>
-		</h2>
+		<h2>Min dag</h2>
 		<div class="content-box-bd">
 			<c:choose>
 				<c:when test="${signedIn}">
