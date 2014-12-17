@@ -43,7 +43,7 @@
     <preferences-owned-by-group>false</preferences-owned-by-group>
     <action-url-redirect>true</action-url-redirect>
     <render-weight>0</render-weight>
-    <ajaxable>true</ajaxable>
+    <ajaxable>false</ajaxable>
     <header-portlet-javascript>/script/vgr-calendar-portlet.js</header-portlet-javascript>
     <css-class-wrapper>vgr-calendar-my-day-portlet</css-class-wrapper>
   </portlet>
