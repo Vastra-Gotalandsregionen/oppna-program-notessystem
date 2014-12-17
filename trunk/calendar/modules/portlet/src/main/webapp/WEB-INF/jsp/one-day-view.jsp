@@ -43,6 +43,7 @@ Boston, MA 02111-1307 USA
 		<h2>
 			Min dag
 
+			
 			<c:if test="${fn:length(calendarItems) > 0}">
 				<c:if test="${fn:length(calendarItems[0]) > 0}">
 					- ${calendarItems[0][0].dayOfMonth} / ${calendarItems[0][0].monthOfYearAsNumber}
