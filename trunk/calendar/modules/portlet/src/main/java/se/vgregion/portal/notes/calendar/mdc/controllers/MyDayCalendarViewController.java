@@ -89,7 +89,6 @@ public class MyDayCalendarViewController extends NotesCalendarViewController imp
         super(calendarService, googleCalendarService);
     }
 
-
     /**
      * Displays the calendar events for the logged in user.
      *
@@ -105,15 +104,10 @@ public class MyDayCalendarViewController extends NotesCalendarViewController imp
         boolean loggedId = userId != null && !"".equals(userId);
         String result = null;
         if (loggedId) {
-            CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get("displayPeriod");
+            CalendarEventsPeriod displayPeriod = (CalendarEventsPeriod) model.get(displayPeriodKey);
             if (displayPeriod == null) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(new Date());
-                int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-                DateTime startDate = new DateTime().withDayOfWeek(dayOfWeek).withHourOfDay(0)
-                        .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
-                displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.ONE_DAY_PERIOD_LENGTH);
-                model.put("displayPeriod", displayPeriod);
+                displayPeriod = makeDisplayPeriod();
+                model.put(displayPeriodKey, displayPeriod);
             }
             result = super.displayCalendarEvents(model, request, response);
         } else {
@@ -126,6 +120,20 @@ public class MyDayCalendarViewController extends NotesCalendarViewController imp
         }
 
         return result;
+    }
+
+    CalendarEventsPeriod makeDisplayPeriod() {
+        return makeDisplayPeriod(new Date());
+    }
+
+    CalendarEventsPeriod makeDisplayPeriod(Date now) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(now);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        DateTime startDate = new DateTime(now).withDayOfWeek(dayOfWeek - 1).withHourOfDay(0)
+                .withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+        CalendarEventsPeriod displayPeriod = new CalendarEventsPeriod(startDate, CalendarEventsPeriod.ONE_DAY_PERIOD_LENGTH);
+        return displayPeriod;
     }
 
     /**
