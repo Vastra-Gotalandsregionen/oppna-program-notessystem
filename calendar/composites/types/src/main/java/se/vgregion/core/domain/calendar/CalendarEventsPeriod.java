@@ -25,6 +25,8 @@ import org.joda.time.Days;
 
 import se.vgregion.core.domain.patterns.valueobjects.AbstractValueObject;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Class representing a period of days.
  *
@@ -104,4 +106,5 @@ public class CalendarEventsPeriod extends AbstractValueObject<CalendarEventsPeri
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }

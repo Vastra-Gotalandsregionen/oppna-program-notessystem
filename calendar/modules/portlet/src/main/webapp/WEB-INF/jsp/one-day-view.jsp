@@ -19,7 +19,7 @@ Boston, MA 02111-1307 USA
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jstl/fmt" %>
 
 <portlet:renderURL escapeXml="false" var="next">
 	<portlet:param name="navigate" value="next"/>
@@ -40,16 +40,7 @@ Boston, MA 02111-1307 USA
 	</c:if>
 
 	<div class="calendar-listing content-box">
-		<h2>
-			Min dag
-
-			
-			<c:if test="${fn:length(calendarItems) > 0}">
-				<c:if test="${fn:length(calendarItems[0]) > 0}">
-					- ${calendarItems[0][0].dayOfMonth} / ${calendarItems[0][0].monthOfYearAsNumber}
-				</c:if>
-			</c:if>
-		</h2>
+		<h2>Min dag ${displayPeriod.startDate.dayOfMonth} / ${displayPeriod.startDate.monthOfYear}</h2>
 		<div class="content-box-bd">
 			<c:choose>
 				<c:when test="${signedIn}">
@@ -97,3 +88,5 @@ Boston, MA 02111-1307 USA
 		}).render();
 	});
 </script>
+
+<div style="display:none;" class="displayPeriod-startDate">${displayPeriod.startDate}</div>
