@@ -89,7 +89,7 @@ AUI().add('vgr-calendar-portlet',function(A) {
 						
 						pagerIO.on('success', instance._onUpdateSuccess, instance);
 						
-						instance.get(CALENDAR_WRAP_NODE).loadingmask.show();
+						//instance.get(CALENDAR_WRAP_NODE).loadingmask.show();
 						
 						pagerIO.start();
 					},
