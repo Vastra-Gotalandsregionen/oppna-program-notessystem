@@ -1,0 +1,14 @@
+# Introduktion #
+
+Notessystem är ansats till att samla portletar som integrerar mot Lotus Notes under ett "tak".
+
+I dagsläget finns det en portlet som integrerar mot notes via en REST-full webservice som konsoliderar infromation från både Noteskalendern och Regionkalendern. I portleten visas de kommande sju dagarnas aktiviteter från dessa kalendrar. Det finns även möjlighet att hoppa fram och tillbaka i tiden för att se framtida händelser och historik.
+
+
+# Teknik #
+
+Portleten är utformad enligt [JSR 286](http://jcp.org/en/jsr/detail?id=286) med hjälp av Spring Portlet MVC. Integrationen mot notes sker via en RESTfull webservice som anropas mha Springs [RestTemplate](http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/client/RestTemplate.html).
+
+Konvertering från xml till java objekt (aka. unmarshalling eller deserialization) görs mha [JAXB](http://java.sun.com/developer/technicalArticles/WebServices/jaxb/).
+
+Information om vart webservicen förväntas ligga hittas f.n. i security.properties som inte är incheckad i svn utan måste läggas in manuellt innan systemt byggs. Exempel på hur filen skall se ut hittas [security.properties.template](http://code.google.com/p/oppna-program-notessystem/source/browse/trunk/calendar/modules/portlet/src/main/resources/security.properties.template).
