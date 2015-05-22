@@ -35,10 +35,6 @@ Boston, MA 02111-1307 USA
 
 <div id="<portlet:namespace />calendarWrap" class="calendar-wrap">
 
-	<c:if test="${not empty errorMessage}">
-		<span class="portlet-msg-error">${errorMessage}</span>
-	</c:if>
-
 	<div class="calendar-listing content-box">
 		<h2>Min dag ${displayPeriod.startDate.dayOfMonth} / ${displayPeriod.startDate.monthOfYear}</h2>
 		<div class="content-box-bd">
@@ -46,8 +42,10 @@ Boston, MA 02111-1307 USA
 				<c:when test="${signedIn}">
 
 					<div class="pager clearfix cal-pager">
-						<a class="prev" href="${previous}">Tidigare</a>
-						<a class="next" href="${next}">Senare</a>
+                        <c:if test="${empty errorMessage}">
+                            <a class="prev" href="${previous}">Tidigare</a>
+                            <a class="next" href="${next}">Senare</a>
+                        </c:if>
 					</div>
 
 					<c:forEach items="${calendarItems}" var="eventDay">
@@ -75,6 +73,9 @@ Boston, MA 02111-1307 USA
 					</div>
 				</c:otherwise>
 			</c:choose>
+			<c:if test="${not empty errorMessage}">
+				<span class="portlet-msg-error">${errorMessage}</span>
+			</c:if>
 		</div>
 	</div>
 
